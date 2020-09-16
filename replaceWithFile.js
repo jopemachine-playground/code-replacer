@@ -47,5 +47,7 @@ module.exports = function ({
     encoding: "utf8",
   });
 
-  console.log(`generated '__replacer__${targetFile}'`);
+  console.log(
+    `generated '${targetPath}${path.sep}__replacer__.${targetFileName}'`
+  );
 };
