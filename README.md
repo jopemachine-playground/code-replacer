@@ -2,20 +2,20 @@
 
 ```
   Usage
-    $ oneline-replacer <file or directory> --args
+    $ oneline-replacer <"file" or "directory"> --args
 
-     Options
-       <dir required args>
+     Required arguments
+       <"dir", required args>
        --dir, -d             specify target directory
-       --ext                 specify target file's extension
+       --ext, -e             specify target file's extension
 
-       <file required args>
-       --target              specify target file
+       <"file", required args>
+       --target, -t          specify target file
 
        <common required args>
-       --replaceListFile     specify replace properties file
+       --replaceList, -r     specify replace properties file
 
   Examples
-       $ oneline-replacer file target=./dmain.jsp replaceList=./rlist
-       $ oneline-replacer dir dir=./ ext=jsp replaceList=./rlist
+       $ oneline-replacer file --target=./abc.java --replaceList=./rlist
+       $ oneline-replacer dir --dir=./ ext=java --replaceList=./rlist
 ```
