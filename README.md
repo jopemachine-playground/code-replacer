@@ -2,7 +2,7 @@
 
 ```
   Usage
-    $ replaceWithFile <file or directory> --args
+    $ oneline-replacer <file or directory> --args
 
      Options
        <dir required args>
