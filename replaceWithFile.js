@@ -2,7 +2,10 @@ const fs = require('fs');
 const replaceString = require('replace-string');
 const path = require('path');
 
-module.exports = function ({ target: targetFile, replaceListFile }) {
+module.exports = function ({
+  target: targetFile,
+  replaceList: replaceListFile,
+}) {
   console.log("** target file: " + targetFile);
   console.log("** replaceList file: " + replaceListFile);
 
@@ -33,14 +36,16 @@ module.exports = function ({ target: targetFile, replaceListFile }) {
       }
     }
 
-    if(!matching) {
+    if (!matching) {
       resultLines.push(srcLine);
     }
   }
 
-  const dstFilePath = targetPath + path.sep + "__oneline-replacer__." + targetFileName;
+  const dstFilePath = targetPath + path.sep + "__replacer__." + targetFileName;
 
   fs.writeFileSync(dstFilePath, "\ufeff" + resultLines.join("\n"), {
     encoding: "utf8",
   });
-}
+
+  console.log(`generated '__replacer__${targetFile}'`);
+};
