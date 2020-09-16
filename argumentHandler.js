@@ -23,6 +23,12 @@ module.exports = function argumentHandler(commandArguments) {
 
   for ([argKey, value] of argMap) {
     switch (argKey) {
+      case "dir":
+        argument.dir = value;
+        break;
+      case "ext":
+        argument.ext = value;
+        break;
       case "target":
         argument.target = value;
         break;

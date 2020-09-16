@@ -12,7 +12,7 @@ module.exports = function ({ target: targetFile, replaceListFile }) {
 
   for (let propertyLine of propertyLines) {
     const [key, ...value] = propertyLine.split("=");
-    replaceObj[key] = value.join("=");
+    replaceObj[key] = value.join("=").trim();
   }
 
   const absPath = path.resolve(targetFile);
@@ -24,13 +24,17 @@ module.exports = function ({ target: targetFile, replaceListFile }) {
   const resultLines = [];
 
   for (let srcLine of srcFileLines) {
+    let matching = false;
     for (let key of Object.keys(replaceObj)) {
       const reg = new RegExp(key);
       if (reg.test(srcLine)) {
+        matching = true;
         resultLines.push(replaceString(srcLine, key, replaceObj[key]));
-      } else {
-        resultLines.push(srcLine);
       }
+    }
+
+    if(!matching) {
+      resultLines.push(srcLine);
     }
   }
 
@@ -39,5 +43,4 @@ module.exports = function ({ target: targetFile, replaceListFile }) {
   fs.writeFileSync(dstFilePath, "\ufeff" + resultLines.join("\n"), {
     encoding: "utf8",
   });
-
 }
