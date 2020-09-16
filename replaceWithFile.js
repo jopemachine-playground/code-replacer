@@ -2,7 +2,7 @@ const fs = require('fs');
 const replaceString = require('replace-string');
 const path = require('path');
 
-module.exports = function ({ targetFile: target, replaceListFile }) {
+module.exports = function ({ target: targetFile, replaceListFile }) {
   console.log("** target file: " + targetFile);
   console.log("** replaceList file: " + replaceListFile);
 
@@ -15,8 +15,10 @@ module.exports = function ({ targetFile: target, replaceListFile }) {
     replaceObj[key] = value.join("=");
   }
 
-  const [targetFileName, ...targetPathArr] = target.split(path.sep);
-  const targetPath = targetPathArr.join(path.sep);
+  const absPath = path.resolve(targetFile);
+  const [targetFileName, ...targetPathArr] = absPath.split(path.sep).reverse();
+
+  const targetPath = targetPathArr.reverse().join(path.sep);
 
   const srcFileLines = fs.readFileSync(targetFile).toString().split("\n");
   const resultLines = [];
@@ -26,6 +28,8 @@ module.exports = function ({ targetFile: target, replaceListFile }) {
       const reg = new RegExp(key);
       if (reg.test(srcLine)) {
         resultLines.push(replaceString(srcLine, key, replaceObj[key]));
+      } else {
+        resultLines.push(srcLine);
       }
     }
   }
