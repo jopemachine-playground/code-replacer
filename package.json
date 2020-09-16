@@ -1,6 +1,9 @@
 {
   "name": "oneline-replacer",
   "version": "0.0.1",
+  "bin": {
+    "oneline-replacer": "./index.js"
+  },
   "description": "",
   "main": "index.js",
   "scripts": {
