@@ -2,3 +2,7 @@ node_modules
 dmain.jsp
 __replacer__.*
 rlist
+energyServicePortal_ewp_adv
+_jsp/*
+DEBUG_INFO
+.DS_Store

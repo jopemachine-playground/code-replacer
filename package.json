@@ -1,5 +1,5 @@
 {
-  "name": "oneline-replacer",
+  "name": "line-replacer",
   "version": "0.0.1",
   "bin": {
     "oneline-replacer": "./index.js"
@@ -12,7 +12,10 @@
   "author": "jopemachine",
   "license": "MIT",
   "dependencies": {
+    "boxen": "^4.2.0",
+    "chalk": "^4.1.0",
     "meow": "^7.1.1",
-    "replace-string": "^3.1.0"
+    "readline-sync": "^1.4.10",
+    "recursive-readdir": "^2.2.2"
   }
 }
