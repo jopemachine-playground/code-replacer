@@ -16,6 +16,7 @@
     "chalk": "^4.1.0",
     "meow": "^7.1.1",
     "readline-sync": "^1.4.10",
-    "recursive-readdir": "^2.2.2"
+    "recursive-readdir": "^2.2.2",
+    "yn": "^4.0.0"
   }
 }

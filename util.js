@@ -28,7 +28,7 @@ module.exports = {
     module.exports.funcExecByFlag(
       flag,
       () => console.log(logIfFlagIsTrue),
-      () => console.log(logIfFlagIsFalse)
+      () => logIfFlagIsFalse && console.log(logIfFlagIsFalse)
     );
   },
 
@@ -61,7 +61,7 @@ module.exports = {
     srcFileLines,
     resultLines
   ) {
-    let previousLine, postLine;
+    let previousLine = '', postLine = '';
 
     if (lineIdx - 2 >= 0) {
       previousLine =
@@ -109,4 +109,34 @@ ${postLine}
       return -1;
     }
   },
+
+  splitWithEscape(string, spliter) {
+    let prevChar = '';
+    let matching = false;
+
+    let frontStrBuf = '';
+    let backStrBuf = '';
+
+    for (let i = 0; i < string.length; i++) {
+      let char = string.charAt(i);
+
+      // handle escape
+      if (prevChar == '\\') {
+        prevChar = char;
+        frontStrBuf += char;
+        continue;
+      }
+
+      if (char === spliter) {
+        matching = true;
+        continue;
+      }
+
+      !matching && (frontStrBuf += char);
+      matching && (backStrBuf += char);
+      prevChar = char;
+    }
+
+    return [frontStrBuf, backStrBuf];
+  }
 };
