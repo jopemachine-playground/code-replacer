@@ -1,6 +1,7 @@
 const chalk = require("chalk");
 const fs = require("fs");
 const _ = require("lodash");
+const path = require('path');
 
 module.exports = {
   err: function () {
@@ -55,6 +56,7 @@ module.exports = {
   },
 
   printLines: function (
+    targetFileName,
     lineIdx,
     sourceStr,
     replacedStr,
@@ -80,7 +82,7 @@ ${chalk.gray(
   "------------------------------------------------------------------------------------------"
 )}
 
-${chalk.gray(`# Line: ${lineIdx}`)}
+${chalk.gray(`# Line: ${chalk.yellow(lineIdx)}, in '${chalk.yellow(targetFileName)}'`)}
 
 ${previousLine}
 ${chalk.blueBright(`${lineIdx}    `) + chalk.blueBright(sourceStr)}
@@ -96,15 +98,15 @@ ${postLine}
     return result;
   },
 
-  findReplaceListFile: function (targetFileName) {
-    if (fs.existsSync(`./rlistDir/rlist_${targetFileName}`)) {
-      return `./rlistDir/rlist_${targetFileName}`;
+  findReplaceListFile: function (rlistDir, targetFileName) {
+    if (fs.existsSync(`${rlistDir}${path.sep}rlist_${targetFileName}`)) {
+      return `${rlistDir}${path.sep}rlist_${targetFileName}`;
     } else if (
-      fs.existsSync(`./rlistDir/rlist_${targetFileName.split(".")[0]}`)
+      fs.existsSync(`${rlistDir}${path.sep}rlist_${targetFileName.split(".")[0]}`)
     ) {
-      return `./rlistDir/rlist_${targetFileName.split(".")[0]}`;
-    } else if (fs.existsSync("./rlist")) {
-      return "./rlist";
+      return `${rlistDir}${path.sep}rlist_${targetFileName.split(".")[0]}`;
+    } else if (fs.existsSync(`.${path.sep}rlist`)) {
+      return `.${path.sep}rlist`;
     } else {
       return -1;
     }
@@ -121,13 +123,13 @@ ${postLine}
       let char = string.charAt(i);
 
       // handle escape
-      if (prevChar == '\\') {
+      if (!matching && prevChar == '\\') {
         prevChar = char;
         frontStrBuf += char;
         continue;
       }
 
-      if (char === spliter) {
+      if (!matching && char === spliter) {
         matching = true;
         continue;
       }

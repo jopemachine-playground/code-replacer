@@ -31,11 +31,17 @@ parseRList = ({
   const replaceObj = {};
 
   if (!replaceListFile) {
-    replaceListFile = findReplaceListFile(targetFileName);
+    replaceListFile = findReplaceListFile(`.${path.sep}rlist`, targetFileName);
+  } else if (fs.lstatSync(replaceListFile).isDirectory()) {
+    replaceListFile = findReplaceListFile(replaceListFile, targetFileName);
   }
 
   funcExecByFlag(!verboseOpt && replaceListFile !== -1, () =>
-    console.log("** replaceList file: " + path.resolve(replaceListFile))
+    console.log(
+      chalk.dim(
+        chalk.italic("** replaceList file: " + path.resolve(replaceListFile))
+      )
+    )
   );
 
   funcExecByFlag(debugOpt && replaceListFile !== -1, () =>
@@ -77,7 +83,10 @@ parseRList = ({
 parseTargetFile = ({ targetFile, verboseOpt, debugOpt }) => {
   const absPath = path.resolve(targetFile);
   const [targetFileName, ...targetPathArr] = absPath.split(path.sep).reverse();
-  logByFlag(!verboseOpt, "** target file: " + path.resolve(targetFile));
+  logByFlag(
+    !verboseOpt,
+    chalk.dim(chalk.italic("** target file: " + path.resolve(targetFile)))
+  );
 
   funcExecByFlag(debugOpt, () =>
     debuggingInfoArr.append("** target file: " + path.resolve(targetFile))
@@ -105,32 +114,120 @@ getReplacingKeys = ({ replaceObj, replaceListFile, regValue, verboseOpt }) => {
   logByFlag(verboseOpt, "keys:");
   logByFlag(verboseOpt, keys);
 
-  if (regValue && !replaceListFile) {
-    // handle ${source}, ${value}
-    let regRValue;
-    const [regValueKey, ...regValueValue] = regValue.split("=");
-    regRValue = regValueValue.join("=").trim().normalize();
+  if (regValue) {
+    let [regLValue, regRValue] = splitWithEscape(regValue, "=");
+
+    regRValue = regRValue.trim().normalize();
 
     for (let key of keys) {
-      key = regValueKey.replace("${source}", key);
+      key = regLValue.replace("${source}", key);
       regRValue = regRValue.replace("${value}", replaceObj[key]);
       replaceObj[key] = regRValue;
     }
-  }
 
-  if (regValue && !replaceListFile) {
-    // handle grouping value
-    const [regValueKey, regValueValue] = splitWithEscape(regValue, "=");
-    keys.push(regValueKey);
+    if (!replaceListFile) {
+      // assume to replace using group regular expressions only
+      keys.push(regLValue);
+    }
   }
 
   return keys;
 };
 
+getMatchingPoints = ({ srcLine, regValue, replacingKeys }) => {
+  let matchingPoints = {};
+  let matchingPtCnt = 0;
+  for (let key of replacingKeys) {
+    const reg = new RegExp(regValue ? key : handleSpecialCharacter(key));
+    const regGenerator = matchAll(srcLine, reg);
+
+    for (let reg of regGenerator) {
+      let existingMatchingPtIdx = -1;
+
+      for (
+        let matchingPtIdx = 0;
+        matchingPtIdx < Object.keys(matchingPoints).length;
+        matchingPtIdx++
+      ) {
+        const cands = matchingPoints[matchingPtIdx];
+
+        for (let candIdx = 0; candIdx < cands.length; candIdx++) {
+          if (
+            reg[0] === cands[candIdx][0] ||
+            (!reg[0].includes(cands[candIdx][0]) &&
+              !cands[candIdx][0].includes(reg[0]))
+          ) {
+            continue;
+          }
+
+          // should be same matching point.
+          if (
+            cands[candIdx][0].length - reg[0].length >=
+            cands[candIdx].index - reg.index
+          ) {
+            existingMatchingPtIdx = matchingPtIdx;
+            break;
+          }
+        }
+      }
+
+      if (existingMatchingPtIdx === -1) {
+        matchingPoints[matchingPtCnt++] = [reg];
+      } else {
+        matchingPoints[existingMatchingPtIdx].push(reg);
+      }
+    }
+  }
+
+  return {
+    matchingPoints,
+    matchingPtCnt,
+  };
+};
+
+displayConsoleMsg = ({ srcLine, matchingInfo, replaceObj, confOpt, verboseOpt, targetFileName, lineIdx, srcFileLines, resultLines }) => {
+  let matchingStr = matchingInfo[0];
+
+  const sourceStr = createHighlightedLine(
+    srcLine,
+    matchingInfo.index,
+    matchingStr,
+    matchingInfo.index + matchingStr.length
+  );
+  const replacedStr = createHighlightedLine(
+    srcLine,
+    matchingInfo.index,
+    replaceObj[matchingStr],
+    matchingInfo.index + matchingStr.length
+  );
+
+  funcExecByFlag(confOpt || verboseOpt, () =>
+    printLines(
+      targetFileName,
+      lineIdx,
+      sourceStr,
+      replacedStr,
+      srcFileLines,
+      resultLines
+    )
+  );
+
+  logByFlag(
+    confOpt,
+    chalk.dim(
+      chalk.italic(
+        "## Press enter to replace the string or 'n' to skip this word or 's' to skip this file."
+      )
+    )
+  );
+};
+
 replaceExecute = ({
+  targetFileName,
   srcFileLines,
   replaceObj,
   regValue,
+  excludeRegValue,
   replaceListFile,
   startLinePatt,
   endLinePatt,
@@ -151,6 +248,10 @@ replaceExecute = ({
   });
 
   for (let srcLine of srcFileLines) {
+    if (excludeRegValue && srcLine.match(new RegExp(excludeRegValue))) {
+      continue;
+    }
+
     // handle blocking replace
     funcExecByFlag(
       blockingReplaceFlag &&
@@ -179,95 +280,93 @@ replaceExecute = ({
     );
 
     if (!blockingReplaceFlag) {
-      let matchingPoints = [];
-      for (let key of replacingKeys) {
-        const reg = new RegExp(regValue ? key : handleSpecialCharacter(key));
-        const regGenerator = matchAll(srcLine, reg);
-        matchingPoints = [...matchingPoints, ...regGenerator];
-      }
+      const { matchingPoints, matchingPtCnt } = getMatchingPoints({ srcLine, regValue, replacingKeys });
 
-      // Proceed with the place from the previous item.
-      matchingPoints.sort(function (a, b) {
-        return a.index - b.index;
-      });
+      for (
+        let matchingPtIdx = 0;
+        matchingPtIdx < matchingPtCnt;
+        matchingPtIdx++
+      ) {
+        // Match the longest string first
+        const matchingCandidates = matchingPoints[matchingPtIdx];
 
-      let replaceFlag = false;
-      let previousKey = "";
+        for (
+          let candidateIdx = 0;
+          candidateIdx < matchingCandidates.length;
+          candidateIdx++
+        ) {
+          let matchingInfo = matchingCandidates[candidateIdx];
+          let matchingStr = matchingInfo[0];
 
-      for (let matchingInfo of matchingPoints) {
-        let matchingStr = matchingInfo[0];
+          // Need more test
+          if (regValue && !replaceListFile) {
+            // handle grouping value
+            const [regLValue, regRValue] = splitWithEscape(regValue, "=");
+            const findGroupKeyReg = new RegExp(/\$\{(?<groupKey>\w*)\}/);
+            const groupKeys = matchAll(regRValue, findGroupKeyReg);
 
-        if (replaceFlag) {
-          for (let item of matchingPoints) {
-            item.index += replaceObj[previousKey].length - previousKey.length;
+            for (let groupKeyInfo of groupKeys) {
+              const groupKey = groupKeyInfo[1];
+              const findMatchingStringReg = new RegExp(regLValue);
+              const groupKeyMatching = srcLine.match(findMatchingStringReg);
+              const groupKeyMatchingStr = groupKeyMatching.groups[groupKey];
+
+              matchingStr = matchingStr.replace(
+                `(?<${groupKey}>)`,
+                groupKeyMatchingStr
+              );
+
+              replaceObj[matchingStr] = regRValue.replace(
+                `\${${groupKey}}`,
+                groupKeyMatching.groups[groupKey]
+              );
+            }
           }
-          replaceFlag = false;
-        }
 
-        // Need more test
-        if (regValue && !replaceListFile) {
-          // handle grouping value
-          const [regLValue, regRValue] = splitWithEscape(regValue, "=");
-          const findGroupKeyReg = new RegExp(/\$\{(?<groupKey>\w*)\}/);
-          const groupKeys = matchAll(regRValue, findGroupKeyReg);
+          displayConsoleMsg ({ srcLine, matchingInfo, replaceObj, confOpt, verboseOpt, targetFileName, lineIdx, srcFileLines, resultLines });
 
-          for (let groupKeyInfo of groupKeys) {
-            const groupKey = groupKeyInfo[1];
-            const findMatchingStringReg = new RegExp(regLValue);
-            const groupKeyMatching = srcLine.match(findMatchingStringReg);
-            const groupKeyMatchingStr = groupKeyMatching.groups[groupKey];
+          let input = "y";
+          confOpt && (input = readlineSync.prompt());
 
-            matchingStr = matchingStr.replace(`(?<${groupKey}>)`, groupKeyMatchingStr);
+          if (yn(input) === false) {
+            // skip this word. choose other candidate if you have a shorter string to replace.
+            logByFlag(confOpt || verboseOpt, chalk.red("\nskip.."));
+          } else if (input.startsWith("s")) {
+            // skip this file.
+            console.log(chalk.red(`\nskip '${targetFileName}'..`));
+            return -1;
+          } else {
+            // replace string
 
-            replaceObj[matchingStr] = regRValue.replace(
-              `\${${groupKey}}`,
-              groupKeyMatching.groups[groupKey]
-            );
+            // push the index value of the other matching points.
+            for (
+              let otherPtsCandidateIdx = matchingPtIdx + 1;
+              otherPtsCandidateIdx < matchingPtCnt;
+              otherPtsCandidateIdx++
+            ) {
+              const otherPts =
+                matchingPoints[otherPtsCandidateIdx];
+
+              for (let candItem of otherPts) {
+                candItem.index +=
+                  replaceObj[matchingStr].length - matchingStr.length;
+              }
+            }
+
+            logByFlag(confOpt || verboseOpt, chalk.yellow("\nreplace.."));
+
+            srcLine =
+              srcLine.substr(0, matchingInfo.index) +
+              replaceObj[matchingStr] +
+              srcLine.substr(
+                matchingInfo.index + matchingStr.length,
+                srcLine.length
+              );
+            break;
           }
         }
 
-        const sourceStr = createHighlightedLine(
-          srcLine,
-          matchingInfo.index,
-          matchingStr,
-          matchingInfo.index + matchingStr.length
-        );
-        const replacedStr = createHighlightedLine(
-          srcLine,
-          matchingInfo.index,
-          replaceObj[matchingStr],
-          matchingInfo.index + matchingStr.length
-        );
-
-        funcExecByFlag(confOpt || verboseOpt, () =>
-          printLines(lineIdx, sourceStr, replacedStr, srcFileLines, resultLines)
-        );
-
-        logByFlag(
-          confOpt,
-          chalk.gray(
-            "## Press enter to replace the string or 'n' or 's' to skip"
-          )
-        );
-
-        let input = "y";
-        confOpt && (input = readlineSync.prompt());
-
-        if (yn(input) === "false" || input === "s") {
-          // skip
-          logByFlag(confOpt || verboseOpt, chalk.red("\nskip.."));
-        } else {
-          // replace string
-          replaceFlag = true;
-          previousKey = matchingStr;
-          logByFlag(confOpt || verboseOpt, chalk.yellow("\nreplace.."));
-          srcLine =
-            srcLine.substr(0, matchingInfo.index) +
-            replaceObj[matchingStr] +
-            srcLine.substr(matchingInfo.index + matchingStr.length, srcLine.length);
-
-          if (onceOpt) break;
-        }
+        if (onceOpt) break;
       }
 
       lineIdx++;
@@ -289,7 +388,9 @@ module.exports = async function ({
   dst: dstFileName,
   conf: confOpt,
   reg: regValue,
+  excludeReg: excludeRegValue,
   debug: debugOpt,
+  overwrite: overwriteOpt,
 }) {
   const { srcFileLines, targetFileName, targetPath } = parseTargetFile({
     targetFile,
@@ -314,9 +415,11 @@ module.exports = async function ({
   );
 
   const resultLines = replaceExecute({
+    targetFileName,
     srcFileLines,
     replaceObj,
     regValue,
+    excludeRegValue,
     replaceListFile,
     startLinePatt,
     endLinePatt,
@@ -325,7 +428,11 @@ module.exports = async function ({
     onceOpt,
   });
 
-  const dstFilePath = dstFileName
+  if (resultLines === -1) return;
+
+  const dstFilePath = overwriteOpt
+    ? targetFile
+    : dstFileName
     ? path.resolve(dstFileName)
     : targetPath + path.sep + "__replacer__." + targetFileName;
 
