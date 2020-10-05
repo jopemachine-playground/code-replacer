@@ -5,7 +5,7 @@ const path = require('path');
 
 module.exports = {
   err: function () {
-    console.log("Wrong usage. \nCheck the correct usage.");
+    console.log(chalk.yellow("See README.md or 'help' option for usage."));
     process.exit();
   },
 
@@ -91,11 +91,24 @@ ${postLine}
 `);
   },
 
-  handleSpecialCharacter: function (key) {
+  handleSpecialCharacter: function (str) {
     // TODO: Need to handle more special characters here
-    let result = key.replace("(", "\\(");
-    result = result.replace(")", "\\)");
-    return result;
+    str = str.replace("\\", "\\\\");
+    str = str.replace("(", "\\(");
+    str = str.replace(")", "\\)");
+    str = str.replace(".", "\\.");
+    str = str.replace("?", "\\?");
+    str = str.replace("!", "\\!");
+    str = str.replace("$", "\\$");
+    str = str.replace("^", "\\^");
+    str = str.replace("{", "\\{");
+    str = str.replace("}", "\\}");
+    str = str.replace("[", "\\[");
+    str = str.replace("]", "\\]");
+    str = str.replace("|", "\\|");
+    str = str.replace("]", "\\]");
+    str = str.replace("/", "\\/");
+    return str;
   },
 
   findReplaceListFile: function (rlistDir, targetFileName) {
@@ -140,5 +153,5 @@ ${postLine}
     }
 
     return [frontStrBuf, backStrBuf];
-  }
+  },
 };

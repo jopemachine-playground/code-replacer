@@ -59,13 +59,7 @@ parseRList = ({
     for (let propertyLine of propertyLines) {
       if (!propertyLine.includes(rlistSeparator)) continue;
       const [key, ...value] = propertyLine.split(rlistSeparator);
-      // hack!!!!
-      // const temp = value.join(rlistSeparator).trim().normalize();
 
-      // replaceObj[key.trim().normalize()] = value
-      //   .join(rlistSeparator)
-      //   .trim()
-      //   .substring(1, temp.length - 1);
       replaceObj[key.trim().normalize()] = value.join(rlistSeparator).trim();
     }
   } else if (replaceListFile === -1 && !regValue) {
@@ -121,8 +115,7 @@ getReplacingKeys = ({ replaceObj, replaceListFile, regValue, verboseOpt }) => {
 
     for (let key of keys) {
       key = regLValue.replace("${source}", key);
-      regRValue = regRValue.replace("${value}", replaceObj[key]);
-      replaceObj[key] = regRValue;
+      replaceObj[key] = regRValue.replace("${value}", replaceObj[key]);
     }
 
     if (!replaceListFile) {
@@ -135,8 +128,9 @@ getReplacingKeys = ({ replaceObj, replaceListFile, regValue, verboseOpt }) => {
 };
 
 getMatchingPoints = ({ srcLine, regValue, replacingKeys }) => {
-  let matchingPoints = {};
+  let matchingPoints = [];
   let matchingPtCnt = 0;
+
   for (let key of replacingKeys) {
     const reg = new RegExp(regValue ? key : handleSpecialCharacter(key));
     const regGenerator = matchAll(srcLine, reg);
@@ -146,7 +140,7 @@ getMatchingPoints = ({ srcLine, regValue, replacingKeys }) => {
 
       for (
         let matchingPtIdx = 0;
-        matchingPtIdx < Object.keys(matchingPoints).length;
+        matchingPtIdx < matchingPoints.length;
         matchingPtIdx++
       ) {
         const cands = matchingPoints[matchingPtIdx];
@@ -160,7 +154,7 @@ getMatchingPoints = ({ srcLine, regValue, replacingKeys }) => {
             continue;
           }
 
-          // should be same matching point.
+          // Should be same matching point.
           if (
             cands[candIdx][0].length - reg[0].length >=
             cands[candIdx].index - reg.index
@@ -178,6 +172,26 @@ getMatchingPoints = ({ srcLine, regValue, replacingKeys }) => {
       }
     }
   }
+
+  for (
+    let matchingPtIdx = 0;
+    matchingPtIdx < matchingPoints.length;
+    matchingPtIdx++
+  ) {
+    const cands = matchingPoints[matchingPtIdx];
+    cands["leastIdx"] = Number.MAX_SAFE_INTEGER;
+
+    for (let candIdx = 0; candIdx < cands.length; candIdx++) {
+      if (cands["leastIdx"] > cands[candIdx].index) {
+        cands["leastIdx"] = cands[candIdx].index;
+      }
+    }
+  }
+
+  // Sort matching points to match in asc order
+  matchingPoints.sort((lPt, rPt) => {
+    return lPt.leastIdx - rPt.leastIdx
+  });
 
   return {
     matchingPoints,
@@ -249,6 +263,8 @@ replaceExecute = ({
 
   for (let srcLine of srcFileLines) {
     if (excludeRegValue && srcLine.match(new RegExp(excludeRegValue))) {
+      lineIdx++;
+      resultLines.push(srcLine);
       continue;
     }
 
@@ -454,5 +470,5 @@ module.exports = async function ({
     })
   );
 
-  console.log(`Generated '${dstFilePath}'\n`);
+  console.log(chalk.italic(chalk.white(`\nGenerated '${dstFilePath}'\n`)));
 };
