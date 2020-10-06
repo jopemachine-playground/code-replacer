@@ -32,8 +32,8 @@ Below is the input file (`replaceList`).
 Note that left column is Message string, right column is corresponding string key.
 
 ```
-Some message..,some_msg
-Blah blah..,blah_blah
+Some message..=some_msg
+Blah blah..=blah_blah
 ```
 
 And you need to forward some reg value.
