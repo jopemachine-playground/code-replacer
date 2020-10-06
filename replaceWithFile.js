@@ -24,7 +24,7 @@ parseRList = ({
   replaceListFile,
   targetFileName,
   rlistSeparator,
-  regValue,
+  template,
   verboseOpt,
   debugOpt,
 }) => {
@@ -62,7 +62,7 @@ parseRList = ({
 
       replaceObj[key.trim().normalize()] = value.join(rlistSeparator).trim();
     }
-  } else if (replaceListFile === -1 && !regValue) {
+  } else if (replaceListFile === -1 && !template) {
     console.log(
       chalk.red(
         "You should specify the 'reg' value or the rlist file. \nPlease refer to README.md\nExit.."
@@ -97,7 +97,7 @@ parseTargetFile = ({ targetFile, verboseOpt, debugOpt }) => {
   };
 };
 
-getReplacingKeys = ({ replaceObj, replaceListFile, regValue, verboseOpt }) => {
+getReplacingKeys = ({ replaceObj, replaceListFile, template, verboseOpt }) => {
   const keys = Object.keys(replaceObj);
 
   // sort by length -> prioritize and map keys with long values first.
@@ -108,8 +108,8 @@ getReplacingKeys = ({ replaceObj, replaceListFile, regValue, verboseOpt }) => {
   logByFlag(verboseOpt, "keys:");
   logByFlag(verboseOpt, keys);
 
-  if (regValue) {
-    let [regLValue, regRValue] = splitWithEscape(regValue, "=");
+  if (template) {
+    let [regLValue, regRValue] = splitWithEscape(template, "=");
 
     regRValue = regRValue.trim().normalize();
 
@@ -127,7 +127,7 @@ getReplacingKeys = ({ replaceObj, replaceListFile, regValue, verboseOpt }) => {
   return keys;
 };
 
-getMatchingPoints = ({ srcLine, regValue, replacingKeys }) => {
+getMatchingPoints = ({ srcLine, template, replacingKeys }) => {
   let matchingPoints = [];
   let matchingPtCnt = 0;
 
@@ -242,7 +242,7 @@ replaceExecute = ({
   targetFileName,
   srcFileLines,
   replaceObj,
-  regValue,
+  template,
   excludeRegValue,
   replaceListFile,
   startLinePatt,
@@ -255,7 +255,7 @@ replaceExecute = ({
   const replacingKeys = getReplacingKeys({
     replaceObj,
     replaceListFile,
-    regValue,
+    template,
     verboseOpt,
   });
 
@@ -297,7 +297,7 @@ replaceExecute = ({
     );
 
     if (!blockingReplaceFlag) {
-      const { matchingPoints, matchingPtCnt } = getMatchingPoints({ srcLine, regValue, replacingKeys });
+      const { matchingPoints, matchingPtCnt } = getMatchingPoints({ srcLine, template, replacingKeys });
 
       for (
         let matchingPtIdx = 0;
@@ -316,9 +316,9 @@ replaceExecute = ({
           let matchingStr = matchingInfo[0];
 
           // Need more test
-          if (regValue && !replaceListFile) {
+          if (template && !replaceListFile) {
             // handle grouping value
-            const [regLValue, regRValue] = splitWithEscape(regValue, "=");
+            const [regLValue, regRValue] = splitWithEscape(template, "=");
             const findGroupKeyReg = new RegExp(/\$\{(?<groupKey>\w*)\}/);
             const groupKeys = matchAll(regRValue, findGroupKeyReg);
 
@@ -404,7 +404,7 @@ module.exports = async function ({
   endLinePatt,
   dst: dstFileName,
   conf: confOpt,
-  reg: regValue,
+  template,
   excludeReg: excludeRegValue,
   debug: debugOpt,
   overwrite: overwriteOpt,
@@ -421,7 +421,7 @@ module.exports = async function ({
     replaceListFile,
     targetFileName,
     rlistSeparator,
-    regValue,
+    template,
     verboseOpt,
     debugOpt,
   });
@@ -437,7 +437,7 @@ module.exports = async function ({
     targetFileName,
     srcFileLines,
     replaceObj,
-    regValue,
+    template,
     excludeRegValue,
     replaceListFile,
     startLinePatt,

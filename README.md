@@ -4,7 +4,7 @@
 
 ## How to use
 
-1. Write input file (rlist) or reg to change your codes.
+1. Write input file (`rlist`) or `template` to change your codes.
 
 2. Type the command
 
@@ -12,7 +12,7 @@
 
 ## Simple example
 
-### Example 1, use `replaceList` and `reg`
+### Example 1, use `replaceList` and `template`
 
 Pass the path of the input file to the `replaceList` option if you need it.
 
@@ -36,15 +36,15 @@ Some message..=some_msg
 Blah blah..=blah_blah
 ```
 
-And you need to forward some reg value.
+And you need to forward some `template` value.
 
 We assume this value is `i18n.t(${key})`.
 
-In reg option, There are two special keys (`${source}`, `${value}`).
+In `template` option, There are two special keys (`${source}`, `${value}`).
 
 On each line in the source file (`msgAlert.js`), the left entry of the `replaceList` is `${source}` and the right value is `${value}`.
 
-Then the reg value we need to forward is as follows.
+Then the `template` value we need to forward is as follows.
 
 ```
 ${source}=i18n.t("${value}")
@@ -53,7 +53,7 @@ ${source}=i18n.t("${value}")
 So if you type below command into the console,
 
 ```
-code-replacer --target=msgAlert.js --replceList=rlist --reg='${source}=i18n.t("${value}")'
+code-replacer --target=msgAlert.js --replceList=rlist --template='${source}=i18n.t("${value}")'
 ```
 
 You can get to below file in the target directory.
@@ -69,7 +69,7 @@ alert(i18n.t("blah_blah"));
 
 For more detailed instructions, see the topic `Options`.
 
-### Example 2, use only `reg`
+### Example 2, use only `template`
 
 In certain situations, key, value pairs may not be required to change the string.
 
@@ -96,7 +96,7 @@ require("ghi");
 Then, the command is as follows.
 
 ```
-code-replacer --target=./index.js --reg='require("${key}")=import ${key} from "${key}"'
+code-replacer --target=./index.js --template='require("${key}")=import ${key} from "${key}"'
 ```
 
 And you can get below file.
@@ -108,6 +108,26 @@ import def from "def";
 import ghi from "ghi";
 ...
 ```
+
+## How it works, tips
+
+1. If there are more than one matching key, (which contain other key in the rlist (e.g. test, tester)), 
+The longest key is selected (replaced) basically. 
+If you don't want this situation, try to give `conf` option and skip the longest one, then you can choose next candidate (test).
+
+2. Key values in the rlist are treated as *regular expression*. But special characters are escaped in the inside.
+So, no separate escape processing is required.
+
+3. In `template` option, The `template` value is treated as a form of `A=B`
+If A contains a `=` (sign of equality), you can escape that `=` by `\=`.
+
+4. You can apply the `excludeReg` option as form of regular expression, to exclude lines that you don't want to replace, such as comments.
+(e.g. `x=(.*//.*)|(.*<!--.*)|(.*\/\*.*)`)
+
+5. If you feel inconvenient to enter regular expressions or option value each time, you can set some values you want as default by below way.
+`code-replacer set --tem={some_value} -x -v --debug --target={some_value} ...`
+If these argument is not entered next time, these values are used as a default.
+
 
 ## Options
 
@@ -176,10 +196,10 @@ type: `boolean`
 
 check the string values that you want to replace on each line.
 
-#### --reg, -g
+#### --template, --tem
 type: `string`
 
-specify regular expression with the rlist file.
+specify template.
 
 #### --sep, -s
 type: `string`

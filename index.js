@@ -57,9 +57,9 @@ const flags = {
     alias: "c",
     isRequired: (flags, input) => false,
   },
-  reg: {
+  template: {
     type: "string",
-    alias: "r",
+    alias: "tem",
     isRequired: (flags, input) => false,
   },
   debug: {
@@ -139,7 +139,7 @@ const cli = meow(
 
             --conf, -c                    check the string values that you want to replace on each line.
 
-            --reg, -g                     specify regular expression with the rlist file.
+            --template, -tem              specify template string.
                                           see README.md for more detail usage.
 
             --sep, -s                     specify rlist's spliter. 
@@ -162,7 +162,8 @@ const cli = meow(
 );
 
 switch (cli.input[0]) {
-  case "setOpt":
+  case "s":
+  case "set":
     setOptions(cli.flags);
     break;
   default:
