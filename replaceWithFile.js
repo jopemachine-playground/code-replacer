@@ -131,11 +131,11 @@ getMatchingPoints = ({ srcLine, regValue, replacingKeys }) => {
   let matchingPoints = [];
   let matchingPtCnt = 0;
 
-  for (let key of replacingKeys) {
-    const reg = new RegExp(regValue ? key : handleSpecialCharacter(key));
-    const regGenerator = matchAll(srcLine, reg);
+  for (let replacingKey of replacingKeys) {
+    const replacingKeyReg = new RegExp(handleSpecialCharacter(replacingKey));
+    const replacingKeyMatchingPts = matchAll(srcLine, replacingKeyReg);
 
-    for (let reg of regGenerator) {
+    for (let replacingKeyMatchingPt of replacingKeyMatchingPts) {
       let existingMatchingPtIdx = -1;
 
       for (
@@ -144,20 +144,22 @@ getMatchingPoints = ({ srcLine, regValue, replacingKeys }) => {
         matchingPtIdx++
       ) {
         const cands = matchingPoints[matchingPtIdx];
+        const replacingKeyMatchingStr = replacingKeyMatchingPt[0];
 
         for (let candIdx = 0; candIdx < cands.length; candIdx++) {
+          const candStr = cands[candIdx][0];
           if (
-            reg[0] === cands[candIdx][0] ||
-            (!reg[0].includes(cands[candIdx][0]) &&
-              !cands[candIdx][0].includes(reg[0]))
+            replacingKeyMatchingStr === candStr ||
+            (!replacingKeyMatchingStr.includes(candStr) &&
+              !candStr.includes(replacingKeyMatchingStr))
           ) {
             continue;
           }
 
           // Should be same matching point.
           if (
-            cands[candIdx][0].length - reg[0].length >=
-            cands[candIdx].index - reg.index
+            candStr.length - replacingKeyMatchingStr.length >=
+            cands[candIdx].index - replacingKeyMatchingPt.index
           ) {
             existingMatchingPtIdx = matchingPtIdx;
             break;
@@ -166,9 +168,9 @@ getMatchingPoints = ({ srcLine, regValue, replacingKeys }) => {
       }
 
       if (existingMatchingPtIdx === -1) {
-        matchingPoints[matchingPtCnt++] = [reg];
+        matchingPoints[matchingPtCnt++] = [replacingKeyMatchingPt];
       } else {
-        matchingPoints[existingMatchingPtIdx].push(reg);
+        matchingPoints[existingMatchingPtIdx].push(replacingKeyMatchingPt);
       }
     }
   }
@@ -250,16 +252,15 @@ replaceExecute = ({
   onceOpt,
 }) => {
   const resultLines = [];
-
-  let lineIdx = 1;
-  let blockingReplaceFlag = startLinePatt ? true : false;
-
   const replacingKeys = getReplacingKeys({
     replaceObj,
     replaceListFile,
     regValue,
     verboseOpt,
   });
+
+  let lineIdx = 1;
+  let blockingReplaceFlag = startLinePatt ? true : false;
 
   for (let srcLine of srcFileLines) {
     if (excludeRegValue && srcLine.match(new RegExp(excludeRegValue))) {
@@ -408,6 +409,8 @@ module.exports = async function ({
   debug: debugOpt,
   overwrite: overwriteOpt,
 }) {
+  if (!rlistSeparator) rlistSeparator = '=';
+
   const { srcFileLines, targetFileName, targetPath } = parseTargetFile({
     targetFile,
     verboseOpt,

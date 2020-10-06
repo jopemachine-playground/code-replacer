@@ -133,7 +133,7 @@ ${postLine}
     let backStrBuf = '';
 
     for (let i = 0; i < string.length; i++) {
-      let char = string.charAt(i);
+      const char = string.charAt(i);
 
       // handle escape
       if (!matching && prevChar == '\\') {
@@ -153,5 +153,13 @@ ${postLine}
     }
 
     return [frontStrBuf, backStrBuf];
+  },
+
+  setOptions(flags) {
+    fs.writeFileSync(".env", "\ufeff" + module.exports.getProperties(flags), {
+      encoding: "utf8",
+    });
+
+    console.log(chalk.whiteBright("🌈 The current setting value has been saved!"));
   },
 };
