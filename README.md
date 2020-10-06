@@ -113,15 +113,18 @@ import ghi from "ghi";
 
 #### --dir (-d)
 type: `string`
+
 specify target directory
 
 #### --ext, -e
 type: `string`
+
 specify target file's extension.
 (Use this with dir to target multiple files)
 
 #### --target, -t
 type: `string`
+
 specify target file.
 when target and dir are given,
 target the files corresponding to the name in the target directory.
@@ -129,6 +132,7 @@ target the files corresponding to the name in the target directory.
 
 #### --replaceList, -l
 type: `string`
+
 specify replace properties file, 
 default value is './rlist'
 name './rlist_{fileName}',
@@ -136,49 +140,60 @@ if you want to apply different rlist files per file
 
 #### --dst, -dst
 type: `string`
+
 specify the name of the output file. 
 default value is `__replace__.{originalFileName}`.
 
 #### --verbose, -v
 type: `boolean`
+
 print all information about the text replaced in console.
 default is 'false'
 
 #### --debug
 type: `boolean`
+
 outputs debugging information to the 'DEBUG_INFO' file
 
 #### --once, -o
 type: `boolean`
+
 even if there are multiple substitution values in a line,
 they are replaced only once.
 
 #### --startLinePatt, -slp
 type: `string`
+
 apply replace from that line.
 
 #### --endLinePatt, -elp
 type: `string`
+
 specify end line pattern.
 
 #### --conf, -c
 type: `boolean`
+
 check the string values that you want to replace on each line.
 
 #### --reg, -g
 type: `string`
+
 specify regular expression with the rlist file.
 
 #### --sep, -s
 type: `string`
+
 specify rlist's spliter. 
 default value is '='
 
 #### --overwrite, -o
 type: `boolean`
+
 overwrite the target source file.
 
 #### --excludeReg, -x
 type: `boolean`
+
 specify the regular expression of the line
 to be excluded from the replace.
