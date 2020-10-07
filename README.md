@@ -124,7 +124,7 @@ If A should contains `=` (sign of equality), you can escape that `=` by `\=`.
 4. You can apply the `excludeReg` option as form of regular expression, to exclude lines that you don't want to replace, such as comments.
 (e.g. `x=(.*//.*)|(.*<!--.*)|(.*\/\*.*)`)
 
-5. If you feel inconvenient to enter regular expressions or option value each time, you can set some values you want as default by below way.
+5. If you feel inconvenient to enter template value or option value each time, you can set some values you want as default by below way.
 `code-replacer set --tem={some_value} -x -v --debug --target={some_value} ...`
 If these argument is not entered next time, these values are used as a default.
 
@@ -135,12 +135,13 @@ If these argument is not entered next time, these values are used as a default.
 type: `string`
 
 specify target directory
+Files beginning with `__replacer__.` are excluded from the target.
 
 #### --ext, -e
 type: `string`
 
 specify target file's extension.
-(Use this with dir to target multiple files)
+(Use this with `dir` option to target multiple files at once)
 
 #### --target, -t
 type: `string`
@@ -148,15 +149,15 @@ type: `string`
 specify target file.
 when target and dir are given,
 target the files corresponding to the name in the target directory.
-(no need to ext)
+(no need to specify `ext` separately)
 
 #### --replaceList, -l
 type: `string`
 
 specify replace properties file, 
-default value is './rlist'
-name './rlist_{fileName}',
-if you want to apply different rlist files per file
+default value is `./rlist`
+
+And when you specify `dir` option, name `./rlist_{fileName}`, to apply different rlist files per file.
 
 #### --dst, -dst
 type: `string`
@@ -173,7 +174,7 @@ default is 'false'
 #### --debug
 type: `boolean`
 
-outputs debugging information to the 'DEBUG_INFO' file
+outputs debugging information to the `DEBUG_INFO` file
 
 #### --once, -o
 type: `boolean`
@@ -200,6 +201,7 @@ check the string values that you want to replace on each line.
 type: `string`
 
 specify template.
+see example for details.
 
 #### --sep, -s
 type: `string`
