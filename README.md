@@ -29,11 +29,11 @@ alert("Blah blah..");
 
 Below is the input file (`replaceList`).
 
-Note that left column is Message string, right column is corresponding string key.
+Note that left column is Message string including double quotes, right column is corresponding string key.
 
 ```
-Some message..=some_msg
-Blah blah..=blah_blah
+"Some message.."=some_msg
+"Blah blah.."=blah_blah
 ```
 
 And you need to forward some `template` value.
@@ -53,7 +53,7 @@ ${source}=i18n.t("${value}")
 So if you type below command into the console,
 
 ```
-code-replacer --target=msgAlert.js --replceList=rlist --template='${source}=i18n.t("${value}")'
+code-replacer --target=example/example_1/msgAlert.js --replaceList='example/example_1/rlist' --template='${source}=i18n.t("${value}")'
 ```
 
 You can get to below file in the target directory.
@@ -83,7 +83,9 @@ We assume in this, the argument of require is `${key}`.
 
 Because these values are treated as keyword referring rlist's left column values and right column values)
 
-So, you can use this regex. `require("${key}")=import ${key} from "${key}"`
+So, you can use this regex. `require\("(?<key>.*)"\)=import ${key} from "${key}"`
+
+(Left value is considered reg expression, so you need to escape special character.)
 
 ```js
 ...
@@ -96,7 +98,7 @@ require("ghi");
 Then, the command is as follows.
 
 ```
-code-replacer --target=./index.js --template='require("${key}")=import ${key} from "${key}"'
+code-replacer --target=./example/example_2/index.js --template='require\("(?<key>.*)"\)=import ${key} from "${key}"'
 ```
 
 And you can get below file.

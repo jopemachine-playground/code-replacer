@@ -71,7 +71,7 @@ module.exports = {
         chalk.gray(resultLines[lineIdx - 2].trim())
     }
 
-    if (lineIdx < srcFileLines.length + 1) {
+    if (lineIdx < srcFileLines.length) {
       postLine =
         chalk.gray(`${lineIdx + 1}    `) +
         chalk.gray(srcFileLines[lineIdx].trim())
@@ -161,5 +161,9 @@ ${postLine}
     })
 
     console.log(chalk.whiteBright('🌈 The current setting value has been saved!'))
+  },
+
+  replaceAll (str, searchStr, replaceStr) {
+    return str.split(searchStr).join(replaceStr)
   }
 }

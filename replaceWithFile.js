@@ -15,7 +15,8 @@ const {
   createHighlightedLine,
   logByFlag,
   funcExecByFlag,
-  splitWithEscape
+  splitWithEscape,
+  replaceAll
 } = require('./util')
 
 const debuggingInfoArr = new StringBuffer()
@@ -131,7 +132,8 @@ getMatchingPoints = ({ srcLine, template, replacingKeys }) => {
   let matchingPtCnt = 0
 
   for (const replacingKey of replacingKeys) {
-    const replacingKeyReg = new RegExp(handleSpecialCharacter(replacingKey))
+    const regKey = template ? replacingKey : handleSpecialCharacter(replacingKey)
+    const replacingKeyReg = new RegExp(regKey)
     const replacingKeyMatchingPts = matchAll(srcLine, replacingKeyReg)
 
     for (const replacingKeyMatchingPt of replacingKeyMatchingPts) {
@@ -332,7 +334,8 @@ replaceExecute = ({
                 groupKeyMatchingStr
               )
 
-              replaceObj[matchingStr] = regRValue.replace(
+              replaceObj[matchingStr] = replaceAll(
+                regRValue,
                 `\${${groupKey}}`,
                 groupKeyMatching.groups[groupKey]
               )
