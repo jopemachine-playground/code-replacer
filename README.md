@@ -124,7 +124,7 @@ If you don't want this situation, try to give `conf` option and skip the longest
 2. Key values in the `rlist` and left side of `template` are treated as *regular expression*. But special characters are escaped automatically.
 So, no separate escape processing is required.
 
-3. In `template` option, The `template` value is treated as a form of `A=B`
+3. In `template` option, The `template` value is treated as a form of `A->B`
 If A should contains `->` (arrow signature), you can escape that `->` by `\->`.
 
 4. You can apply the `excludeReg` option as form of regular expression, to exclude lines that you don't want to replace, such as comments.
@@ -133,6 +133,12 @@ If A should contains `->` (arrow signature), you can escape that `->` by `\->`.
 5. If you feel inconvenient to enter template value or option value each time, you can set some values you want as default by below way.
 `code-replacer set --tem={some_value} -x -v --debug --target={some_value} ...`
 If these argument is not entered next time, these values are used as a default.
+
+And you can also check the default values with the command below.
+
+```
+code-replacer default
+```
 
 ## Options
 

@@ -4,7 +4,7 @@ const meow = require('meow')
 const codeReplace = require('./codeReplace')
 require('dotenv').config()
 const _ = require('lodash')
-const { setOptions } = require('./util')
+const { setOptions, showDefaultOptions } = require('./util')
 
 const flags = {
   dir: {
@@ -164,6 +164,10 @@ switch (cli.input[0]) {
   case 's':
   case 'set':
     setOptions(cli.flags)
+    break
+  case 'd':
+  case 'default':
+    showDefaultOptions()
     break
   default:
     codeReplace(cli.flags)

@@ -177,10 +177,25 @@ ${postLine}
       encoding: 'utf8'
     })
 
-    console.log(chalk.whiteBright('🌈 The current setting value has been saved!'))
+    console.log(chalk.whiteBright('🌈  The current setting value has been saved! 🌈'))
   },
 
   replaceAll (str, searchStr, replaceStr) {
     return str.split(searchStr).join(replaceStr)
+  },
+
+  showDefaultOptions () {
+    const env = fs.readFileSync('.env', {
+      encoding: 'utf8'
+    })
+    const defaultValues = env.split('\n')
+
+    console.log(chalk.whiteBright('🌈  Current default setting is as follows. 🌈'))
+
+    for (const devaultValue of defaultValues) {
+      const [key, value] = devaultValue.split('=')
+      if (!key || !value) continue
+      console.log(chalk.blue(`${key.trim()}: ${value}`))
+    }
   }
 }
