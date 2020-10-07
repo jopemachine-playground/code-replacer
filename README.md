@@ -83,9 +83,7 @@ We assume in this, the argument of require is `${key}`.
 
 Because these values are treated as keyword referring rlist's left column values and right column values)
 
-So, you can use this regex. `require\("(?<key>.*)"\)=import ${key} from "${key}"`
-
-(Left value is considered reg expression, so you need to escape special character.)
+So, you can use this template. `require("${key}")=import ${key} from "${key}"`
 
 ```js
 ...
@@ -98,7 +96,7 @@ require("ghi");
 Then, the command is as follows.
 
 ```
-code-replacer --target=./example/example_2/index.js --template='require\("(?<key>.*)"\)=import ${key} from "${key}"'
+code-replacer --target=./example/example_2/index.js --template='require("${key}")=import ${key} from "${key}"'
 ```
 
 And you can get below file.
@@ -121,7 +119,7 @@ If you don't want this situation, try to give `conf` option and skip the longest
 So, no separate escape processing is required.
 
 3. In `template` option, The `template` value is treated as a form of `A=B`
-If A contains a `=` (sign of equality), you can escape that `=` by `\=`.
+If A should contains `=` (sign of equality), you can escape that `=` by `\=`.
 
 4. You can apply the `excludeReg` option as form of regular expression, to exclude lines that you don't want to replace, such as comments.
 (e.g. `x=(.*//.*)|(.*<!--.*)|(.*\/\*.*)`)
