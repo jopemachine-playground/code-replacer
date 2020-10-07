@@ -1,13 +1,16 @@
 class StringBuffer {
-  constructor() {
-    this.buffer = new Array();
+  constructor () {
+    // eslint-disable-next-line no-array-constructor
+    this.buffer = new Array()
   }
-  append(obj) {
-    this.buffer.push(obj);
+
+  append (obj) {
+    this.buffer.push(obj)
   }
-  toString() {
-    return this.buffer.join("\n");
+
+  toString () {
+    return this.buffer.join('\n')
   }
 }
 
-module.exports = StringBuffer;
+module.exports = StringBuffer

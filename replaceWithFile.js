@@ -1,12 +1,12 @@
-const fs = require("fs");
-const path = require("path");
-const boxen = require("boxen");
-const StringBuffer = require("./stringBuffer");
-const chalk = require("chalk");
-const matchAll = require("./stringReplace");
-const yn = require("yn");
-const readlineSync = require("readline-sync");
-const _ = require("lodash");
+/* eslint-disable no-template-curly-in-string */
+const fs = require('fs')
+const path = require('path')
+const boxen = require('boxen')
+const StringBuffer = require('./stringBuffer')
+const chalk = require('chalk')
+const matchAll = require('./stringReplace')
+const yn = require('yn')
+const readlineSync = require('readline-sync')
 
 const {
   printLines,
@@ -15,10 +15,10 @@ const {
   createHighlightedLine,
   logByFlag,
   funcExecByFlag,
-  splitWithEscape,
-} = require("./util");
+  splitWithEscape
+} = require('./util')
 
-const debuggingInfoArr = new StringBuffer();
+const debuggingInfoArr = new StringBuffer()
 
 parseRList = ({
   replaceListFile,
@@ -26,134 +26,133 @@ parseRList = ({
   rlistSeparator,
   template,
   verboseOpt,
-  debugOpt,
+  debugOpt
 }) => {
-  const replaceObj = {};
+  const replaceObj = {}
 
   if (!replaceListFile) {
-    replaceListFile = findReplaceListFile(`.${path.sep}rlist`, targetFileName);
+    replaceListFile = findReplaceListFile(`.${path.sep}rlist`, targetFileName)
   } else if (fs.lstatSync(replaceListFile).isDirectory()) {
-    replaceListFile = findReplaceListFile(replaceListFile, targetFileName);
+    replaceListFile = findReplaceListFile(replaceListFile, targetFileName)
   }
 
   funcExecByFlag(!verboseOpt && replaceListFile !== -1, () =>
     console.log(
       chalk.dim(
-        chalk.italic("** replaceList file: " + path.resolve(replaceListFile))
+        chalk.italic('** replaceList file: ' + path.resolve(replaceListFile))
       )
     )
-  );
+  )
 
   funcExecByFlag(debugOpt && replaceListFile !== -1, () =>
     debuggingInfoArr.append(
-      "** replaceList file: " + path.resolve(replaceListFile)
+      '** replaceList file: ' + path.resolve(replaceListFile)
     )
-  );
+  )
 
   if (replaceListFile !== -1) {
     const propertyLines = fs
       .readFileSync(replaceListFile)
       .toString()
-      .split("\n");
+      .split('\n')
 
-    for (let propertyLine of propertyLines) {
-      if (!propertyLine.includes(rlistSeparator)) continue;
-      const [key, ...value] = propertyLine.split(rlistSeparator);
+    for (const propertyLine of propertyLines) {
+      if (!propertyLine.includes(rlistSeparator)) continue
+      const [key, ...value] = propertyLine.split(rlistSeparator)
 
-      replaceObj[key.trim().normalize()] = value.join(rlistSeparator).trim();
+      replaceObj[key.trim().normalize()] = value.join(rlistSeparator).trim()
     }
   } else if (replaceListFile === -1 && !template) {
     console.log(
       chalk.red(
         "You should specify the 'reg' value or the rlist file. \nPlease refer to README.md\nExit.."
       )
-    );
-    return;
+    )
+    return
   }
 
-  return replaceObj;
-};
+  return replaceObj
+}
 
 parseTargetFile = ({ targetFile, verboseOpt, debugOpt }) => {
-  const absPath = path.resolve(targetFile);
-  const [targetFileName, ...targetPathArr] = absPath.split(path.sep).reverse();
+  const absPath = path.resolve(targetFile)
+  const [targetFileName, ...targetPathArr] = absPath.split(path.sep).reverse()
   logByFlag(
     !verboseOpt,
-    chalk.dim(chalk.italic("** target file: " + path.resolve(targetFile)))
-  );
+    chalk.dim(chalk.italic('** target file: ' + path.resolve(targetFile)))
+  )
 
   funcExecByFlag(debugOpt, () =>
-    debuggingInfoArr.append("** target file: " + path.resolve(targetFile))
-  );
+    debuggingInfoArr.append('** target file: ' + path.resolve(targetFile))
+  )
 
-  const srcFileLines = fs.readFileSync(targetFile).toString().split("\n");
-
-  const targetPath = targetPathArr.reverse().join(path.sep);
+  const srcFileLines = fs.readFileSync(targetFile).toString().split('\n')
+  const targetPath = targetPathArr.reverse().join(path.sep)
 
   return {
     srcFileLines,
     targetFileName,
-    targetPath,
-  };
-};
+    targetPath
+  }
+}
 
 getReplacingKeys = ({ replaceObj, replaceListFile, template, verboseOpt }) => {
-  const keys = Object.keys(replaceObj);
+  const keys = Object.keys(replaceObj)
 
   // sort by length -> prioritize and map keys with long values first.
   keys.sort(function (a, b) {
-    return b.length - a.length || b.localeCompare(a);
-  });
+    return b.length - a.length || b.localeCompare(a)
+  })
 
-  logByFlag(verboseOpt, "keys:");
-  logByFlag(verboseOpt, keys);
+  logByFlag(verboseOpt, 'keys:')
+  logByFlag(verboseOpt, keys)
 
   if (template) {
-    let [regLValue, regRValue] = splitWithEscape(template, "=");
+    let [regLValue, regRValue] = splitWithEscape(template, '=')
 
-    regRValue = regRValue.trim().normalize();
+    regRValue = regRValue.trim().normalize()
 
     for (let key of keys) {
-      key = regLValue.replace("${source}", key);
-      replaceObj[key] = regRValue.replace("${value}", replaceObj[key]);
+      key = regLValue.replace('${source}', key)
+      replaceObj[key] = regRValue.replace('${value}', replaceObj[key])
     }
 
     if (!replaceListFile) {
       // assume to replace using group regular expressions only
-      keys.push(regLValue);
+      keys.push(regLValue)
     }
   }
 
-  return keys;
-};
+  return keys
+}
 
 getMatchingPoints = ({ srcLine, template, replacingKeys }) => {
-  let matchingPoints = [];
-  let matchingPtCnt = 0;
+  const matchingPoints = []
+  let matchingPtCnt = 0
 
-  for (let replacingKey of replacingKeys) {
-    const replacingKeyReg = new RegExp(handleSpecialCharacter(replacingKey));
-    const replacingKeyMatchingPts = matchAll(srcLine, replacingKeyReg);
+  for (const replacingKey of replacingKeys) {
+    const replacingKeyReg = new RegExp(handleSpecialCharacter(replacingKey))
+    const replacingKeyMatchingPts = matchAll(srcLine, replacingKeyReg)
 
-    for (let replacingKeyMatchingPt of replacingKeyMatchingPts) {
-      let existingMatchingPtIdx = -1;
+    for (const replacingKeyMatchingPt of replacingKeyMatchingPts) {
+      let existingMatchingPtIdx = -1
 
       for (
         let matchingPtIdx = 0;
         matchingPtIdx < matchingPoints.length;
         matchingPtIdx++
       ) {
-        const cands = matchingPoints[matchingPtIdx];
-        const replacingKeyMatchingStr = replacingKeyMatchingPt[0];
+        const cands = matchingPoints[matchingPtIdx]
+        const replacingKeyMatchingStr = replacingKeyMatchingPt[0]
 
         for (let candIdx = 0; candIdx < cands.length; candIdx++) {
-          const candStr = cands[candIdx][0];
+          const candStr = cands[candIdx][0]
           if (
             replacingKeyMatchingStr === candStr ||
             (!replacingKeyMatchingStr.includes(candStr) &&
               !candStr.includes(replacingKeyMatchingStr))
           ) {
-            continue;
+            continue
           }
 
           // Should be same matching point.
@@ -161,16 +160,16 @@ getMatchingPoints = ({ srcLine, template, replacingKeys }) => {
             candStr.length - replacingKeyMatchingStr.length >=
             cands[candIdx].index - replacingKeyMatchingPt.index
           ) {
-            existingMatchingPtIdx = matchingPtIdx;
-            break;
+            existingMatchingPtIdx = matchingPtIdx
+            break
           }
         }
       }
 
       if (existingMatchingPtIdx === -1) {
-        matchingPoints[matchingPtCnt++] = [replacingKeyMatchingPt];
+        matchingPoints[matchingPtCnt++] = [replacingKeyMatchingPt]
       } else {
-        matchingPoints[existingMatchingPtIdx].push(replacingKeyMatchingPt);
+        matchingPoints[existingMatchingPtIdx].push(replacingKeyMatchingPt)
       }
     }
   }
@@ -180,12 +179,12 @@ getMatchingPoints = ({ srcLine, template, replacingKeys }) => {
     matchingPtIdx < matchingPoints.length;
     matchingPtIdx++
   ) {
-    const cands = matchingPoints[matchingPtIdx];
-    cands["leastIdx"] = Number.MAX_SAFE_INTEGER;
+    const cands = matchingPoints[matchingPtIdx]
+    cands.leastIdx = Number.MAX_SAFE_INTEGER
 
     for (let candIdx = 0; candIdx < cands.length; candIdx++) {
-      if (cands["leastIdx"] > cands[candIdx].index) {
-        cands["leastIdx"] = cands[candIdx].index;
+      if (cands.leastIdx > cands[candIdx].index) {
+        cands.leastIdx = cands[candIdx].index
       }
     }
   }
@@ -193,29 +192,29 @@ getMatchingPoints = ({ srcLine, template, replacingKeys }) => {
   // Sort matching points to match in asc order
   matchingPoints.sort((lPt, rPt) => {
     return lPt.leastIdx - rPt.leastIdx
-  });
+  })
 
   return {
     matchingPoints,
-    matchingPtCnt,
-  };
-};
+    matchingPtCnt
+  }
+}
 
 displayConsoleMsg = ({ srcLine, matchingInfo, replaceObj, confOpt, verboseOpt, targetFileName, lineIdx, srcFileLines, resultLines }) => {
-  let matchingStr = matchingInfo[0];
+  const matchingStr = matchingInfo[0]
 
   const sourceStr = createHighlightedLine(
     srcLine,
     matchingInfo.index,
     matchingStr,
     matchingInfo.index + matchingStr.length
-  );
+  )
   const replacedStr = createHighlightedLine(
     srcLine,
     matchingInfo.index,
     replaceObj[matchingStr],
     matchingInfo.index + matchingStr.length
-  );
+  )
 
   funcExecByFlag(confOpt || verboseOpt, () =>
     printLines(
@@ -226,7 +225,7 @@ displayConsoleMsg = ({ srcLine, matchingInfo, replaceObj, confOpt, verboseOpt, t
       srcFileLines,
       resultLines
     )
-  );
+  )
 
   logByFlag(
     confOpt,
@@ -235,8 +234,8 @@ displayConsoleMsg = ({ srcLine, matchingInfo, replaceObj, confOpt, verboseOpt, t
         "## Press enter to replace the string or 'n' to skip this word or 's' to skip this file."
       )
     )
-  );
-};
+  )
+}
 
 replaceExecute = ({
   targetFileName,
@@ -249,24 +248,24 @@ replaceExecute = ({
   endLinePatt,
   verboseOpt,
   confOpt,
-  onceOpt,
+  onceOpt
 }) => {
-  const resultLines = [];
+  const resultLines = []
   const replacingKeys = getReplacingKeys({
     replaceObj,
     replaceListFile,
     template,
-    verboseOpt,
-  });
+    verboseOpt
+  })
 
-  let lineIdx = 1;
-  let blockingReplaceFlag = startLinePatt ? true : false;
+  let lineIdx = 1
+  let blockingReplaceFlag = !!startLinePatt
 
   for (let srcLine of srcFileLines) {
     if (excludeRegValue && srcLine.match(new RegExp(excludeRegValue))) {
-      lineIdx++;
-      resultLines.push(srcLine);
-      continue;
+      lineIdx++
+      resultLines.push(srcLine)
+      continue
     }
 
     // handle blocking replace
@@ -279,10 +278,10 @@ replaceExecute = ({
           debuggingInfoArr.append(
             `Encountered startLinePatt on line ${lineIdx}`
           )
-        );
-        blockingReplaceFlag = false;
+        )
+        blockingReplaceFlag = false
       }
-    );
+    )
 
     funcExecByFlag(
       !blockingReplaceFlag &&
@@ -291,13 +290,13 @@ replaceExecute = ({
       () => {
         funcExecByFlag(debugOpt, () =>
           debuggingInfoArr.append(`Encountered endLinePatt on line ${lineIdx}`)
-        );
-        blockingReplaceFlag = true;
+        )
+        blockingReplaceFlag = true
       }
-    );
+    )
 
     if (!blockingReplaceFlag) {
-      const { matchingPoints, matchingPtCnt } = getMatchingPoints({ srcLine, template, replacingKeys });
+      const { matchingPoints, matchingPtCnt } = getMatchingPoints({ srcLine, template, replacingKeys })
 
       for (
         let matchingPtIdx = 0;
@@ -305,53 +304,53 @@ replaceExecute = ({
         matchingPtIdx++
       ) {
         // Match the longest string first
-        const matchingCandidates = matchingPoints[matchingPtIdx];
+        const matchingCandidates = matchingPoints[matchingPtIdx]
 
         for (
           let candidateIdx = 0;
           candidateIdx < matchingCandidates.length;
           candidateIdx++
         ) {
-          let matchingInfo = matchingCandidates[candidateIdx];
-          let matchingStr = matchingInfo[0];
+          const matchingInfo = matchingCandidates[candidateIdx]
+          let matchingStr = matchingInfo[0]
 
           // Need more test
           if (template && !replaceListFile) {
             // handle grouping value
-            const [regLValue, regRValue] = splitWithEscape(template, "=");
-            const findGroupKeyReg = new RegExp(/\$\{(?<groupKey>\w*)\}/);
-            const groupKeys = matchAll(regRValue, findGroupKeyReg);
+            const [regLValue, regRValue] = splitWithEscape(template, '=')
+            const findGroupKeyReg = new RegExp(/\$\{(?<groupKey>\w*)\}/)
+            const groupKeys = matchAll(regRValue, findGroupKeyReg)
 
-            for (let groupKeyInfo of groupKeys) {
-              const groupKey = groupKeyInfo[1];
-              const findMatchingStringReg = new RegExp(regLValue);
-              const groupKeyMatching = srcLine.match(findMatchingStringReg);
-              const groupKeyMatchingStr = groupKeyMatching.groups[groupKey];
+            for (const groupKeyInfo of groupKeys) {
+              const groupKey = groupKeyInfo[1]
+              const findMatchingStringReg = new RegExp(regLValue)
+              const groupKeyMatching = srcLine.match(findMatchingStringReg)
+              const groupKeyMatchingStr = groupKeyMatching.groups[groupKey]
 
               matchingStr = matchingStr.replace(
                 `(?<${groupKey}>)`,
                 groupKeyMatchingStr
-              );
+              )
 
               replaceObj[matchingStr] = regRValue.replace(
                 `\${${groupKey}}`,
                 groupKeyMatching.groups[groupKey]
-              );
+              )
             }
           }
 
-          displayConsoleMsg ({ srcLine, matchingInfo, replaceObj, confOpt, verboseOpt, targetFileName, lineIdx, srcFileLines, resultLines });
+          displayConsoleMsg({ srcLine, matchingInfo, replaceObj, confOpt, verboseOpt, targetFileName, lineIdx, srcFileLines, resultLines })
 
-          let input = "y";
-          confOpt && (input = readlineSync.prompt());
+          let input = 'y'
+          confOpt && (input = readlineSync.prompt())
 
           if (yn(input) === false) {
             // skip this word. choose other candidate if you have a shorter string to replace.
-            logByFlag(confOpt || verboseOpt, chalk.red("\nskip.."));
-          } else if (input.startsWith("s")) {
+            logByFlag(confOpt || verboseOpt, chalk.red('\nskip..'))
+          } else if (input.startsWith('s')) {
             // skip this file.
-            console.log(chalk.red(`\nskip '${targetFileName}'..`));
-            return -1;
+            console.log(chalk.red(`\nskip '${targetFileName}'..`))
+            return -1
           } else {
             // replace string
 
@@ -362,15 +361,15 @@ replaceExecute = ({
               otherPtsCandidateIdx++
             ) {
               const otherPts =
-                matchingPoints[otherPtsCandidateIdx];
+                matchingPoints[otherPtsCandidateIdx]
 
-              for (let candItem of otherPts) {
+              for (const candItem of otherPts) {
                 candItem.index +=
-                  replaceObj[matchingStr].length - matchingStr.length;
+                  replaceObj[matchingStr].length - matchingStr.length
               }
             }
 
-            logByFlag(confOpt || verboseOpt, chalk.yellow("\nreplace.."));
+            logByFlag(confOpt || verboseOpt, chalk.yellow('\nreplace..'))
 
             srcLine =
               srcLine.substr(0, matchingInfo.index) +
@@ -378,21 +377,21 @@ replaceExecute = ({
               srcLine.substr(
                 matchingInfo.index + matchingStr.length,
                 srcLine.length
-              );
-            break;
+              )
+            break
           }
         }
 
-        if (onceOpt) break;
+        if (onceOpt) break
       }
 
-      lineIdx++;
-      resultLines.push(srcLine);
+      lineIdx++
+      resultLines.push(srcLine)
     }
   }
 
-  return resultLines;
-};
+  return resultLines
+}
 
 module.exports = async function ({
   target: targetFile,
@@ -407,15 +406,15 @@ module.exports = async function ({
   template,
   excludeReg: excludeRegValue,
   debug: debugOpt,
-  overwrite: overwriteOpt,
+  overwrite: overwriteOpt
 }) {
-  if (!rlistSeparator) rlistSeparator = '=';
+  if (!rlistSeparator) rlistSeparator = '='
 
   const { srcFileLines, targetFileName, targetPath } = parseTargetFile({
     targetFile,
     verboseOpt,
-    debugOpt,
-  });
+    debugOpt
+  })
 
   const replaceObj = parseRList({
     replaceListFile,
@@ -423,15 +422,15 @@ module.exports = async function ({
     rlistSeparator,
     template,
     verboseOpt,
-    debugOpt,
-  });
+    debugOpt
+  })
 
   funcExecByFlag(debugOpt, () =>
     debuggingInfoArr.append(`startLinePatt: ${startLinePatt}`)
-  );
+  )
   funcExecByFlag(debugOpt, () =>
     debuggingInfoArr.append(`endLinePatt: ${endLinePatt}`)
-  );
+  )
 
   const resultLines = replaceExecute({
     targetFileName,
@@ -444,34 +443,34 @@ module.exports = async function ({
     endLinePatt,
     verboseOpt,
     confOpt,
-    onceOpt,
-  });
+    onceOpt
+  })
 
-  if (resultLines === -1) return;
+  if (resultLines === -1) return
 
   const dstFilePath = overwriteOpt
     ? targetFile
     : dstFileName
-    ? path.resolve(dstFileName)
-    : targetPath + path.sep + "__replacer__." + targetFileName;
+      ? path.resolve(dstFileName)
+      : targetPath + path.sep + '__replacer__.' + targetFileName
 
-  fs.writeFileSync(dstFilePath, "\ufeff" + resultLines.join("\n"), {
-    encoding: "utf8",
-  });
+  fs.writeFileSync(dstFilePath, '\ufeff' + resultLines.join('\n'), {
+    encoding: 'utf8'
+  })
 
   const debugInfoStr = boxen(debuggingInfoArr.toString(), {
     padding: 1,
     margin: 1,
-    borderStyle: "double",
-  });
+    borderStyle: 'double'
+  })
 
-  logByFlag(verboseOpt, debugInfoStr);
+  logByFlag(verboseOpt, debugInfoStr)
 
   funcExecByFlag(debugOpt, () =>
-    fs.appendFileSync("DEBUG_INFO", "\ufeff" + debugInfoStr, {
-      encoding: "utf8",
+    fs.appendFileSync('DEBUG_INFO', '\ufeff' + debugInfoStr, {
+      encoding: 'utf8'
     })
-  );
+  )
 
-  console.log(chalk.italic(chalk.white(`\nGenerated '${dstFilePath}'\n`)));
-};
+  console.log(chalk.italic(chalk.white(`\nGenerated '${dstFilePath}'\n`)))
+}

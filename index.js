@@ -1,96 +1,95 @@
 #!/usr/bin/env node
 
-const meow = require("meow");
-const codeReplace = require("./codeReplace");
-require('dotenv').config();
-const _ = require('lodash');
-const { setOptions } = require('./util');
+const meow = require('meow')
+const codeReplace = require('./codeReplace')
+require('dotenv').config()
+const _ = require('lodash')
+const { setOptions } = require('./util')
 
 const flags = {
   dir: {
-    type: "string",
-    alias: "d",
-    isRequired: (flags, input) => false,
+    type: 'string',
+    alias: 'd',
+    isRequired: (flags, input) => false
   },
   ext: {
-    type: "string",
-    alias: "e",
-    isRequired: (flags, input) => false,
+    type: 'string',
+    alias: 'e',
+    isRequired: (flags, input) => false
   },
   target: {
-    type: "string",
-    alias: "t",
-    isRequired: (flags, input) => false,
+    type: 'string',
+    alias: 't',
+    isRequired: (flags, input) => false
   },
   replaceList: {
-    type: "string",
-    alias: "l",
-    isRequired: (flags, input) => false,
+    type: 'string',
+    alias: 'l',
+    isRequired: (flags, input) => false
   },
   verbose: {
-    type: "boolean",
-    alias: "v",
-    isRequired: (flags, input) => false,
+    type: 'boolean',
+    alias: 'v',
+    isRequired: (flags, input) => false
   },
   once: {
-    type: "boolean",
-    alias: "o",
-    isRequired: (flags, input) => false,
+    type: 'boolean',
+    alias: 'o',
+    isRequired: (flags, input) => false
   },
   startLinePatt: {
-    type: "string",
-    alias: "slp",
-    isRequired: (flags, input) => false,
+    type: 'string',
+    alias: 'slp',
+    isRequired: (flags, input) => false
   },
   endLinePatt: {
-    type: "string",
-    alias: "elp",
-    isRequired: (flags, input) => false,
+    type: 'string',
+    alias: 'elp',
+    isRequired: (flags, input) => false
   },
   dst: {
-    type: "string",
-    alias: "ds",
-    isRequired: (flags, input) => false,
+    type: 'string',
+    alias: 'ds',
+    isRequired: (flags, input) => false
   },
   conf: {
-    type: "boolean",
-    alias: "c",
-    isRequired: (flags, input) => false,
+    type: 'boolean',
+    alias: 'c',
+    isRequired: (flags, input) => false
   },
   template: {
-    type: "string",
-    alias: "tem",
-    isRequired: (flags, input) => false,
+    type: 'string',
+    alias: 'tem',
+    isRequired: (flags, input) => false
   },
   debug: {
-    type: "boolean",
-    isRequired: (flags, input) => false,
+    type: 'boolean',
+    isRequired: (flags, input) => false
   },
   sep: {
-    type: "string",
-    alias: "s",
-    isRequired: (flags, input) => false,
+    type: 'string',
+    alias: 's',
+    isRequired: (flags, input) => false
   },
   overwrite: {
-    type: "boolean",
-    alias: "w",
-    isRequired: (flags, input) => false,
+    type: 'boolean',
+    alias: 'w',
+    isRequired: (flags, input) => false
   },
   excludeReg: {
-    type: "string",
-    alias: "x",
-    isRequired: (flags, input) => false,
+    type: 'string',
+    alias: 'x',
+    isRequired: (flags, input) => false
   }
-};
+}
 
 _.map(Object.keys(flags), (flagKey) => {
   if (process.env[flagKey]) {
     if (process.env[flagKey] === 'true' || process.env[flagKey] === 'false') {
-      flags[flagKey].default = Boolean(process.env[flagKey]);
-    }
-    else flags[flagKey].default = process.env[flagKey];
+      flags[flagKey].default = Boolean(process.env[flagKey])
+    } else flags[flagKey].default = process.env[flagKey]
   }
-});
+})
 
 const cli = meow(
   `
@@ -159,14 +158,14 @@ const cli = meow(
     See README.md for more details.
 `,
   { flags }
-);
+)
 
 switch (cli.input[0]) {
-  case "s":
-  case "set":
-    setOptions(cli.flags);
-    break;
+  case 's':
+  case 'set':
+    setOptions(cli.flags)
+    break
   default:
-    codeReplace(cli.flags);
-    break;
+    codeReplace(cli.flags)
+    break
 }
