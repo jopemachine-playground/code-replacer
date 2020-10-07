@@ -25,7 +25,8 @@ parseRList = ({
   replaceListFile,
   targetFileName,
   rlistSeparator,
-  template,
+  templateLValue,
+  templateRValue,
   verboseOpt,
   debugOpt
 }) => {
@@ -63,7 +64,7 @@ parseRList = ({
 
       replaceObj[key.trim().normalize()] = value.join(rlistSeparator).trim()
     }
-  } else if (replaceListFile === -1 && !template) {
+  } else if (replaceListFile === -1 && (!templateLValue || !templateRValue)) {
     console.log(
       chalk.red(
         "You should specify the 'reg' value or the rlist file. \nPlease refer to README.md\nExit.."
@@ -97,7 +98,7 @@ parseTargetFile = ({ targetFile, verboseOpt, debugOpt }) => {
   }
 }
 
-getReplacingKeys = ({ replaceObj, replaceListFile, template, verboseOpt }) => {
+getReplacingKeys = ({ replaceObj, replaceListFile, templateLValue, templateRValue, verboseOpt }) => {
   const keys = Object.keys(replaceObj)
 
   // sort by length -> prioritize and map keys with long values first.
@@ -108,57 +109,53 @@ getReplacingKeys = ({ replaceObj, replaceListFile, template, verboseOpt }) => {
   logByFlag(verboseOpt, 'keys:')
   logByFlag(verboseOpt, keys)
 
-  if (template) {
-    let [regLValue, regRValue] = splitWithEscape(template, '=')
-
-    regRValue = regRValue.trim().normalize()
+  if (templateLValue && templateRValue) {
+    templateRValue = templateRValue.trim().normalize()
 
     for (let key of keys) {
-      key = regLValue.replace('${source}', key)
-      replaceObj[key] = regRValue.replace('${value}', replaceObj[key])
+      key = templateLValue.replace('${source}', key)
+      replaceObj[key] = templateRValue.replace('${value}', replaceObj[key])
     }
 
     if (!replaceListFile) {
       // assume to replace using group regular expressions only
-      keys.push(regLValue)
+      keys.push(templateLValue)
     }
   }
 
   return keys
 }
 
-handleTemplateLeftValue = (template) => {
-  let [regLValue, regRValue] = splitWithEscape(template, '=')
+handleTemplateLeftValue = (templateLValue) => {
   const findGroupKeyReg = new RegExp(/\$\{(?<groupKey>\w*)\}/)
-  const groupKeysInLValue = matchAll(regLValue, findGroupKeyReg)
+  const groupKeysInLValue = matchAll(templateLValue, findGroupKeyReg)
 
-  regLValue = handleSpecialCharacter(regLValue)
+  templateLValue = handleSpecialCharacter(templateLValue)
 
   for (const groupKeyInfo of groupKeysInLValue) {
     const groupKey = groupKeyInfo[1]
     if (groupKey === 'source' || groupKey === 'value') continue
-    regLValue = replaceAll(regLValue, `\\$\\{${groupKey}\\}`, `(?<${groupKey}>.*)`)
+    templateLValue = replaceAll(templateLValue, `\\$\\{${groupKey}\\}`, `(?<${groupKey}>.*)`)
   }
 
-  return `${regLValue}=${regRValue}`
+  return templateLValue
 }
 
-getMatchingPoints = ({ srcLine, template, replacingKeys }) => {
+getMatchingPoints = ({ srcLine, templateLValue, replacingKeys }) => {
   const matchingPoints = []
   let matchingPtCnt = 0
 
-  let [regLValue] = splitWithEscape(template, '=')
   const findGroupKeyReg = new RegExp(/\$\{(?<groupKey>\w*)\}/)
-  const groupKeysInLValue = matchAll(regLValue, findGroupKeyReg)
+  const groupKeysInLValue = matchAll(templateLValue, findGroupKeyReg)
 
   for (const groupKeyInfo of groupKeysInLValue) {
     const groupKey = groupKeyInfo[1]
-    regLValue = replaceAll(regLValue, `\${${groupKey}}`, `(?<${groupKey}>.*)`)
+    templateLValue = replaceAll(templateLValue, `\${${groupKey}}`, `(?<${groupKey}>.*)`)
   }
 
   for (const replacingKey of replacingKeys) {
     // reg of replacingKey is already processed
-    const regKey = template ? replacingKey : handleSpecialCharacter(replacingKey)
+    const regKey = templateLValue ? replacingKey : handleSpecialCharacter(replacingKey)
     const replacingKeyReg = new RegExp(regKey)
     const replacingKeyMatchingPts = matchAll(srcLine, replacingKeyReg)
 
@@ -269,7 +266,8 @@ replaceExecute = ({
   targetFileName,
   srcFileLines,
   replaceObj,
-  template,
+  templateLValue,
+  templateRValue,
   excludeRegValue,
   replaceListFile,
   startLinePatt,
@@ -282,7 +280,8 @@ replaceExecute = ({
   const replacingKeys = getReplacingKeys({
     replaceObj,
     replaceListFile,
-    template,
+    templateLValue,
+    templateRValue,
     verboseOpt
   })
 
@@ -324,7 +323,7 @@ replaceExecute = ({
     )
 
     if (!blockingReplaceFlag) {
-      const { matchingPoints, matchingPtCnt } = getMatchingPoints({ srcLine, template, replacingKeys })
+      const { matchingPoints, matchingPtCnt } = getMatchingPoints({ srcLine, templateLValue, replacingKeys })
 
       for (
         let matchingPtIdx = 0;
@@ -343,15 +342,14 @@ replaceExecute = ({
           let matchingStr = matchingInfo[0]
 
           // Need more test
-          if (template && !replaceListFile) {
+          if (templateLValue && templateRValue && !replaceListFile) {
             // handle grouping value
-            const [regLValue, regRValue] = splitWithEscape(template, '=')
             const findGroupKeyReg = new RegExp(/\$\{(?<groupKey>\w*)\}/)
-            const groupKeys = matchAll(regRValue, findGroupKeyReg)
+            const groupKeys = matchAll(templateRValue, findGroupKeyReg)
 
             for (const groupKeyInfo of groupKeys) {
               const groupKey = groupKeyInfo[1]
-              const findMatchingStringReg = new RegExp(regLValue)
+              const findMatchingStringReg = new RegExp(templateLValue)
               const groupKeyMatching = srcLine.match(findMatchingStringReg)
               const groupKeyMatchingStr = groupKeyMatching.groups[groupKey]
 
@@ -361,14 +359,24 @@ replaceExecute = ({
               )
 
               replaceObj[matchingStr] = replaceAll(
-                regRValue,
+                templateRValue,
                 `\${${groupKey}}`,
                 groupKeyMatching.groups[groupKey]
               )
             }
           }
 
-          displayConsoleMsg({ srcLine, matchingInfo, replaceObj, confOpt, verboseOpt, targetFileName, lineIdx, srcFileLines, resultLines })
+          displayConsoleMsg({
+            srcLine,
+            matchingInfo,
+            replaceObj,
+            confOpt,
+            verboseOpt,
+            targetFileName,
+            lineIdx,
+            srcFileLines,
+            resultLines
+          })
 
           let input = 'y'
           confOpt && (input = readlineSync.prompt())
@@ -438,7 +446,14 @@ module.exports = async function ({
   overwrite: overwriteOpt
 }) {
   if (!rlistSeparator) rlistSeparator = '='
-  if (template) template = handleTemplateLeftValue(template)
+  let templateLValue, templateRValue
+  if (template) {
+    const templateVals = splitWithEscape(template, '->')
+    templateLValue = templateVals[0]
+    templateRValue = templateVals[1]
+  }
+
+  templateLValue = handleTemplateLeftValue(templateLValue)
 
   const { srcFileLines, targetFileName, targetPath } = parseTargetFile({
     targetFile,
@@ -450,7 +465,8 @@ module.exports = async function ({
     replaceListFile,
     targetFileName,
     rlistSeparator,
-    template,
+    templateLValue,
+    templateRValue,
     verboseOpt,
     debugOpt
   })
@@ -466,7 +482,8 @@ module.exports = async function ({
     targetFileName,
     srcFileLines,
     replaceObj,
-    template,
+    templateLValue,
+    templateRValue,
     excludeRegValue,
     replaceListFile,
     startLinePatt,

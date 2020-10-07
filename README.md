@@ -2,6 +2,12 @@
 
 **Table of Contents**
 
+## Installation
+
+```
+npm i -g code-replacer
+```
+
 ## How to use
 
 1. Write input file (`rlist`) or `template` to change your codes.
@@ -83,7 +89,7 @@ We assume in this, the argument of require is `${key}`.
 
 Because these values are treated as keyword referring rlist's left column values and right column values)
 
-So, you can use this template. `require("${key}")=import ${key} from "${key}"`
+So, you can use this template. `require("${key}")->import ${key} from "${key}"`
 
 ```js
 ...
@@ -109,17 +115,17 @@ import ghi from "ghi";
 ...
 ```
 
-## How it works, tips
+## Tips
 
 1. If there are more than one matching key, (which contain other key in the rlist (e.g. test, tester)), 
 The longest key is selected (replaced) basically. 
 If you don't want this situation, try to give `conf` option and skip the longest one, then you can choose next candidate (test).
 
-2. Key values in the rlist are treated as *regular expression*. But special characters are escaped in the inside.
+2. Key values in the `rlist` and left side of `template` are treated as *regular expression*. But special characters are escaped automatically.
 So, no separate escape processing is required.
 
 3. In `template` option, The `template` value is treated as a form of `A=B`
-If A should contains `=` (sign of equality), you can escape that `=` by `\=`.
+If A should contains `->` (arrow signature), you can escape that `->` by `\->`.
 
 4. You can apply the `excludeReg` option as form of regular expression, to exclude lines that you don't want to replace, such as comments.
 (e.g. `x=(.*//.*)|(.*<!--.*)|(.*\/\*.*)`)
@@ -127,7 +133,6 @@ If A should contains `=` (sign of equality), you can escape that `=` by `\=`.
 5. If you feel inconvenient to enter template value or option value each time, you can set some values you want as default by below way.
 `code-replacer set --tem={some_value} -x -v --debug --target={some_value} ...`
 If these argument is not entered next time, these values are used as a default.
-
 
 ## Options
 

@@ -132,6 +132,8 @@ ${postLine}
     let frontStrBuf = ''
     let backStrBuf = ''
 
+    let spliterBuf = ''
+
     for (let i = 0; i < string.length; i++) {
       const char = string.charAt(i)
 
@@ -142,9 +144,24 @@ ${postLine}
         continue
       }
 
-      if (!matching && char === spliter) {
-        matching = true
-        continue
+      if (!matching && char === spliter.charAt(0)) {
+        spliterBuf = char
+        for (
+          let spliterIdx = i + 1;
+          spliterIdx < i + spliter.length && spliterIdx < string.length;
+          spliterIdx++
+        ) {
+          if (spliter.charAt(spliterBuf.length) === string.charAt(spliterIdx)) {
+            spliterBuf += string.charAt(spliterIdx)
+          } else {
+            break
+          }
+        }
+        if (spliterBuf === spliter) {
+          matching = true
+          i += spliterBuf.length - 1
+          continue
+        }
       }
 
       !matching && (frontStrBuf += char)
