@@ -16,6 +16,7 @@ module.exports = async function (props) {
       ) { return filePath }
     })
 
+    // TODO: sort not works
     targetFiles.sort((a, b) => a.localeCompare(b))
 
     for (const targetFile of targetFiles) {

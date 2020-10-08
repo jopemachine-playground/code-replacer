@@ -7,10 +7,10 @@ module.exports = (commandArguments) => {
 
   if (
     commandArguments.dir &&
-    (commandArguments.target || commandArguments.ext)
+    (commandArguments.src || commandArguments.ext)
   ) {
     replaceWithDirExec(commandArguments)
-  } else if (commandArguments.target) {
+  } else if (commandArguments.src) {
     replaceWithFileExec(commandArguments)
   } else {
     err()

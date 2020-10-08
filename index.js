@@ -17,9 +17,9 @@ const flags = {
     alias: 'e',
     isRequired: (flags, input) => false
   },
-  target: {
+  src: {
     type: 'string',
-    alias: 't',
+    alias: 's',
     isRequired: (flags, input) => false
   },
   replaceList: {

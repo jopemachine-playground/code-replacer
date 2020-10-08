@@ -2,6 +2,7 @@ const chalk = require('chalk')
 const fs = require('fs')
 const _ = require('lodash')
 const path = require('path')
+const matchAll = require('./matchAll')
 
 module.exports = {
   err: function () {
@@ -197,5 +198,19 @@ ${postLine}
       if (!key || !value) continue
       console.log(chalk.blue(`${key.trim()}: ${value}`))
     }
+  },
+
+  changeTemplateStringToGroupKeys (string) {
+    string = module.exports.handleSpecialCharacter(string)
+    // Note that the special characters are escaped.
+    const findGroupKeyReg = new RegExp(/\\\$\\\{(?<groupKey>\w*)\\\}/)
+    const groupKeysInLValue = matchAll(string, findGroupKeyReg)
+
+    for (const groupKeyInfo of groupKeysInLValue) {
+      const groupKey = groupKeyInfo[1]
+      string = module.exports.replaceAll(string, `\\$\\{${groupKey}\\}`, `(?<${groupKey}>.*)`)
+    }
+
+    return string
   }
 }

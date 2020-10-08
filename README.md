@@ -59,10 +59,10 @@ ${source}=i18n.t("${value}")
 So if you type below command into the console,
 
 ```
-code-replacer --target=example/example_1/msgAlert.js --replaceList='example/example_1/rlist' --template='${source}=i18n.t("${value}")'
+code-replacer --src=example/example_1/msgAlert.js --replaceList='example/example_1/rlist' --template='${source}=i18n.t("${value}")'
 ```
 
-You can get to below file in the target directory.
+Then you can get to below file.
 
 ```js
 // This file name is __replacer__.msgAlert.js
@@ -102,7 +102,7 @@ require("ghi");
 Then, the command is as follows.
 
 ```
-code-replacer --target=./example/example_2/index.js --template='require("${key}")=import ${key} from "${key}"'
+code-replacer --src=./example/example_2/index.js --template='require("${key}")->import ${key} from "${key}"'
 ```
 
 And you can get below file.
@@ -131,7 +131,7 @@ If A should contains `->` (arrow signature), you can escape that `->` by `\->`.
 (e.g. `x=(.*//.*)|(.*<!--.*)|(.*\/\*.*)`)
 
 5. If you feel inconvenient to enter template value or option value each time, you can set some values you want as default by below way.
-`code-replacer set --tem={some_value} -x -v --debug --target={some_value} ...`
+`code-replacer set --tem={some_value} -x -v --debug --src={some_value} ...`
 If these argument is not entered next time, these values are used as a default.
 
 And you can also check the default values with the command below.
@@ -145,20 +145,20 @@ code-replacer default
 #### --dir (-d)
 type: `string`
 
-specify target directory
-Files beginning with `__replacer__.` are excluded from the target.
+specify source file's directory
+Files beginning with `__replacer__.` are excluded from the source files.
 
 #### --ext, -e
 type: `string`
 
-specify target file's extension.
+specify source file's extension.
 (Use this with `dir` option to target multiple files at once)
 
-#### --target, -t
+#### --src, -s
 type: `string`
 
-specify target file.
-when target and dir are given,
+specify source code file.
+when `src` and `dir` are given,
 target the files corresponding to the name in the target directory.
 (no need to specify `ext` separately)
 
@@ -223,7 +223,7 @@ default value is '='
 #### --overwrite, -o
 type: `boolean`
 
-overwrite the target source file.
+overwrite the source file.
 
 #### --excludeReg, -x
 type: `boolean`
