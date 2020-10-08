@@ -68,7 +68,6 @@ const flags = {
   },
   sep: {
     type: 'string',
-    alias: 's',
     isRequired: (flags, input) => false
   },
   overwrite: {
@@ -109,7 +108,7 @@ const cli = meow(
             --ext, -e                     specify target file's extension. 
                                           (Use this with dir to target multiple files)
 
-            --target, -t                  specify target file. 
+            --src, -s                     specify target file. 
                                           when target and dir are given, 
                                           target the files corresponding to the name in the target directory.
                                           (no need to ext)
@@ -141,7 +140,7 @@ const cli = meow(
             --template, -tem              specify template string.
                                           see README.md for more detail usage.
 
-            --sep, -s                     specify rlist's spliter. 
+            --sep                         specify rlist's spliter. 
                                           default value is '='
             
             --overwrite, -o               overwrite existing file.

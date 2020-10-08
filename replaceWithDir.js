@@ -7,10 +7,10 @@ module.exports = async function (props) {
   recursive(path.resolve(props.dir), [], async (_err, files) => {
     const targetFiles = files.map((filePath) => {
       const targetFileName = filePath.split(path.sep).reverse()[0]
-      if (props.target && targetFileName === props.target) {
+      if (props.src && targetFileName === props.src) {
         return filePath
       } else if (
-        !props.target &&
+        !props.src &&
         targetFileName.split('.')[1] === props.ext &&
         !targetFileName.startsWith('__replacer__.')
       ) { return filePath }
@@ -21,7 +21,7 @@ module.exports = async function (props) {
 
     for (const targetFile of targetFiles) {
       if (!targetFile) continue
-      props.target = targetFile
+      props.src = targetFile
       await replaceWithFile(props)
       console.log(chalk.gray('##########################################################################################\n'))
     }

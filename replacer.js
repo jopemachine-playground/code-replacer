@@ -99,9 +99,6 @@ getMatchingPoints = ({ srcLine, templateLValue, replacingKeys }) => {
   const matchingPoints = []
   let matchingPtCnt = 0
 
-  console.log(templateLValue)
-  console.log(replacingKeys)
-
   for (const replacingKey of replacingKeys) {
     // reg of replacingKey is already processed
     const regKey = templateLValue
