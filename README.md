@@ -56,13 +56,13 @@ Then type the template as a form of `A->B`.
 So the `template` value we need to forward is as follows.
 
 ```
-${source}->i18n.t("${value}")
+"${source}"->i18n.t("${value}")
 ```
 
 So if you type below command into the console,
 
 ```
-code-replacer --src='example/example_1/msgAlert.js' --csv='example/example_1/rlist' --template='${source}->i18n.t("${value}")'
+code-replacer --src='example/example_1/msgAlert.js' --csv='example/example_1/rlist' --template='"${source}"->i18n.t("${value}")'
 ```
 
 Then you can get to below file.

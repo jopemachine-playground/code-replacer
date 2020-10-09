@@ -2,10 +2,10 @@ const chalk = require('chalk')
 const matchAll = require('./matchAll')
 const yn = require('yn')
 const readlineSync = require('readline-sync')
+const handleTemplateLValue = require('./template')
 
 const {
   createHighlightedLine,
-  handleSpecialCharacter,
   logByFlag,
   funcExecByFlag,
   replaceAll,
@@ -76,7 +76,7 @@ applyCSVTable = ({
       for (const columnName of columnNames) {
         key = replaceAll(
           key,
-          `\\$\\{${columnName}\\}`,
+          `\${${columnName}}`,
           csvRecord[columnName]
         )
 
@@ -94,6 +94,7 @@ applyCSVTable = ({
     // assume to replace using group regular expressions only
     replaceObj[templateLValue] = templateRValue
   }
+
   return replaceObj
 }
 
@@ -110,9 +111,7 @@ getMatchingPoints = ({ srcLine, templateLValue, replacingKeys }) => {
 
   for (const replacingKey of replacingKeys) {
     // reg of replacingKey is already processed
-    const regKey = templateLValue
-      ? replacingKey
-      : handleSpecialCharacter(replacingKey)
+    const regKey = handleTemplateLValue(false, replacingKey)
     const replacingKeyReg = new RegExp(regKey)
     const replacingKeyMatchingPts = matchAll(srcLine, replacingKeyReg)
 
@@ -278,7 +277,8 @@ module.exports = ({
 
             for (const groupKeyInfo of groupKeys) {
               const groupKey = groupKeyInfo[1]
-              const findMatchingStringReg = new RegExp(templateLValue)
+              const regKey = handleTemplateLValue(false, templateLValue)
+              const findMatchingStringReg = new RegExp(regKey)
               const groupKeyMatching = srcLine.match(findMatchingStringReg)
               const groupKeyMatchingStr = groupKeyMatching.groups[groupKey]
 

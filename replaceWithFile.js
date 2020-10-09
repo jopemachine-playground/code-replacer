@@ -8,7 +8,6 @@ const replaceExecute = require('./replacer')
 const parseCSV = require('./csvParse')
 
 const {
-  changeTemplateStringToGroupKeys,
   logByFlag,
   funcExecByFlag,
   splitWithEscape
@@ -36,8 +35,6 @@ module.exports = async function ({
     templateLValue = templateVals[0]
     templateRValue = templateVals[1]
   }
-
-  templateLValue = changeTemplateStringToGroupKeys(templateLValue)
 
   const { srcFileLines, srcFileName, srcFilePath } = parseSourceFile({
     srcFile,

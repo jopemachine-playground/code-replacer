@@ -2,7 +2,6 @@ const chalk = require('chalk')
 const fs = require('fs')
 const _ = require('lodash')
 const path = require('path')
-const matchAll = require('./matchAll')
 
 module.exports = {
   err: function () {
@@ -92,25 +91,6 @@ ${postLine}
 `)
   },
 
-  handleSpecialCharacter: function (str) {
-    // TODO: Need to handle more special characters here
-    str = str.replace('\\', '\\\\')
-    str = str.replace('(', '\\(')
-    str = str.replace(')', '\\)')
-    str = str.replace('.', '\\.')
-    str = str.replace('?', '\\?')
-    str = str.replace('!', '\\!')
-    str = str.replace('$', '\\$')
-    str = str.replace('^', '\\^')
-    str = str.replace('{', '\\{')
-    str = str.replace('}', '\\}')
-    str = str.replace('[', '\\[')
-    str = str.replace(']', '\\]')
-    str = str.replace('|', '\\|')
-    str = str.replace('/', '\\/')
-    return str
-  },
-
   findReplaceListFile: function (rlistDir, srcFileName) {
     if (fs.existsSync(`${rlistDir}${path.sep}rlist_${srcFileName}`)) {
       return `${rlistDir}${path.sep}rlist_${srcFileName}`
@@ -197,20 +177,5 @@ ${postLine}
       if (!key || !value) continue
       console.log(chalk.blue(`${key.trim()}: ${value}`))
     }
-  },
-
-  changeTemplateStringToGroupKeys (string) {
-    string = module.exports.handleSpecialCharacter(string)
-
-    // Note that the special characters are escaped.
-    const findGroupKeyReg = new RegExp(/\\\$\\\[(?<groupKey>[\d\w]*)\\\]/)
-    const groupKeysInLValue = matchAll(string, findGroupKeyReg)
-
-    for (const groupKeyInfo of groupKeysInLValue) {
-      const groupKey = groupKeyInfo[1]
-      string = module.exports.replaceAll(string, `\\$\\[${groupKey}\\]`, `(?<${groupKey}>[\\d\\w]*)`)
-    }
-
-    return string
   }
 }
