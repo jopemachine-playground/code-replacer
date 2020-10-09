@@ -31,7 +31,7 @@ changeTemplateStringToGroupKeys = (string, hasEscaped) => {
   for (const groupKeyInfo of groupKeysInLValue) {
     const groupKey = groupKeyInfo[1]
     const groupKeyReg = hasEscaped ? `\\$\\[${groupKey}\\]` : `$[${groupKey}]`
-    string = module.exports.replaceAll(
+    string = replaceAll(
       string,
       groupKeyReg,
       `(?<${groupKey}>[\\d\\w]*)`

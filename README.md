@@ -116,6 +116,20 @@ import ghi from "ghi";
 ...
 ```
 
+### Example 3, use csv's multiple column
+
+Multiple column data from the csv file are available in the following ways.
+
+```
+code-replacer --src='example/example_3/index.js' --csv='example/example_3/rlist' --template='${source}${index}-><div id="${id}" class="${class}" />'
+```
+
+### Example 4, use csv's multiple value 
+
+```
+code-replacer --src='example/example_4/index.js' --csv='example/example_4/rlist' --template='$[key1] ${source}${index} $[key2]->$[key2] ${index}${source} $[key1]'
+```
+
 ## Tips
 
 1. If there are more than one matching key, (which contain other key in the rlist (e.g. test, tester)), 
