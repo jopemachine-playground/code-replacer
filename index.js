@@ -22,9 +22,8 @@ const flags = {
     alias: 's',
     isRequired: (flags, input) => false
   },
-  replaceList: {
+  csv: {
     type: 'string',
-    alias: 'l',
     isRequired: (flags, input) => false
   },
   verbose: {
@@ -113,7 +112,7 @@ const cli = meow(
                                           target the files corresponding to the name in the target directory.
                                           (no need to ext)
 
-            --replaceList, -l             specify replace properties file, 
+            --csv, -c                     specify replace properties file, 
                                           default value is './rlist'
                                           name './rlist_{fileName}',
                                           if you want to apply different rlist files per file

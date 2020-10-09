@@ -57,7 +57,7 @@ module.exports = {
   },
 
   printLines: function (
-    targetFileName,
+    srcFileName,
     lineIdx,
     sourceStr,
     replacedStr,
@@ -83,7 +83,7 @@ ${chalk.gray(
   '------------------------------------------------------------------------------------------'
 )}
 
-${chalk.gray(`# Line: ${chalk.yellow(lineIdx)}, in '${chalk.yellow(targetFileName)}'`)}
+${chalk.gray(`# Line: ${chalk.yellow(lineIdx)}, in '${chalk.yellow(srcFileName)}'`)}
 
 ${previousLine}
 ${chalk.blueBright(`${lineIdx}    `) + chalk.blueBright(sourceStr)}
@@ -107,18 +107,17 @@ ${postLine}
     str = str.replace('[', '\\[')
     str = str.replace(']', '\\]')
     str = str.replace('|', '\\|')
-    str = str.replace(']', '\\]')
     str = str.replace('/', '\\/')
     return str
   },
 
-  findReplaceListFile: function (rlistDir, targetFileName) {
-    if (fs.existsSync(`${rlistDir}${path.sep}rlist_${targetFileName}`)) {
-      return `${rlistDir}${path.sep}rlist_${targetFileName}`
+  findReplaceListFile: function (rlistDir, srcFileName) {
+    if (fs.existsSync(`${rlistDir}${path.sep}rlist_${srcFileName}`)) {
+      return `${rlistDir}${path.sep}rlist_${srcFileName}`
     } else if (
-      fs.existsSync(`${rlistDir}${path.sep}rlist_${targetFileName.split('.')[0]}`)
+      fs.existsSync(`${rlistDir}${path.sep}rlist_${srcFileName.split('.')[0]}`)
     ) {
-      return `${rlistDir}${path.sep}rlist_${targetFileName.split('.')[0]}`
+      return `${rlistDir}${path.sep}rlist_${srcFileName.split('.')[0]}`
     } else if (fs.existsSync(`.${path.sep}rlist`)) {
       return `.${path.sep}rlist`
     } else {
@@ -202,13 +201,14 @@ ${postLine}
 
   changeTemplateStringToGroupKeys (string) {
     string = module.exports.handleSpecialCharacter(string)
+
     // Note that the special characters are escaped.
-    const findGroupKeyReg = new RegExp(/\\\$\\\{(?<groupKey>\w*)\\\}/)
+    const findGroupKeyReg = new RegExp(/\\\$\\\[(?<groupKey>[\d\w]*)\\\]/)
     const groupKeysInLValue = matchAll(string, findGroupKeyReg)
 
     for (const groupKeyInfo of groupKeysInLValue) {
       const groupKey = groupKeyInfo[1]
-      string = module.exports.replaceAll(string, `\\$\\{${groupKey}\\}`, `(?<${groupKey}>.*)`)
+      string = module.exports.replaceAll(string, `\\$\\[${groupKey}\\]`, `(?<${groupKey}>[\\d\\w]*)`)
     }
 
     return string

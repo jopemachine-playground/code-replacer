@@ -10,7 +10,7 @@ npm i -g code-replacer
 
 ## How to use
 
-1. Write input file (`rlist`) or `template` to change your codes.
+1. Write `csv` file to replace text or `template` to change your codes.
 
 2. Type the command
 
@@ -18,9 +18,9 @@ npm i -g code-replacer
 
 ## Simple example
 
-### Example 1, use `replaceList` and `template`
+### Example 1, use `csv` and `template`
 
-Pass the path of the input file to the `replaceList` option if you need it.
+Pass the path of the input file to the `csv` option if you need it.
 
 For example, if you wanna change `Some message..` to `alert(i18n.t("some_msg"))` for support i18n (supporting multi language feature), you can do this.
 
@@ -33,33 +33,36 @@ alert("Blah blah..");
 ...
 ```
 
-Below is the input file (`replaceList`).
+Below is the input file (`csv`).
 
-Note that left column is Message string including double quotes, right column is corresponding string key.
+Note that `source` column is Message string including double quotes and `value` column is corresponding string key.
 
 ```
-"Some message.."=some_msg
-"Blah blah.."=blah_blah
+source,value
+Some message..,some_msg
+Blah blah..,blah_blah
 ```
 
 And you need to forward some `template` value.
 
-We assume this value is `i18n.t(${key})`.
+We assume this value is `i18n.t(${value})`.
 
-In `template` option, There are two special keys (`${source}`, `${value}`).
+In `template` option, `${var}` option means column data named `var`.
 
-On each line in the source file (`msgAlert.js`), the left entry of the `replaceList` is `${source}` and the right value is `${value}`.
+On each line in the source file (`msgAlert.js`), you can insert data in the csv column with the corresponding variable.
 
-Then the `template` value we need to forward is as follows.
+Then type the template as a form of `A->B`.
+
+So the `template` value we need to forward is as follows.
 
 ```
-${source}=i18n.t("${value}")
+${source}->i18n.t("${value}")
 ```
 
 So if you type below command into the console,
 
 ```
-code-replacer --src=example/example_1/msgAlert.js --replaceList='example/example_1/rlist' --template='${source}=i18n.t("${value}")'
+code-replacer --src='example/example_1/msgAlert.js' --csv='example/example_1/rlist' --template='${source}->i18n.t("${value}")'
 ```
 
 Then you can get to below file.
@@ -83,13 +86,11 @@ For example, if you need to replace all of *require* below with *import* stateme
 
 (Whether it works or not)
 
-We assume in this, the argument of require is `${key}`. 
+We assume in this, the argument of require is `$[key]`. 
 
-(You can name it `${key1}` or `${key_1}` or other string as you wish, but do not use `${source}` or `${value}`. 
+(You can name it `$[someKey1]` or `$[otherKey]` or other name (`Alphabet`, `Numeric` Available))
 
-Because these values are treated as keyword referring rlist's left column values and right column values)
-
-So, you can use this template. `require("${key}")->import ${key} from "${key}"`
+So, you can use this template. `require("$[key]")->import $[key] from "$[key]"`
 
 ```js
 ...
@@ -102,7 +103,7 @@ require("ghi");
 Then, the command is as follows.
 
 ```
-code-replacer --src=./example/example_2/index.js --template='require("${key}")->import ${key} from "${key}"'
+code-replacer --src='./example/example_2/index.js' --template='require("$[key]")->import $[key] from "$[key]"'
 ```
 
 And you can get below file.
@@ -162,10 +163,10 @@ when `src` and `dir` are given,
 target the files corresponding to the name in the target directory.
 (no need to specify `ext` separately)
 
-#### --replaceList, -l
+#### --csv, -c
 type: `string`
 
-specify replace properties file, 
+specify csv file,
 default value is `./rlist`
 
 And when you specify `dir` option, name `./rlist_{fileName}`, to apply different rlist files per file.

@@ -2,7 +2,6 @@ const chalk = require('chalk')
 const matchAll = require('./matchAll')
 const yn = require('yn')
 const readlineSync = require('readline-sync')
-const _ = require('lodash')
 
 const {
   createHighlightedLine,
@@ -19,7 +18,7 @@ displayConsoleMsg = ({
   replaceObj,
   confOpt,
   verboseOpt,
-  targetFileName,
+  srcFileName,
   lineIdx,
   srcFileLines,
   resultLines
@@ -41,7 +40,7 @@ displayConsoleMsg = ({
 
   funcExecByFlag(confOpt || verboseOpt, () =>
     printLines(
-      targetFileName,
+      srcFileName,
       lineIdx,
       sourceStr,
       replacedStr,
@@ -60,39 +59,49 @@ displayConsoleMsg = ({
   )
 }
 
-getReplacingKeys = ({
-  replaceObj,
-  replaceListFile,
+applyCSVTable = ({
+  csvTbl,
   templateLValue,
-  templateRValue,
-  verboseOpt
+  templateRValue
 }) => {
-  let keys = Object.keys(replaceObj)
+  const replaceObj = {}
+  templateRValue = templateRValue.trim().normalize()
 
-  // sort by length -> prioritize and map keys with long values first.
-  keys.sort(function (a, b) {
-    return b.length - a.length || b.localeCompare(a)
-  })
+  if (csvTbl.length > 0 && templateLValue && templateRValue) {
+    const columnNames = Object.keys(csvTbl[0])
+    for (const csvRecord of csvTbl) {
+      let key = templateLValue
+      let value = templateRValue
 
-  logByFlag(verboseOpt, 'keys:')
-  logByFlag(verboseOpt, keys)
+      for (const columnName of columnNames) {
+        key = replaceAll(
+          key,
+          `\\$\\{${columnName}\\}`,
+          csvRecord[columnName]
+        )
 
-  if (templateLValue && templateRValue) {
-    templateRValue = templateRValue.trim().normalize()
-
-    keys = _.map(keys, (key) => {
-      key = templateLValue.replace('\\$\\{source\\}', key)
-      replaceObj[key] = templateRValue.replace('${value}', replaceObj[key])
-      return key
-    })
-
-    if (!replaceListFile) {
-      // assume to replace using group regular expressions only
-      keys.push(templateLValue)
+        value = replaceAll(
+          value,
+          `\${${columnName}}`,
+          csvRecord[columnName]
+        )
+      }
+      replaceObj[key] = value
     }
   }
 
-  return keys
+  if (csvTbl.length < 1) {
+    // assume to replace using group regular expressions only
+    replaceObj[templateLValue] = templateRValue
+  }
+  return replaceObj
+}
+
+insertTemplateLValue = (templateLValue, replaceListFile, keys) => {
+  if (!replaceListFile) {
+    // assume to replace using group regular expressions only
+    keys.push(templateLValue)
+  }
 }
 
 getMatchingPoints = ({ srcLine, templateLValue, replacingKeys }) => {
@@ -174,9 +183,9 @@ getMatchingPoints = ({ srcLine, templateLValue, replacingKeys }) => {
 }
 
 module.exports = ({
-  targetFileName,
+  srcFileName,
   srcFileLines,
-  replaceObj,
+  csvTbl,
   templateLValue,
   templateRValue,
   excludeRegValue,
@@ -188,12 +197,17 @@ module.exports = ({
   onceOpt
 }) => {
   const resultLines = []
-  const replacingKeys = getReplacingKeys({
-    replaceObj,
-    replaceListFile,
+  const replaceObj = applyCSVTable({
+    csvTbl,
     templateLValue,
-    templateRValue,
-    verboseOpt
+    templateRValue
+  })
+
+  const replacingKeys = Object.keys(replaceObj)
+
+  // sort by length -> prioritize and map keys with long values first.
+  replacingKeys.sort(function (a, b) {
+    return b.length - a.length || b.localeCompare(a)
   })
 
   let lineIdx = 1
@@ -256,10 +270,10 @@ module.exports = ({
           const matchingInfo = matchingCandidates[candidateIdx]
           let matchingStr = matchingInfo[0]
 
-          // Need more test
+          // TODO: Remove this if statement
           if (templateLValue && templateRValue && !replaceListFile) {
             // handle grouping value
-            const findGroupKeyReg = new RegExp(/\$\{(?<groupKey>\w*)\}/)
+            const findGroupKeyReg = new RegExp(/\$\[(?<groupKey>[\d\w]*)\]/)
             const groupKeys = matchAll(templateRValue, findGroupKeyReg)
 
             for (const groupKeyInfo of groupKeys) {
@@ -268,14 +282,15 @@ module.exports = ({
               const groupKeyMatching = srcLine.match(findMatchingStringReg)
               const groupKeyMatchingStr = groupKeyMatching.groups[groupKey]
 
-              matchingStr = matchingStr.replace(
+              matchingStr = replaceAll(
+                matchingStr,
                 `(?<${groupKey}>)`,
                 groupKeyMatchingStr
               )
 
               replaceObj[matchingStr] = replaceAll(
                 templateRValue,
-                `\${${groupKey}}`,
+                `$[${groupKey}]`,
                 groupKeyMatching.groups[groupKey]
               )
             }
@@ -287,7 +302,7 @@ module.exports = ({
             replaceObj,
             confOpt,
             verboseOpt,
-            targetFileName,
+            srcFileName,
             lineIdx,
             srcFileLines,
             resultLines
@@ -301,7 +316,7 @@ module.exports = ({
             logByFlag(confOpt || verboseOpt, chalk.red('\nskip..'))
           } else if (input.startsWith('s')) {
             // skip this file.
-            console.log(chalk.red(`\nskip '${targetFileName}'..`))
+            console.log(chalk.red(`\nskip '${srcFileName}'..`))
             return -1
           } else {
             // replace string
