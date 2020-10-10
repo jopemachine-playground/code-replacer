@@ -1,19 +1,17 @@
 const fs = require('fs')
 const path = require('path')
 const boxen = require('boxen')
-const StringBuffer = require('./stringBuffer')
 const chalk = require('chalk')
 const parseSourceFile = require('./parseSourceFile')
 const replaceExecute = require('./replacer')
 const parseCSV = require('./csvParse')
+const debuggingInfoArr = require('./debuggingInfo')
 
 const {
   logByFlag,
   funcExecByFlag,
   splitWithEscape
 } = require('./util')
-
-const debuggingInfoArr = new StringBuffer()
 
 module.exports = async function ({
   src: srcFile,
@@ -54,10 +52,10 @@ module.exports = async function ({
   if (csvTbl === -1) return
 
   funcExecByFlag(debugOpt, () =>
-    debuggingInfoArr.append(`startLinePatt: ${startLinePatt}`)
+    debuggingInfoArr.getInstance().append(`startLinePatt: ${startLinePatt}`)
   )
   funcExecByFlag(debugOpt, () =>
-    debuggingInfoArr.append(`endLinePatt: ${endLinePatt}`)
+    debuggingInfoArr.getInstance().append(`endLinePatt: ${endLinePatt}`)
   )
 
   const resultLines = replaceExecute({
@@ -87,7 +85,7 @@ module.exports = async function ({
     encoding: 'utf8'
   })
 
-  const debugInfoStr = boxen(debuggingInfoArr.toString(), {
+  const debugInfoStr = boxen(debuggingInfoArr.getInstance().toString(), {
     padding: 1,
     margin: 1,
     borderStyle: 'double'

@@ -5,6 +5,7 @@ const {
   logByFlag,
   funcExecByFlag
 } = require('./util')
+const debuggingInfoArr = require('./debuggingInfo')
 
 module.exports = ({ srcFile, verboseOpt, debugOpt }) => {
   const absPath = path.resolve(srcFile)
@@ -15,7 +16,7 @@ module.exports = ({ srcFile, verboseOpt, debugOpt }) => {
   )
 
   funcExecByFlag(debugOpt, () =>
-    debuggingInfoArr.append('** target file: ' + path.resolve(srcFile))
+    debuggingInfoArr.getInstance().append('** target file: ' + path.resolve(srcFile))
   )
 
   const srcFileLines = fs.readFileSync(srcFile).toString().split('\n')

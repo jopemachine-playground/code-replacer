@@ -2,6 +2,7 @@ const fs = require('fs')
 const path = require('path')
 const chalk = require('chalk')
 const csv = require('csv-parser')
+const debuggingInfoArr = require('./debuggingInfo')
 const { findReplaceListFile, funcExecByFlag } = require('./util')
 
 module.exports = async ({
@@ -29,7 +30,7 @@ module.exports = async ({
   )
 
   funcExecByFlag(debugOpt && replaceListFile !== -1, () =>
-    debuggingInfoArr.append(
+    debuggingInfoArr.getInstance().append(
       '** replaceList file: ' + path.resolve(replaceListFile)
     )
   )

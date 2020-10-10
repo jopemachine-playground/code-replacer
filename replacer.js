@@ -3,6 +3,7 @@ const matchAll = require('./matchAll')
 const yn = require('yn')
 const readlineSync = require('readline-sync')
 const handleTemplateLValue = require('./template')
+const debuggingInfoArr = require('./debuggingInfo')
 
 const {
   createHighlightedLine,
@@ -94,8 +95,6 @@ applyCSVTable = ({
     // assume to replace using group regular expressions only
     replaceObj[templateLValue] = templateRValue
   }
-
-  console.log(replaceObj)
 
   return replaceObj
 }
@@ -229,7 +228,7 @@ module.exports = ({
         srcLine.trim() === startLinePatt.trim(),
       () => {
         funcExecByFlag(debugOpt, () =>
-          debuggingInfoArr.append(
+          debuggingInfoArr.getInstance().append(
             `Encountered startLinePatt on line ${lineIdx}`
           )
         )
@@ -243,7 +242,7 @@ module.exports = ({
         srcLine.trim() === endLinePatt.trim(),
       () => {
         funcExecByFlag(debugOpt, () =>
-          debuggingInfoArr.append(`Encountered endLinePatt on line ${lineIdx}`)
+          debuggingInfoArr.getInstance().append(`Encountered endLinePatt on line ${lineIdx}`)
         )
         blockingReplaceFlag = true
       }
@@ -278,12 +277,15 @@ module.exports = ({
             const groupKeys = matchAll(templateRValue, findGroupKeyReg)
 
             let value = templateRValue
-            for (const columnName of Object.keys(csvTbl[0])) {
-              value = replaceAll(
-                value,
-                `\${${columnName}}`,
-                csvTbl[csvLineIdx][columnName]
-              )
+            // ${var} should not exist if csvTbl is empty.
+            if (csvTbl.length > 0) {
+              for (const columnName of Object.keys(csvTbl[0])) {
+                value = replaceAll(
+                  value,
+                  `\${${columnName}}`,
+                  csvTbl[csvLineIdx][columnName]
+                )
+              }
             }
 
             for (const groupKeyInfo of groupKeys) {
@@ -295,7 +297,6 @@ module.exports = ({
                 const findMatchingStringReg = new RegExp(regKey)
                 const groupKeyMatching = srcLine.match(findMatchingStringReg)
                 if (!groupKeyMatching) continue
-                console.log(csvLineIdx)
                 const groupKeyMatchingStr = groupKeyMatching.groups[groupKey]
 
                 matchingStr = replaceAll(
@@ -316,7 +317,6 @@ module.exports = ({
             csvLineIdx++
           }
 
-          console.log(replaceObj)
           displayConsoleMsg({
             srcLine,
             matchingInfo,
