@@ -6,6 +6,20 @@ const inquirer = require('inquirer')
 const inquirerFileTreeSelection = require('inquirer-file-tree-selection-prompt')
 inquirer.registerPrompt('file-tree-selection', inquirerFileTreeSelection)
 
+const fetchLog = ({ keyName }) => {
+  const logs = []
+  const usageLogJson = require('./usageLog.json')
+
+  let displayCnt = 0
+  const maxDisplayCnt = 5
+  for (const usageLogKey of Object.keys(usageLogJson)) {
+    usageLogJson[usageLogKey][keyName] && (displayCnt++ < maxDisplayCnt) &&
+    logs.push(usageLogJson[usageLogKey][keyName])
+  }
+
+  return logs
+}
+
 const receiveCSVOption = async () => {
   let csvFilePath = -1
   await inquirer
@@ -68,55 +82,58 @@ const ENTER_TEMPLATE = chalk.yellow('Enter template')
 const receiveTemplateOption = async () => {
   let template = -1
 
-  const templateUsageLogs = []
-  const usageLogJson = require('./usageLog.json')
-
-  let displayCnt = 0
-  const maxDisplayCnt = 5
-  for (const usageLogKey of Object.keys(usageLogJson)) {
-    usageLogJson[usageLogKey].template && (displayCnt++ < maxDisplayCnt) &&
-      templateUsageLogs.push(usageLogJson[usageLogKey].template)
-  }
+  const templateUsageLogs = fetchLog({ keyName: 'template' })
 
   await inquirer
     .prompt([
       {
-        type: 'list',
-        name: 'template',
-        message: chalk.dim('Choose template'),
-        choices: [
-          ...templateUsageLogs,
-          ENTER_TEMPLATE
-        ]
+        type: 'confirm',
+        name: 'templateYn',
+        message: chalk.dim('Would you like to use template?')
       }
-    ])
-    .then(async (templateOutput) => {
-      if (templateOutput.template === ENTER_TEMPLATE) {
-        await inquirer
-          .prompt([
-            {
-              type: 'input',
-              name: 'templateManual',
-              message: chalk.dim('Enter template value'),
-              validate: (input) => {
-                return input.includes('->')
-              }
-            }
-          ]).then(async (templateManualOutput) => {
-            template = templateManualOutput.templateManual
-          })
-      } else {
-        template = templateOutput.template
-      }
+    ]).then(async (ynOutput) => {
+      if (!ynOutput.templateYn) return
+      await inquirer
+        .prompt([
+          {
+            type: 'list',
+            name: 'template',
+            message: chalk.dim('Choose template'),
+            choices: [
+              ...templateUsageLogs,
+              ENTER_TEMPLATE
+            ]
+          }
+        ])
+        .then(async (templateOutput) => {
+          if (templateOutput.template === ENTER_TEMPLATE) {
+            await inquirer
+              .prompt([
+                {
+                  type: 'input',
+                  name: 'templateManual',
+                  message: chalk.dim('Enter template value'),
+                  validate: (input) => {
+                    return input.includes('->')
+                  }
+                }
+              ]).then(async (templateManualOutput) => {
+                template = templateManualOutput.templateManual
+              })
+          } else {
+            template = templateOutput.template
+          }
+        })
+      return template
     })
-  return template
 }
 
 const receiveFlagOptions = async () => {
-  let verboseOpt
-  let debugOpt
-  let overwriteOpt
-  let onceOpt
+  let verbose,
+    debug,
+    overwrite,
+    once,
+    conf
 
   await inquirer
     .prompt([
@@ -136,6 +153,9 @@ const receiveFlagOptions = async () => {
           },
           {
             name: 'once'
+          },
+          {
+            name: 'conf'
           }
         ],
         validate: function (answer) {
@@ -143,42 +163,61 @@ const receiveFlagOptions = async () => {
         }
       }
     ]).then(async answer => {
-      debugOpt = answer.flags.includes('debug')
-      verboseOpt = answer.flags.includes('verbose')
-      overwriteOpt = answer.flags.includes('overwrite')
-      onceOpt = answer.flags.includes('once')
+      debug = answer.flags.includes('debug')
+      verbose = answer.flags.includes('verbose')
+      overwrite = answer.flags.includes('overwrite')
+      once = answer.flags.includes('once')
+      conf = answer.flags.includes('conf')
     })
 
   return {
-    verboseOpt,
-    debugOpt,
-    overwriteOpt,
-    onceOpt
+    verbose,
+    debug,
+    overwrite,
+    once,
+    conf
   }
 }
 
+const ENTER_EXCLUDE_KEY = chalk.yellow('Enter excludeKey')
+
 const receiveExcludeRegOption = async () => {
   let excludeReg = -1
+  const excludeRegUsageLogs = fetchLog({ keyName: 'excludeReg' })
+
   await inquirer
     .prompt([
       {
         type: 'confirm',
-        name: 'excludeRegOpt',
-        message: chalk.dim('Would you like to use exclude Reg?')
-      }
-    ])
-    .then(async (ynOutput) => {
-      if (!ynOutput.excludeRegOpt) return
+        name: 'excludeRegYn',
+        message: chalk.dim('Would you like to use excludeReg?')
+      }]).then(async (yn) => {
+      if (!yn.excludeRegYn) return
       await inquirer
         .prompt([
           {
-            type: 'input',
-            name: 'excludeReg',
-            message: chalk.dim('Enter regular expressions for lines to exclude from substitution.')
+            type: 'list',
+            name: 'excludeRegOpt',
+            message: chalk.dim('Choose exclude key'),
+            choices: [
+              ...excludeRegUsageLogs,
+              ENTER_EXCLUDE_KEY
+            ]
           }
         ])
-        .then((excludeOutput) => {
-          excludeReg = excludeOutput.excludeReg
+        .then(async (ynOutput) => {
+          if (!ynOutput.excludeRegOpt) return
+          await inquirer
+            .prompt([
+              {
+                type: 'input',
+                name: 'excludeReg',
+                message: chalk.dim('Enter regular expressions for lines to exclude from substitution.')
+              }
+            ])
+            .then((excludeOutput) => {
+              excludeReg = excludeOutput.excludeReg
+            })
         })
     })
   return excludeReg
@@ -193,11 +232,12 @@ module.exports = async (input, flags) => {
       flags.csv = await receiveCSVOption()
       flags.template = await receiveTemplateOption()
       flags.excludeReg = await receiveExcludeRegOption()
-      const { verbose, debug, overwrite, once } = await receiveFlagOptions()
+      const { verbose, debug, overwrite, once, conf } = await receiveFlagOptions()
       flags.verbose = verbose
       flags.debug = debug
       flags.overwrite = overwrite
       flags.once = once
+      flags.conf = conf
       codeReplace(flags)
       break
     }

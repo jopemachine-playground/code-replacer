@@ -2,6 +2,7 @@ rlist
 DEBUG_INFO
 .DS_Store
 target/
+usageLog.json
 
 # Logs
 logs
