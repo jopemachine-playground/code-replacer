@@ -42,5 +42,9 @@
       "pre-commit": "npm run test",
       "pre-push": "npm run test"
     }
+  },
+  "jest": {
+    "verbose": true,
+    "testMatch": ["**/test/*.test.js"]
   }
 }

@@ -99,13 +99,6 @@ applyCSVTable = ({
   return replaceObj
 }
 
-insertTemplateLValue = (templateLValue, replaceListFile, keys) => {
-  if (!replaceListFile) {
-    // assume to replace using group regular expressions only
-    keys.push(templateLValue)
-  }
-}
-
 getMatchingPoints = ({ srcLine, replacingKeys }) => {
   const matchingPoints = []
   let matchingPtCnt = 0
@@ -127,24 +120,21 @@ getMatchingPoints = ({ srcLine, replacingKeys }) => {
         const cands = matchingPoints[matchingPtIdx]
         const replacingKeyMatchingStr = replacingKeyMatchingPt[0]
 
-        for (let candIdx = 0; candIdx < cands.length; candIdx++) {
-          const candStr = cands[candIdx][0]
-          if (
-            replacingKeyMatchingStr === candStr ||
-            (!replacingKeyMatchingStr.includes(candStr) &&
-              !candStr.includes(replacingKeyMatchingStr))
-          ) {
-            continue
-          }
+        const longestStrInMatchingPt = cands[0][0]
+        if (
+          replacingKeyMatchingStr === longestStrInMatchingPt ||
+          !longestStrInMatchingPt.includes(replacingKeyMatchingStr)
+        ) {
+          continue
+        }
 
-          // Should be same matching point.
-          if (
-            candStr.length - replacingKeyMatchingStr.length >=
-            cands[candIdx].index - replacingKeyMatchingPt.index
-          ) {
-            existingMatchingPtIdx = matchingPtIdx
-            break
-          }
+        // Should be same matching point.
+        if (
+          longestStrInMatchingPt.length >
+          replacingKeyMatchingPt.index - cands[0].index
+        ) {
+          existingMatchingPtIdx = matchingPtIdx
+          break
         }
       }
 
@@ -182,14 +172,13 @@ getMatchingPoints = ({ srcLine, replacingKeys }) => {
   }
 }
 
-module.exports = ({
+replace = ({
   srcFileName,
   srcFileLines,
   csvTbl,
   templateLValue,
   templateRValue,
   excludeRegValue,
-  replaceListFile,
   startLinePatt,
   endLinePatt,
   verboseOpt,
@@ -378,4 +367,10 @@ module.exports = ({
   }
 
   return resultLines
+}
+
+module.exports = {
+  replace,
+  applyCSVTable,
+  getMatchingPoints
 }

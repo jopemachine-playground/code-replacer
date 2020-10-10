@@ -3,9 +3,9 @@ const path = require('path')
 const boxen = require('boxen')
 const chalk = require('chalk')
 const parseSourceFile = require('./parseSourceFile')
-const replaceExecute = require('./replacer')
 const parseCSV = require('./csvParse')
 const debuggingInfoArr = require('./debuggingInfo')
+const { replace } = require('./replacer')
 
 const {
   logByFlag,
@@ -58,14 +58,13 @@ module.exports = async function ({
     debuggingInfoArr.getInstance().append(`endLinePatt: ${endLinePatt}`)
   )
 
-  const resultLines = replaceExecute({
+  const resultLines = replace({
     srcFileName,
     srcFileLines,
     csvTbl,
     templateLValue,
     templateRValue,
     excludeRegValue,
-    replaceListFile,
     startLinePatt,
     endLinePatt,
     verboseOpt,

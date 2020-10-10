@@ -1,8 +1,8 @@
 const StringBuffer = require('./stringBuffer')
 
 module.exports = (function () {
-  var instance
-  var stringBuf = new StringBuffer()
+  let instance
+  const stringBuf = new StringBuffer()
   function initiate () {
     return stringBuf
   }
