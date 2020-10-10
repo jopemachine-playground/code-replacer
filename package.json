@@ -7,7 +7,7 @@
   "description": "Replace codes line by line with regex for target files",
   "main": "index.js",
   "scripts": {
-    "test": ""
+    "test": "jest"
   },
   "author": "jopemachine",
   "license": "MIT",
@@ -16,6 +16,8 @@
     "chalk": "^4.1.0",
     "csv-parser": "^2.3.3",
     "dotenv": "^8.2.0",
+    "inquirer": "^7.3.3",
+    "inquirer-file-tree-selection-prompt": "^1.0.6",
     "meow": "^7.1.1",
     "readline-sync": "^1.4.10",
     "recursive-readdir": "^2.2.2",
@@ -32,7 +34,8 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
-    "husky": "^4.3.0"
+    "husky": "^4.3.0",
+    "jest": "^26.5.2"
   },
   "husky": {
     "hooks": {

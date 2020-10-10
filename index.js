@@ -1,10 +1,9 @@
 #!/usr/bin/env node
 
 const meow = require('meow')
-const codeReplace = require('./codeReplace')
 require('dotenv').config()
 const _ = require('lodash')
-const { setOptions, showDefaultOptions } = require('./util')
+const cliSelector = require('./cliSelector')
 
 const flags = {
   dir: {
@@ -89,7 +88,7 @@ _.map(Object.keys(flags), (flagKey) => {
   }
 })
 
-const cli = meow(
+const meowCli = meow(
   `
     Outline
 
@@ -104,7 +103,7 @@ const cli = meow(
         <required args>
 
             --dir, -d                     specify target directory
-            --ext, -e                     specify target file's extension. 
+            --ext, -e                     specify target file's extension.
                                           (Use this with dir to target multiple files)
 
             --src, -s                     specify target file. 
@@ -124,7 +123,7 @@ const cli = meow(
 
             --verbose, -v                 print all information about the text replaced in console.
                                           default is 'false'
-            
+
             --debug                       outputs debugging information to the 'DEBUG_INFO' file
 
             --once, -o                    even if there are multiple substitution values in a line,
@@ -139,9 +138,6 @@ const cli = meow(
             --template, -tem              specify template string.
                                           see README.md for more detail usage.
 
-            --sep                         specify rlist's spliter. 
-                                          default value is '='
-            
             --overwrite, -o               overwrite existing file.
 
             --excludeReg, -x              specify the regular expression of the line
@@ -158,16 +154,4 @@ const cli = meow(
   { flags }
 )
 
-switch (cli.input[0]) {
-  case 's':
-  case 'set':
-    setOptions(cli.flags)
-    break
-  case 'd':
-  case 'default':
-    showDefaultOptions()
-    break
-  default:
-    codeReplace(cli.flags)
-    break
-}
+cliSelector(meowCli.input[0], meowCli.flags)
