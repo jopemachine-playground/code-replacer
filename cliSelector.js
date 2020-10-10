@@ -20,14 +20,22 @@ const fetchLog = ({ keyName }) => {
   return logs
 }
 
+const STRING_CONSTANT = {
+  FILE_DIR: chalk.yellow('Choose from file tree'),
+  TYPE_INPUT: chalk.yellow('Type input'),
+  ENTER_TEMPLATE: chalk.yellow('Enter template'),
+  ENTER_EXCLUDE_KEY: chalk.yellow('Enter excludeKey')
+}
+
 const receiveCSVOption = async () => {
+  const csvUsageLogs = fetchLog({ keyName: 'csv' })
   let csvFilePath = -1
   await inquirer
     .prompt([
       {
         type: 'confirm',
         name: 'csvOpt',
-        message: chalk.dim('Would you like to use csv?')
+        message: chalk.dim('Would you like to use csv option?')
       }
     ])
     .then(async (ynOutput) => {
@@ -35,20 +43,50 @@ const receiveCSVOption = async () => {
       await inquirer
         .prompt([
           {
-            type: 'file-tree-selection',
-            name: 'file',
-            message: chalk.dim('Choose csv file'),
-            transformer: (input) => {
-              const name = input.split(path.sep).pop()
-              if (name[0] === '.') {
-                return chalk.grey(name)
-              }
-              return name
-            }
+            type: 'list',
+            name: 'csvOpt',
+            message: chalk.dim('Choose options'),
+            choices: [
+              ...csvUsageLogs,
+              STRING_CONSTANT.TYPE_INPUT,
+              STRING_CONSTANT.FILE_DIR
+            ]
           }
-        ])
-        .then((fileSelectionOutput) => {
-          csvFilePath = fileSelectionOutput.file
+        ]).then(async (listSelect) => {
+          if (listSelect.csvOpt === STRING_CONSTANT.FILE_DIR) {
+            await inquirer
+              .prompt([
+                {
+                  type: 'file-tree-selection',
+                  name: 'file',
+                  message: chalk.dim('Choose csv file from file directory'),
+                  transformer: (input) => {
+                    const name = input.split(path.sep).pop()
+                    if (name[0] === '.') {
+                      return chalk.grey(name)
+                    }
+                    return name
+                  }
+                }
+              ])
+              .then((fileSelectionOutput) => {
+                csvFilePath = fileSelectionOutput.file
+              })
+          } else if (listSelect.csvOpt === STRING_CONSTANT.TYPE_INPUT) {
+            await inquirer
+              .prompt([
+                {
+                  type: 'input',
+                  name: 'csvFilePathInput',
+                  message: chalk.dim('Please enter the path of the csv file.')
+                }
+              ])
+              .then((fileSelectionOutput) => {
+                csvFilePath = fileSelectionOutput.csvFilePathInput
+              })
+          } else {
+            csvFilePath = listSelect.csvOpt
+          }
         })
     })
   return csvFilePath
@@ -77,8 +115,6 @@ const receiveSrcOption = async () => {
   return srcFilePath
 }
 
-const ENTER_TEMPLATE = chalk.yellow('Enter template')
-
 const receiveTemplateOption = async () => {
   let template = -1
 
@@ -101,12 +137,12 @@ const receiveTemplateOption = async () => {
             message: chalk.dim('Choose template'),
             choices: [
               ...templateUsageLogs,
-              ENTER_TEMPLATE
+              STRING_CONSTANT.ENTER_TEMPLATE
             ]
           }
         ])
         .then(async (templateOutput) => {
-          if (templateOutput.template === ENTER_TEMPLATE) {
+          if (templateOutput.template === STRING_CONSTANT.ENTER_TEMPLATE) {
             await inquirer
               .prompt([
                 {
@@ -124,8 +160,8 @@ const receiveTemplateOption = async () => {
             template = templateOutput.template
           }
         })
-      return template
     })
+  return template
 }
 
 const receiveFlagOptions = async () => {
@@ -179,8 +215,6 @@ const receiveFlagOptions = async () => {
   }
 }
 
-const ENTER_EXCLUDE_KEY = chalk.yellow('Enter excludeKey')
-
 const receiveExcludeRegOption = async () => {
   let excludeReg = -1
   const excludeRegUsageLogs = fetchLog({ keyName: 'excludeReg' })
@@ -201,7 +235,7 @@ const receiveExcludeRegOption = async () => {
             message: chalk.dim('Choose exclude key'),
             choices: [
               ...excludeRegUsageLogs,
-              ENTER_EXCLUDE_KEY
+              STRING_CONSTANT.ENTER_EXCLUDE_KEY
             ]
           }
         ])
@@ -228,16 +262,21 @@ module.exports = async (input, flags) => {
     case 'sel':
     case 'select': {
       const flags = {}
-      flags.src = await receiveSrcOption()
-      flags.csv = await receiveCSVOption()
-      flags.template = await receiveTemplateOption()
-      flags.excludeReg = await receiveExcludeRegOption()
+      const src = await receiveSrcOption()
+      const csv = await receiveCSVOption()
+      const template = await receiveTemplateOption()
+      const excludeReg = await receiveExcludeRegOption()
+      src !== -1 && (flags.src = src)
+      csv !== -1 && (flags.csv = csv)
+      template !== -1 && (flags.template = template)
+      excludeReg !== -1 && (flags.excludeReg = excludeReg)
       const { verbose, debug, overwrite, once, conf } = await receiveFlagOptions()
       flags.verbose = verbose
       flags.debug = debug
       flags.overwrite = overwrite
       flags.once = once
       flags.conf = conf
+      console.log()
       codeReplace(flags)
       break
     }
