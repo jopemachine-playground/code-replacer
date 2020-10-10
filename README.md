@@ -130,6 +130,11 @@ code-replacer --src='example/example_3/index.js' --csv='example/example_3/rlist'
 code-replacer --src='example/example_4/index.js' --csv='example/example_4/rlist' --template='$[key1] ${source}${index} $[key2]->$[key2] ${index}${source} $[key1]'
 ```
 
+### Example 5, use no-escape option
+
+<img src="./image/1.png" />
+
+
 ## Tips
 
 1. If there are more than one matching key, (which contain other key in the rlist (e.g. test, tester)), 

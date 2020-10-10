@@ -25,7 +25,8 @@ module.exports = async function ({
   template,
   excludeReg: excludeRegValue,
   debug: debugOpt,
-  overwrite: overwriteOpt
+  overwrite: overwriteOpt,
+  'no-escape': noEscapeOpt
 }) {
   let templateLValue, templateRValue
   if (template) {
@@ -69,7 +70,8 @@ module.exports = async function ({
     endLinePatt,
     verboseOpt,
     confOpt,
-    onceOpt
+    onceOpt,
+    noEscapeOpt
   })
 
   if (resultLines === -1) return

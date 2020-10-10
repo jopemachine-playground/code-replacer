@@ -99,13 +99,13 @@ applyCSVTable = ({
   return replaceObj
 }
 
-getMatchingPoints = ({ srcLine, replacingKeys }) => {
+getMatchingPoints = ({ srcLine, replacingKeys, noEscapeOpt = false }) => {
   const matchingPoints = []
   let matchingPtCnt = 0
 
   for (const replacingKey of replacingKeys) {
     // reg of replacingKey is already processed
-    const regKey = handleTemplateLValue(false, replacingKey)
+    const regKey = handleTemplateLValue(noEscapeOpt, replacingKey)
     const replacingKeyReg = new RegExp(regKey)
     const replacingKeyMatchingPts = matchAll(srcLine, replacingKeyReg)
 
@@ -119,8 +119,8 @@ getMatchingPoints = ({ srcLine, replacingKeys }) => {
       ) {
         const cands = matchingPoints[matchingPtIdx]
         const replacingKeyMatchingStr = replacingKeyMatchingPt[0]
-
         const longestStrInMatchingPt = cands[0][0]
+
         if (
           replacingKeyMatchingStr === longestStrInMatchingPt ||
           !longestStrInMatchingPt.includes(replacingKeyMatchingStr)
@@ -172,6 +172,18 @@ getMatchingPoints = ({ srcLine, replacingKeys }) => {
   }
 }
 
+const getReplacedString = ({ noEscapeOpt, replaceObj, matchingStr }) => {
+  let replacedString = replaceObj[matchingStr]
+  if (noEscapeOpt) {
+    for (const key of Object.keys(replaceObj)) {
+      if (new RegExp(key).test(matchingStr)) {
+        replacedString = replaceObj[key]
+      }
+    }
+  }
+  return replacedString
+}
+
 replace = ({
   srcFileName,
   srcFileLines,
@@ -183,7 +195,8 @@ replace = ({
   endLinePatt,
   verboseOpt,
   confOpt,
-  onceOpt
+  onceOpt,
+  noEscapeOpt = false
 }) => {
   const resultLines = []
   const replaceObj = applyCSVTable({
@@ -240,7 +253,8 @@ replace = ({
     if (!blockingReplaceFlag) {
       const { matchingPoints, matchingPtCnt } = getMatchingPoints({
         srcLine,
-        replacingKeys
+        replacingKeys,
+        noEscapeOpt
       })
 
       for (
@@ -280,7 +294,7 @@ replace = ({
             for (const groupKeyInfo of groupKeys) {
               const groupKey = groupKeyInfo[1]
               for (let regKey of Object.keys(replaceObj)) {
-                regKey = handleTemplateLValue(false, regKey)
+                regKey = handleTemplateLValue(noEscapeOpt, regKey)
                 const replacedHandleRValue = value
 
                 const findMatchingStringReg = new RegExp(regKey)
@@ -330,6 +344,7 @@ replace = ({
             return -1
           } else {
             // replace string
+            const replacedString = getReplacedString({ noEscapeOpt, replaceObj, matchingStr })
 
             // push the index value of the other matching points.
             for (
@@ -340,8 +355,7 @@ replace = ({
               const otherPts = matchingPoints[otherPtsCandidateIdx]
 
               for (const candItem of otherPts) {
-                candItem.index +=
-                  replaceObj[matchingStr].length - matchingStr.length
+                candItem.index += replacedString.length - matchingStr.length
               }
             }
 
@@ -349,7 +363,7 @@ replace = ({
 
             srcLine =
               srcLine.substr(0, matchingInfo.index) +
-              replaceObj[matchingStr] +
+              replacedString +
               srcLine.substr(
                 matchingInfo.index + matchingStr.length,
                 srcLine.length

@@ -64,10 +64,6 @@ const flags = {
     type: 'boolean',
     isRequired: (flags, input) => false
   },
-  sep: {
-    type: 'string',
-    isRequired: (flags, input) => false
-  },
   overwrite: {
     type: 'boolean',
     alias: 'w',
@@ -76,6 +72,11 @@ const flags = {
   excludeReg: {
     type: 'string',
     alias: 'x',
+    isRequired: (flags, input) => false
+  },
+  'no-escape': {
+    type: 'boolean',
+    alias: 'n',
     isRequired: (flags, input) => false
   }
 }
@@ -142,6 +143,9 @@ const meowCli = meow(
 
             --excludeReg, -x              specify the regular expression of the line
                                           to be excluded from the replace.
+
+            --no-escape, -n               apply the left side of the template as a regular expression,
+                                          therefore, special character literals should be escaped with this option.
 
     Examples
 

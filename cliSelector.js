@@ -169,7 +169,8 @@ const receiveFlagOptions = async () => {
     debug,
     overwrite,
     once,
-    conf
+    conf,
+    noEscape
 
   await inquirer
     .prompt([
@@ -192,6 +193,9 @@ const receiveFlagOptions = async () => {
           },
           {
             name: 'conf'
+          },
+          {
+            name: 'no-escape'
           }
         ],
         validate: function (answer) {
@@ -204,6 +208,7 @@ const receiveFlagOptions = async () => {
       overwrite = answer.flags.includes('overwrite')
       once = answer.flags.includes('once')
       conf = answer.flags.includes('conf')
+      noEscape = answer.flags.includes('no-escape')
     })
 
   return {
@@ -211,7 +216,8 @@ const receiveFlagOptions = async () => {
     debug,
     overwrite,
     once,
-    conf
+    conf,
+    noEscape
   }
 }
 
@@ -270,12 +276,13 @@ module.exports = async (input, flags) => {
       csv !== -1 && (flags.csv = csv)
       template !== -1 && (flags.template = template)
       excludeReg !== -1 && (flags.excludeReg = excludeReg)
-      const { verbose, debug, overwrite, once, conf } = await receiveFlagOptions()
+      const { verbose, debug, overwrite, once, conf, noEscape } = await receiveFlagOptions()
       flags.verbose = verbose
       flags.debug = debug
       flags.overwrite = overwrite
       flags.once = once
       flags.conf = conf
+      flags['no-escape'] = noEscape
       console.log()
       codeReplace(flags)
       break
