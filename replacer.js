@@ -5,7 +5,12 @@ const readlineSync = require('readline-sync')
 const { handleTemplateLValue, handleTemplateRValue } = require('./template')
 const debuggingInfoArr = require('./debuggingInfo')
 const optionManager = require('./optionManager')
-const { CreatingReplacingObjError, InvalidLeftTemplateError, ERROR_CONSTANT } = require('./error')
+const {
+  CreatingReplacingObjError,
+  InvalidLeftTemplateError,
+  InvalidRightReferenceError,
+  ERROR_CONSTANT
+} = require('./error')
 
 const {
   createHighlightedLine,
@@ -93,7 +98,7 @@ const applyCSVTable = ({
 
       if (replaceObj[key]) {
         throw new CreatingReplacingObjError(
-          ERROR_CONSTANT.DUPLICATE_KEY(replaceObj[key])
+          ERROR_CONSTANT.DUPLICATE_KEY(key + ', ' + replaceObj[key])
         )
       }
       replaceObj[key] = value
@@ -281,7 +286,6 @@ const replace = ({
           let matchingStr = matchingInfo[0]
 
           // TODO: Remove this if statement
-          // TODO: Column Name에 없는 변수를 참조하려고 하면 error throw할 것
           if (templateLValue && templateRValue) {
             // handle grouping value
             const findGroupKeyReg = new RegExp(/\$\[(?<groupKey>[\d\w]*)\]/)
@@ -298,6 +302,10 @@ const replace = ({
                 const groupKeyMatching = srcLine.match(findMatchingStringReg)
                 if (!groupKeyMatching) continue
                 const groupKeyMatchingStr = groupKeyMatching.groups[groupKey]
+
+                if (!groupKeyMatchingStr) {
+                  throw new InvalidRightReferenceError(ERROR_CONSTANT.NON_EXISTENT_GROUPKEY)
+                }
 
                 matchingStr = replaceAll(
                   matchingStr,

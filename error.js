@@ -30,24 +30,29 @@ class InvalidLeftTemplateError extends Error {
 }
 
 const ERROR_CONSTANT = {
-  DUPLICATE_KEY: (duplicateKey) => `
+  DUPLICATE_KEY: (str) => `
 Duplicate key exists in replaceObj.
-Duplicate key: ${duplicateKey}
+Duplicate key, value: ${str}
 
-This might happens when..
+This might happens why..
 1. You might use regular expression for the left template value, and there are more than two values matched to that regexp.
 2. csv column Key is not replaced because is not valid.`,
 
   WRONG_COLUMN_R_Template: `
 There are some columnName that does not exist in the right value of the template.
 
-This might happens when..
+This might happens why..
 1. There are some wrong named column variable (don't exists in the csv).
 `,
 
   LEFT_TEMPLATE_EMPTY: `
 It seems that left template value is empty.
 See README.md for usage
+`,
+
+  NON_EXISTENT_GROUPKEY: `
+This might happens why..
+1. You might use $[key] that do not exist at the right term of template.
 `
 }
 

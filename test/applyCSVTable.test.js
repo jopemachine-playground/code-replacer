@@ -1,7 +1,7 @@
 const { applyCSVTable } = require("../replacer");
 
 describe("Apply CSV Table", () => {
-  test("Should be matched", () => {
+  test("Column variables should be appropriately replaced.", () => {
     const csvTbl = [
       { source: "Some message..", value: "some_msg" },
       { source: "Blah blah..", value: "blah_blah" },
@@ -16,7 +16,7 @@ describe("Apply CSV Table", () => {
     expect(replaceObj[keys[1]]).toBe('i18n.t("blah_blah")');
   });
 
-  test("Should be matched", () => {
+  test("Column variables should be appropriately replaced.", () => {
     const csvTbl = [
       { index: "1", source: "example", id: "id_1", class: "class1" },
       { index: "2", source: "example", id: "id_2", class: "class2" },
@@ -44,6 +44,9 @@ describe("Apply CSV Table", () => {
     const templateRValue = '';
     const replaceObj = applyCSVTable({ csvTbl, templateLValue, templateRValue });
     const keys = Object.keys(replaceObj);
+    expect(keys[0]).toBe("example1");
+    expect(keys[1]).toBe("example2");
+    expect(keys[2]).toBe("example3");
     expect(replaceObj[keys[0]]).toBe("");
     expect(replaceObj[keys[1]]).toBe("");
     expect(replaceObj[keys[2]]).toBe("");

@@ -42,7 +42,6 @@ describe("Should be matched - multiple matching", () => {
   test("Should be matched - multiple matching", () => {
     const srcLine = `abcdefg fefgg`;
     const replacingKeys = ["abcdefg", "abcde", "fefgg", "abcd", "efg", "fef"];
-    const noEscapeOpt = false;
     const result = getMatchingPoints({ srcLine, replacingKeys });
 
     expect(result.matchingPoints[0].length).toBe(4);
