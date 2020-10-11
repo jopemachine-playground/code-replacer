@@ -5,7 +5,7 @@ const readlineSync = require('readline-sync')
 const { handleTemplateLValue, handleTemplateRValue } = require('./template')
 const debuggingInfoArr = require('./debuggingInfo')
 const optionManager = require('./optionManager')
-const { CreatingReplacingObjError, ERROR_CONSTANT } = require('./error')
+const { CreatingReplacingObjError, InvalidLeftTemplateError, ERROR_CONSTANT } = require('./error')
 
 const {
   createHighlightedLine,
@@ -16,13 +16,13 @@ const {
 } = require('./util')
 
 const displayConsoleMsg = ({
-  srcLine,
+  lineIdx,
   matchingInfo,
   replaceObj,
-  srcFileName,
-  lineIdx,
+  resultLines,
   srcFileLines,
-  resultLines
+  srcFileName,
+  srcLine
 }) => {
   const matchingStr = matchingInfo[0]
 
@@ -71,7 +71,7 @@ const applyCSVTable = ({
   const replaceObj = {}
   templateRValue = templateRValue.trim().normalize()
 
-  if (csvTbl.length > 0 && templateLValue && templateRValue) {
+  if (csvTbl.length > 0 && templateLValue) {
     const columnNames = Object.keys(csvTbl[0])
     for (const csvRecord of csvTbl) {
       let key = templateLValue
@@ -212,6 +212,7 @@ const replace = ({
     templateRValue
   })
 
+  if (templateLValue === '') { throw new InvalidLeftTemplateError(ERROR_CONSTANT.LEFT_TEMPLATE_EMPTY) }
   const replacingKeys = Object.keys(replaceObj)
 
   // sort by length -> prioritize and map keys with long values first.

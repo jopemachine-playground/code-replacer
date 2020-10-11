@@ -33,4 +33,19 @@ describe("Apply CSV Table", () => {
     expect(replaceObj[keys[1]]).toBe('<div id="id_2" class="class2" />');
     expect(replaceObj[keys[2]]).toBe('<div id="id_3" class="class3" />');
   });
+
+  test("Should be deleted", () => {
+    const csvTbl = [
+      { index: "1", source: "example", id: "id_1", class: "class1" },
+      { index: "2", source: "example", id: "id_2", class: "class2" },
+      { index: "3", source: "example", id: "id_3", class: "class3" },
+    ];
+    const templateLValue = "${source}${index}";
+    const templateRValue = '';
+    const replaceObj = applyCSVTable({ csvTbl, templateLValue, templateRValue });
+    const keys = Object.keys(replaceObj);
+    expect(replaceObj[keys[0]]).toBe("");
+    expect(replaceObj[keys[1]]).toBe("");
+    expect(replaceObj[keys[2]]).toBe("");
+  });
 });

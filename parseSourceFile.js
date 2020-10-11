@@ -8,11 +8,11 @@ const {
 const debuggingInfoArr = require('./debuggingInfo')
 const optionManager = require('./optionManager')
 
-module.exports = ({ srcFile, verboseOpt }) => {
+module.exports = ({ srcFile }) => {
   const absPath = path.resolve(srcFile)
   const [srcFileName, ...srcFilePathArr] = absPath.split(path.sep).reverse()
   logByFlag(
-    !verboseOpt,
+    !optionManager.getInstance().verboseOpt,
     chalk.dim(chalk.italic('** target file: ' + path.resolve(srcFile)))
   )
 

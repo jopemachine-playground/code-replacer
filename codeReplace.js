@@ -1,23 +1,22 @@
 #!/usr/bin/env node
+const fs = require('fs')
+const replaceWithFileExec = require('./replaceWithFile')
+const replaceWithDirExec = require('./replaceWithDir')
+const usageLog = require('./usageLog.json')
+const _ = require('lodash')
+const { HELP_STRING } = require('./constant')
 
 const handleOptions = (commandArguments) => {
   const optionManager = require('./optionManager')
-  optionManager.getInstance().verbose = commandArguments.verbose
-  optionManager.getInstance().once = commandArguments.once
-  optionManager.getInstance().conf = commandArguments.conf
-  optionManager.getInstance().debug = commandArguments.debug
-  optionManager.getInstance().overwrite = commandArguments.overwrite
+  optionManager.getInstance().verboseOpt = commandArguments.verbose
+  optionManager.getInstance().onceOpt = commandArguments.once
+  optionManager.getInstance().confOpt = commandArguments.conf
+  optionManager.getInstance().debugOpt = commandArguments.debug
+  optionManager.getInstance().overwriteOpt = commandArguments.overwrite
   optionManager.getInstance()['no-escape'] = commandArguments.noEscape
 }
 
 module.exports = (commandArguments) => {
-  const fs = require('fs')
-  const replaceWithFileExec = require('./replaceWithFile')
-  const replaceWithDirExec = require('./replaceWithDir')
-  const { err } = require('./util')
-  const usageLog = require('./usageLog.json')
-  const _ = require('lodash')
-
   handleOptions(commandArguments)
 
   if (
@@ -34,8 +33,12 @@ module.exports = (commandArguments) => {
       delete usageLog[oldest]
     }
 
-    fs.writeFileSync('usageLog.json', '\ufeff' + JSON.stringify(usageLog, null, 2), { encoding: 'utf8' })
+    fs.writeFileSync(
+      'usageLog.json',
+      '\ufeff' + JSON.stringify(usageLog, null, 2),
+      { encoding: 'utf8' }
+    )
   } else {
-    err()
+    console.log(HELP_STRING)
   }
 }

@@ -182,7 +182,7 @@ when `src` and `dir` are given,
 target the files corresponding to the name in the target directory.
 (no need to specify `ext` separately)
 
-#### --csv, -c
+#### --csv
 type: `string`
 
 specify csv file,

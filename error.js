@@ -22,6 +22,13 @@ class InvalidLeftReferenceError extends Error {
   }
 }
 
+class InvalidLeftTemplateError extends Error {
+  constructor (message) {
+    super(message)
+    this.name = this.constructor.name
+  }
+}
+
 const ERROR_CONSTANT = {
   DUPLICATE_KEY: (duplicateKey) => `
 Duplicate key exists in replaceObj.
@@ -36,6 +43,11 @@ There are some columnName that does not exist in the right value of the template
 
 This might happens when..
 1. There are some wrong named column variable (don't exists in the csv).
+`,
+
+  LEFT_TEMPLATE_EMPTY: `
+It seems that left template value is empty.
+See README.md for usage
 `
 }
 
@@ -43,5 +55,6 @@ module.exports = {
   CreatingReplacingObjError,
   InvalidLeftReferenceError,
   InvalidRightReferenceError,
+  InvalidLeftTemplateError,
   ERROR_CONSTANT
 }

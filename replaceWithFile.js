@@ -8,11 +8,6 @@ const debuggingInfoArr = require('./debuggingInfo')
 const { replace } = require('./replacer')
 const optionManager = require('./optionManager')
 const { TEMPLATE_SPLITER } = require('./constant')
-const {
-  InvalidLeftReferenceError,
-  InvalidRightReferenceError,
-  CreatingReplacingObjError
-} = require('./error')
 
 const {
   logByFlag,
@@ -69,15 +64,7 @@ module.exports = async function ({
       endLinePatt
     })
   } catch (err) {
-    if (err instanceof InvalidRightReferenceError) {
-      console.log(chalk.red(err))
-    } else if (err instanceof InvalidLeftReferenceError) {
-      console.log(chalk.red(err))
-    } else if (err instanceof CreatingReplacingObjError) {
-      console.log(chalk.red(err))
-    } else {
-      console.log(err)
-    }
+    console.log(chalk.red(err))
     return
   }
 

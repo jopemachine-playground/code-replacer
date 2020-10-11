@@ -222,6 +222,12 @@ const receiveFlagOptions = async () => {
           },
           {
             name: 'no-escape'
+          },
+          {
+            name: 'startLinePatt'
+          },
+          {
+            name: 'endLinePatt'
           }
         ],
         validate: function (answer) {
@@ -235,6 +241,14 @@ const receiveFlagOptions = async () => {
       once = answer.flags.includes('once')
       conf = answer.flags.includes('conf')
       noEscape = answer.flags.includes('no-escape')
+
+      // TODO: Write below to handle startLinePatt, endLinePatt
+      if (answer.flags.includes('startLinePatt')) {
+
+      }
+      if (answer.flags.includes('endLinePatt')) {
+
+      }
     })
 
   return {
@@ -303,11 +317,11 @@ module.exports = async (input, flags) => {
       template !== -1 && (flags.template = template)
       excludeReg !== -1 && (flags.excludeReg = excludeReg)
       const { verbose, debug, overwrite, once, conf, noEscape } = await receiveFlagOptions()
-      flags.verbose = verbose
-      flags.debug = debug
-      flags.overwrite = overwrite
-      flags.once = once
-      flags.conf = conf
+      flags.verboseOpt = verbose
+      flags.debugOpt = debug
+      flags.overwriteOpt = overwrite
+      flags.onceOpt = once
+      flags.confOpt = conf
       flags['no-escape'] = noEscape
       console.log()
       codeReplace(flags)

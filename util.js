@@ -4,11 +4,6 @@ const _ = require('lodash')
 const path = require('path')
 
 module.exports = {
-  err: function () {
-    console.log(chalk.yellow("See README.md or 'help' option for usage."))
-    process.exit()
-  },
-
   funcExecByFlag: function (flag, funcExecIfFlagIsTrue, funcExecIfFlagIsFalse) {
     return _.cond([
       [_.matches({ flag: true }), () => funcExecIfFlagIsTrue()],
