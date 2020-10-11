@@ -2,7 +2,7 @@ const matchAll = require('./matchAll')
 const { replaceAll } = require('./util')
 const optionManager = require('./optionManager')
 
-handleSpecialCharacter = (str) => {
+const handleSpecialCharacter = (str) => {
   // TODO: Need to handle more special characters here
   str = replaceAll(str, '\\', '\\\\')
   str = replaceAll(str, '(', '\\(')
@@ -22,7 +22,7 @@ handleSpecialCharacter = (str) => {
   return str
 }
 
-changeTemplateStringToGroupKeys = (string, hasEscaped) => {
+const changeTemplateStringToGroupKeys = (string, hasEscaped) => {
   const findGroupKeyReg = hasEscaped
     ? /\\\$\\\[(?<groupKey>[\d\w]*)\\\]/
     : /\$\[(?<groupKey>[\d\w]*)\]/

@@ -4,6 +4,7 @@ const yn = require('yn')
 const readlineSync = require('readline-sync')
 const handleTemplateLValue = require('./template')
 const debuggingInfoArr = require('./debuggingInfo')
+const optionManager = require('./optionManager')
 
 const {
   createHighlightedLine,
@@ -13,12 +14,10 @@ const {
   printLines
 } = require('./util')
 
-displayConsoleMsg = ({
+const displayConsoleMsg = ({
   srcLine,
   matchingInfo,
   replaceObj,
-  confOpt,
-  verboseOpt,
   srcFileName,
   lineIdx,
   srcFileLines,
@@ -39,19 +38,22 @@ displayConsoleMsg = ({
     matchingInfo.index + matchingStr.length
   )
 
-  funcExecByFlag(confOpt || verboseOpt, () =>
-    printLines(
-      srcFileName,
-      lineIdx,
-      sourceStr,
-      replacedStr,
-      srcFileLines,
-      resultLines
-    )
+  funcExecByFlag(
+    optionManager.getInstance().confOpt ||
+      optionManager.getInstance().verboseOpt,
+    () =>
+      printLines(
+        srcFileName,
+        lineIdx,
+        sourceStr,
+        replacedStr,
+        srcFileLines,
+        resultLines
+      )
   )
 
   logByFlag(
-    confOpt,
+    optionManager.getInstance().confOpt,
     chalk.dim(
       chalk.italic(
         "## Press enter to replace the string or 'n' to skip this word or 's' to skip this file."
@@ -60,7 +62,7 @@ displayConsoleMsg = ({
   )
 }
 
-applyCSVTable = ({
+const applyCSVTable = ({
   csvTbl,
   templateLValue,
   templateRValue
@@ -100,7 +102,7 @@ applyCSVTable = ({
   return replaceObj
 }
 
-getMatchingPoints = ({ srcLine, replacingKeys }) => {
+const getMatchingPoints = ({ srcLine, replacingKeys }) => {
   const matchingPoints = []
   let matchingPtCnt = 0
 
@@ -173,8 +175,10 @@ getMatchingPoints = ({ srcLine, replacingKeys }) => {
   }
 }
 
-const getReplacedString = ({ noEscapeOpt, replaceObj, matchingStr }) => {
+const getReplacedString = ({ replaceObj, matchingStr }) => {
   let replacedString = replaceObj[matchingStr]
+  const noEscapeOpt = optionManager.getInstance()['no-escape']
+
   if (noEscapeOpt) {
     for (const key of Object.keys(replaceObj)) {
       if (new RegExp(key).test(matchingStr)) {
@@ -185,7 +189,7 @@ const getReplacedString = ({ noEscapeOpt, replaceObj, matchingStr }) => {
   return replacedString
 }
 
-replace = ({
+const replace = ({
   srcFileName,
   srcFileLines,
   csvTbl,
@@ -193,11 +197,7 @@ replace = ({
   templateRValue,
   excludeRegValue,
   startLinePatt,
-  endLinePatt,
-  verboseOpt,
-  confOpt,
-  onceOpt,
-  noEscapeOpt = false
+  endLinePatt
 }) => {
   const resultLines = []
   const replaceObj = applyCSVTable({
@@ -254,8 +254,7 @@ replace = ({
     if (!blockingReplaceFlag) {
       const { matchingPoints, matchingPtCnt } = getMatchingPoints({
         srcLine,
-        replacingKeys,
-        noEscapeOpt
+        replacingKeys
       })
 
       for (
@@ -326,8 +325,6 @@ replace = ({
             srcLine,
             matchingInfo,
             replaceObj,
-            confOpt,
-            verboseOpt,
             srcFileName,
             lineIdx,
             srcFileLines,
@@ -335,7 +332,7 @@ replace = ({
           })
 
           let input = 'y'
-          confOpt && (input = readlineSync.prompt())
+          optionManager.getInstance().confOpt && (input = readlineSync.prompt())
 
           if (yn(input) === false) {
             // skip this word. choose other candidate if you have a shorter string to replace.
@@ -346,7 +343,7 @@ replace = ({
             return -1
           } else {
             // replace string
-            const replacedString = getReplacedString({ noEscapeOpt, replaceObj, matchingStr })
+            const replacedString = getReplacedString({ replaceObj, matchingStr })
 
             // push the index value of the other matching points.
             for (
@@ -361,7 +358,11 @@ replace = ({
               }
             }
 
-            logByFlag(confOpt || verboseOpt, chalk.yellow('\nreplace..'))
+            logByFlag(
+              optionManager.getInstance().confOpt ||
+                optionManager.getInstance().verboseOpt,
+              chalk.yellow('\nreplace..')
+            )
 
             srcLine =
               srcLine.substr(0, matchingInfo.index) +
@@ -374,7 +375,7 @@ replace = ({
           }
         }
 
-        if (onceOpt) break
+        if (optionManager.getInstance().onceOpt) break
       }
 
       lineIdx++
