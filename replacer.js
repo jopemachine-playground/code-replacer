@@ -2,9 +2,10 @@ const chalk = require('chalk')
 const matchAll = require('./matchAll')
 const yn = require('yn')
 const readlineSync = require('readline-sync')
-const handleTemplateLValue = require('./template')
+const { handleTemplateLValue, handleTemplateRValue } = require('./template')
 const debuggingInfoArr = require('./debuggingInfo')
 const optionManager = require('./optionManager')
+const { CreatingReplacingObjError, ERROR_CONSTANT } = require('./error')
 
 const {
   createHighlightedLine,
@@ -89,7 +90,12 @@ const applyCSVTable = ({
           csvRecord[columnName]
         )
       }
-      // TODO: Should throw error when multiple keys are founded.
+
+      if (replaceObj[key]) {
+        throw new CreatingReplacingObjError(
+          ERROR_CONSTANT.DUPLICATE_KEY(replaceObj[key])
+        )
+      }
       replaceObj[key] = value
     }
   }
@@ -279,25 +285,14 @@ const replace = ({
             // handle grouping value
             const findGroupKeyReg = new RegExp(/\$\[(?<groupKey>[\d\w]*)\]/)
             const groupKeys = matchAll(templateRValue, findGroupKeyReg)
-
-            let value = templateRValue
-            // ${var} should not exist if csvTbl is empty.
-            if (csvTbl.length > 0) {
-              for (const columnName of Object.keys(csvTbl[0])) {
-                value = replaceAll(
-                  value,
-                  `\${${columnName}}`,
-                  csvTbl[csvLineIdx][columnName]
-                )
-              }
-            }
+            const value = handleTemplateRValue({ templateRValue, csvTbl, csvLineIdx })
 
             for (const groupKeyInfo of groupKeys) {
               const groupKey = groupKeyInfo[1]
               for (let regKey of Object.keys(replaceObj)) {
                 regKey = handleTemplateLValue(regKey)
-                const replacedHandleRValue = value
 
+                const replacedHandleRValue = value
                 const findMatchingStringReg = new RegExp(regKey)
                 const groupKeyMatching = srcLine.match(findMatchingStringReg)
                 if (!groupKeyMatching) continue

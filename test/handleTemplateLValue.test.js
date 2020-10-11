@@ -1,4 +1,4 @@
-const handleTemplateLValue = require("../template");
+const { handleTemplateLValue } = require("../template");
 const optionManager = require('../optionManager');
 
 describe("Handle template", () => {

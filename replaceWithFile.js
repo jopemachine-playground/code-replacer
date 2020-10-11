@@ -7,6 +7,12 @@ const parseCSV = require('./csvParse')
 const debuggingInfoArr = require('./debuggingInfo')
 const { replace } = require('./replacer')
 const optionManager = require('./optionManager')
+const { TEMPLATE_SPLITER } = require('./constant')
+const {
+  InvalidLeftReferenceError,
+  InvalidRightReferenceError,
+  CreatingReplacingObjError
+} = require('./error')
 
 const {
   logByFlag,
@@ -25,7 +31,7 @@ module.exports = async function ({
 }) {
   let templateLValue, templateRValue
   if (template) {
-    const templateVals = splitWithEscape(template, '->')
+    const templateVals = splitWithEscape(template, TEMPLATE_SPLITER)
     templateLValue = templateVals[0]
     templateRValue = templateVals[1]
   }
@@ -50,16 +56,30 @@ module.exports = async function ({
     debuggingInfoArr.getInstance().append(`endLinePatt: ${endLinePatt}`)
   )
 
-  const resultLines = replace({
-    srcFileName,
-    srcFileLines,
-    csvTbl,
-    templateLValue,
-    templateRValue,
-    excludeRegValue,
-    startLinePatt,
-    endLinePatt
-  })
+  let resultLines = []
+  try {
+    resultLines = replace({
+      srcFileName,
+      srcFileLines,
+      csvTbl,
+      templateLValue,
+      templateRValue,
+      excludeRegValue,
+      startLinePatt,
+      endLinePatt
+    })
+  } catch (err) {
+    if (err instanceof InvalidRightReferenceError) {
+      console.log(chalk.red(err))
+    } else if (err instanceof InvalidLeftReferenceError) {
+      console.log(chalk.red(err))
+    } else if (err instanceof CreatingReplacingObjError) {
+      console.log(chalk.red(err))
+    } else {
+      console.log(err)
+    }
+    return
+  }
 
   if (resultLines === -1) return
 

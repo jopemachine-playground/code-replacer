@@ -4,6 +4,9 @@ const path = require('path')
 const chalk = require('chalk')
 const inquirer = require('inquirer')
 const inquirerFileTreeSelection = require('inquirer-file-tree-selection-prompt')
+const STRING_CONSTANT = require('./constant').cliSelectorString
+const { TEMPLATE_SPLITER, CLI_SELCTOR_MAX_DISPLAYING_LOG } = require('./constant')
+
 inquirer.registerPrompt('file-tree-selection', inquirerFileTreeSelection)
 
 const fetchLog = ({ keyName }) => {
@@ -11,20 +14,13 @@ const fetchLog = ({ keyName }) => {
   const usageLogJson = require('./usageLog.json')
 
   let displayCnt = 0
-  const maxDisplayCnt = 5
+  const maxDisplayCnt = CLI_SELCTOR_MAX_DISPLAYING_LOG
   for (const usageLogKey of Object.keys(usageLogJson)) {
     usageLogJson[usageLogKey][keyName] && (displayCnt++ < maxDisplayCnt) &&
     logs.push(usageLogJson[usageLogKey][keyName])
   }
 
   return logs
-}
-
-const STRING_CONSTANT = {
-  FILE_DIR: chalk.yellow('Choose from file tree'),
-  TYPE_INPUT: chalk.yellow('Type input'),
-  ENTER_TEMPLATE: chalk.yellow('Enter template'),
-  ENTER_EXCLUDE_KEY: chalk.yellow('Enter excludeKey')
 }
 
 const receiveCSVOption = async () => {
@@ -93,31 +89,61 @@ const receiveCSVOption = async () => {
 }
 
 const receiveSrcOption = async () => {
+  const srcUsageLogs = fetchLog({ keyName: 'src' })
   let srcFilePath = -1
   await inquirer
     .prompt([
       {
-        type: 'file-tree-selection',
-        name: 'file',
-        message: chalk.dim('Choose src file'),
-        transformer: (input) => {
-          const name = input.split(path.sep).pop()
-          if (name[0] === '.') {
-            return chalk.grey(name)
-          }
-          return name
-        }
+        type: 'list',
+        name: 'src',
+        message: chalk.dim('Choose src file by below options'),
+        choices: [
+          ...srcUsageLogs,
+          STRING_CONSTANT.TYPE_INPUT,
+          STRING_CONSTANT.FILE_DIR
+        ]
+      }]).then(async (srcOpt) => {
+      if (srcOpt.src === STRING_CONSTANT.FILE_DIR) {
+        await inquirer
+          .prompt([
+            {
+              type: 'file-tree-selection',
+              name: 'file',
+              message: chalk.dim('Choose src file'),
+              transformer: (input) => {
+                const name = input.split(path.sep).pop()
+                if (name[0] === '.') {
+                  return chalk.grey(name)
+                }
+                return name
+              }
+            }
+          ]).then((fileSelectionOutput) => {
+            srcFilePath = fileSelectionOutput.file
+          })
+      } else if (srcOpt.src === STRING_CONSTANT.TYPE_INPUT) {
+        await inquirer
+          .prompt([
+            {
+              type: 'input',
+              name: 'srcManual',
+              message: chalk.dim("Enter src file's path"),
+              validate: (input) => {
+                return input.includes(TEMPLATE_SPLITER)
+              }
+            }
+          ]).then(async (srcManualOutput) => {
+            srcFilePath = srcManualOutput.srcManual
+          })
+      } else {
+        srcFilePath = srcOpt.src
       }
-    ])
-    .then((fileSelectionOutput) => {
-      srcFilePath = fileSelectionOutput.file
     })
   return srcFilePath
 }
 
 const receiveTemplateOption = async () => {
   let template = -1
-
   const templateUsageLogs = fetchLog({ keyName: 'template' })
 
   await inquirer
@@ -150,7 +176,7 @@ const receiveTemplateOption = async () => {
                   name: 'templateManual',
                   message: chalk.dim('Enter template value'),
                   validate: (input) => {
-                    return input.includes('->')
+                    return input.includes(TEMPLATE_SPLITER)
                   }
                 }
               ]).then(async (templateManualOutput) => {

@@ -1,6 +1,7 @@
 const matchAll = require('./matchAll')
 const { replaceAll } = require('./util')
 const optionManager = require('./optionManager')
+const { InvalidRightReferenceError, ERROR_CONSTANT } = require('./error')
 
 const handleSpecialCharacter = (str) => {
   // TODO: Need to handle more special characters here
@@ -42,7 +43,27 @@ const changeTemplateStringToGroupKeys = (string, hasEscaped) => {
   return string
 }
 
-module.exports = (templateLValue) => {
+const handleTemplateRValue = ({ csvTbl, csvLineIdx, templateRValue }) => {
+  let value = templateRValue
+  const findCSVColumnVariableReg = new RegExp(/\$\{(?<columnName>[\d\w]*)\}/)
+  const csvColumnVars = matchAll(templateRValue, findCSVColumnVariableReg)
+  for (const csvColumnVar of csvColumnVars) {
+    const columnName = csvColumnVar.groups.columnName
+    if (!csvTbl[0][columnName]) {
+      throw new InvalidRightReferenceError(ERROR_CONSTANT.WRONG_COLUMN_R_Template)
+    }
+
+    value = replaceAll(
+      value,
+      `\${${columnName}}`,
+      csvTbl[csvLineIdx][columnName]
+    )
+  }
+
+  return value
+}
+
+const handleTemplateLValue = (templateLValue) => {
   const isReg = optionManager.getInstance()['no-escape']
   if (isReg) {
     return changeTemplateStringToGroupKeys(templateLValue, false)
@@ -52,4 +73,9 @@ module.exports = (templateLValue) => {
       true
     )
   }
+}
+
+module.exports = {
+  handleTemplateLValue,
+  handleTemplateRValue
 }
