@@ -1,5 +1,6 @@
 const matchAll = require('./matchAll')
 const { replaceAll } = require('./util')
+const optionManager = require('./optionManager')
 
 handleSpecialCharacter = (str) => {
   // TODO: Need to handle more special characters here
@@ -41,7 +42,8 @@ changeTemplateStringToGroupKeys = (string, hasEscaped) => {
   return string
 }
 
-module.exports = (isReg, templateLValue) => {
+module.exports = (templateLValue) => {
+  const isReg = optionManager.getInstance()['no-escape']
   if (isReg) {
     return changeTemplateStringToGroupKeys(templateLValue, false)
   } else {

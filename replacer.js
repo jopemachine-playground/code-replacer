@@ -75,18 +75,19 @@ applyCSVTable = ({
       let value = templateRValue
 
       for (const columnName of columnNames) {
+        const trimmedColumnName = columnName.trim()
         key = replaceAll(
           key,
-          `\${${columnName}}`,
+          `\${${trimmedColumnName}}`,
           csvRecord[columnName]
         )
-
         value = replaceAll(
           value,
-          `\${${columnName}}`,
+          `\${${trimmedColumnName}}`,
           csvRecord[columnName]
         )
       }
+      // TODO: Should throw error when multiple keys are founded.
       replaceObj[key] = value
     }
   }
@@ -99,13 +100,13 @@ applyCSVTable = ({
   return replaceObj
 }
 
-getMatchingPoints = ({ srcLine, replacingKeys, noEscapeOpt = false }) => {
+getMatchingPoints = ({ srcLine, replacingKeys }) => {
   const matchingPoints = []
   let matchingPtCnt = 0
 
   for (const replacingKey of replacingKeys) {
     // reg of replacingKey is already processed
-    const regKey = handleTemplateLValue(noEscapeOpt, replacingKey)
+    const regKey = handleTemplateLValue(replacingKey)
     const replacingKeyReg = new RegExp(regKey)
     const replacingKeyMatchingPts = matchAll(srcLine, replacingKeyReg)
 
@@ -274,6 +275,7 @@ replace = ({
           let matchingStr = matchingInfo[0]
 
           // TODO: Remove this if statement
+          // TODO: Column Name에 없는 변수를 참조하려고 하면 error throw할 것
           if (templateLValue && templateRValue) {
             // handle grouping value
             const findGroupKeyReg = new RegExp(/\$\[(?<groupKey>[\d\w]*)\]/)
@@ -294,7 +296,7 @@ replace = ({
             for (const groupKeyInfo of groupKeys) {
               const groupKey = groupKeyInfo[1]
               for (let regKey of Object.keys(replaceObj)) {
-                regKey = handleTemplateLValue(noEscapeOpt, regKey)
+                regKey = handleTemplateLValue(regKey)
                 const replacedHandleRValue = value
 
                 const findMatchingStringReg = new RegExp(regKey)

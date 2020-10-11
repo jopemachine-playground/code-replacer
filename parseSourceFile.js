@@ -6,8 +6,9 @@ const {
   funcExecByFlag
 } = require('./util')
 const debuggingInfoArr = require('./debuggingInfo')
+const optionManager = require('./optionManager')
 
-module.exports = ({ srcFile, verboseOpt, debugOpt }) => {
+module.exports = ({ srcFile, verboseOpt }) => {
   const absPath = path.resolve(srcFile)
   const [srcFileName, ...srcFilePathArr] = absPath.split(path.sep).reverse()
   logByFlag(
@@ -15,7 +16,7 @@ module.exports = ({ srcFile, verboseOpt, debugOpt }) => {
     chalk.dim(chalk.italic('** target file: ' + path.resolve(srcFile)))
   )
 
-  funcExecByFlag(debugOpt, () =>
+  funcExecByFlag(optionManager.getInstance().debugOpt, () =>
     debuggingInfoArr.getInstance().append('** target file: ' + path.resolve(srcFile))
   )
 

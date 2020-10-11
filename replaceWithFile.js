@@ -6,6 +6,7 @@ const parseSourceFile = require('./parseSourceFile')
 const parseCSV = require('./csvParse')
 const debuggingInfoArr = require('./debuggingInfo')
 const { replace } = require('./replacer')
+const optionManager = require('./optionManager')
 
 const {
   logByFlag,
@@ -16,17 +17,11 @@ const {
 module.exports = async function ({
   src: srcFile,
   csv: replaceListFile,
-  verbose: verboseOpt,
-  once: onceOpt,
   startLinePatt,
   endLinePatt,
   dst: dstFileName,
-  conf: confOpt,
   template,
-  excludeReg: excludeRegValue,
-  debug: debugOpt,
-  overwrite: overwriteOpt,
-  'no-escape': noEscapeOpt
+  excludeReg: excludeRegValue
 }) {
   let templateLValue, templateRValue
   if (template) {
@@ -36,26 +31,22 @@ module.exports = async function ({
   }
 
   const { srcFileLines, srcFileName, srcFilePath } = parseSourceFile({
-    srcFile,
-    verboseOpt,
-    debugOpt
+    srcFile
   })
 
   const csvTbl = await parseCSV({
     replaceListFile,
     srcFileName,
     templateLValue,
-    templateRValue,
-    verboseOpt,
-    debugOpt
+    templateRValue
   })
 
   if (csvTbl === -1) return
 
-  funcExecByFlag(debugOpt, () =>
+  funcExecByFlag(optionManager.getInstance().debugOpt, () =>
     debuggingInfoArr.getInstance().append(`startLinePatt: ${startLinePatt}`)
   )
-  funcExecByFlag(debugOpt, () =>
+  funcExecByFlag(optionManager.getInstance().debugOpt, () =>
     debuggingInfoArr.getInstance().append(`endLinePatt: ${endLinePatt}`)
   )
 
@@ -67,16 +58,12 @@ module.exports = async function ({
     templateRValue,
     excludeRegValue,
     startLinePatt,
-    endLinePatt,
-    verboseOpt,
-    confOpt,
-    onceOpt,
-    noEscapeOpt
+    endLinePatt
   })
 
   if (resultLines === -1) return
 
-  const dstFilePath = overwriteOpt
+  const dstFilePath = optionManager.getInstance().overwriteOpt
     ? srcFile
     : dstFileName
       ? path.resolve(dstFileName)
@@ -92,9 +79,9 @@ module.exports = async function ({
     borderStyle: 'double'
   })
 
-  logByFlag(verboseOpt, debugInfoStr)
+  logByFlag(optionManager.getInstance().verboseOpt, debugInfoStr)
 
-  funcExecByFlag(debugOpt, () =>
+  funcExecByFlag(optionManager.getInstance().debugOpt, () =>
     fs.appendFileSync('DEBUG_INFO', '\ufeff' + debugInfoStr, {
       encoding: 'utf8'
     })

@@ -4,14 +4,13 @@ const chalk = require('chalk')
 const csv = require('csv-parser')
 const debuggingInfoArr = require('./debuggingInfo')
 const { findReplaceListFile, funcExecByFlag } = require('./util')
+const optionManager = require('./optionManager')
 
 module.exports = async ({
   replaceListFile,
   srcFileName,
   templateLValue,
-  templateRValue,
-  verboseOpt,
-  debugOpt
+  templateRValue
 }) => {
   let csvTbl = []
 
@@ -21,7 +20,7 @@ module.exports = async ({
     replaceListFile = findReplaceListFile(replaceListFile, srcFileName)
   }
 
-  funcExecByFlag(!verboseOpt && replaceListFile !== -1, () =>
+  funcExecByFlag(!optionManager.getInstance().verboseOpt && replaceListFile !== -1, () =>
     console.log(
       chalk.dim(
         chalk.italic('** replaceList file: ' + path.resolve(replaceListFile))
@@ -29,7 +28,7 @@ module.exports = async ({
     )
   )
 
-  funcExecByFlag(debugOpt && replaceListFile !== -1, () =>
+  funcExecByFlag(optionManager.getInstance().debugOpt && replaceListFile !== -1, () =>
     debuggingInfoArr.getInstance().append(
       '** replaceList file: ' + path.resolve(replaceListFile)
     )

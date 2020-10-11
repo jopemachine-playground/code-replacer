@@ -3,6 +3,7 @@ DEBUG_INFO
 .DS_Store
 target/
 usageLog.json
+.usageLog.json
 
 # Logs
 logs

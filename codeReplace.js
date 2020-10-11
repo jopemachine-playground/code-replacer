@@ -1,5 +1,15 @@
 #!/usr/bin/env node
 
+const handleOptions = (commandArguments) => {
+  const optionManager = require('./optionManager')
+  optionManager.getInstance().verbose = commandArguments.verbose
+  optionManager.getInstance().once = commandArguments.once
+  optionManager.getInstance().conf = commandArguments.conf
+  optionManager.getInstance().debug = commandArguments.debug
+  optionManager.getInstance().overwrite = commandArguments.overwrite
+  optionManager.getInstance()['no-escape'] = commandArguments.noEscape
+}
+
 module.exports = (commandArguments) => {
   const fs = require('fs')
   const replaceWithFileExec = require('./replaceWithFile')
@@ -7,6 +17,8 @@ module.exports = (commandArguments) => {
   const { err } = require('./util')
   const usageLog = require('./usageLog.json')
   const _ = require('lodash')
+
+  handleOptions(commandArguments)
 
   if (
     commandArguments.dir &&
