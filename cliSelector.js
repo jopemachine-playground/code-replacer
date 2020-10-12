@@ -6,6 +6,7 @@ const inquirer = require('inquirer')
 const inquirerFileTreeSelection = require('inquirer-file-tree-selection-prompt')
 const STRING_CONSTANT = require('./constant').cliSelectorString
 const { TEMPLATE_SPLITER, CLI_SELCTOR_MAX_DISPLAYING_LOG } = require('./constant')
+const fs = require('fs')
 
 inquirer.registerPrompt('file-tree-selection', inquirerFileTreeSelection)
 
@@ -62,6 +63,9 @@ const receiveCSVOption = async () => {
                       return chalk.grey(name)
                     }
                     return name
+                  },
+                  validate: (input) => {
+                    return fs.lstatSync(input).isFile()
                   }
                 }
               ])
@@ -116,6 +120,9 @@ const receiveSrcOption = async () => {
                   return chalk.grey(name)
                 }
                 return name
+              },
+              validate: (input) => {
+                return fs.lstatSync(input).isFile()
               }
             }
           ]).then((fileSelectionOutput) => {
@@ -129,7 +136,7 @@ const receiveSrcOption = async () => {
               name: 'srcManual',
               message: chalk.dim("Enter src file's path"),
               validate: (input) => {
-                return input.includes(TEMPLATE_SPLITER)
+                return fs.lstatSync(input).isFile()
               }
             }
           ]).then(async (srcManualOutput) => {
@@ -196,7 +203,9 @@ const receiveFlagOptions = async () => {
     overwrite,
     once,
     conf,
-    noEscape
+    noEscape,
+    startLinePatt,
+    endLinePatt
 
   await inquirer
     .prompt([
@@ -242,12 +251,31 @@ const receiveFlagOptions = async () => {
       conf = answer.flags.includes('conf')
       noEscape = answer.flags.includes('no-escape')
 
-      // TODO: Write below to handle startLinePatt, endLinePatt
       if (answer.flags.includes('startLinePatt')) {
-
+        await inquirer
+          .prompt([
+            {
+              type: 'input',
+              name: 'startLinePatt',
+              message: chalk.dim('Please enter startLinePatt')
+            }
+          ])
+          .then((startLinePattOutput) => {
+            startLinePatt = startLinePattOutput.startLinePatt
+          })
       }
       if (answer.flags.includes('endLinePatt')) {
-
+        await inquirer
+          .prompt([
+            {
+              type: 'input',
+              name: 'endLinePatt',
+              message: chalk.dim('Please enter endLinePatt')
+            }
+          ])
+          .then((endLinePattOutput) => {
+            endLinePatt = endLinePattOutput.endLinePatt
+          })
       }
     })
 
@@ -257,7 +285,9 @@ const receiveFlagOptions = async () => {
     overwrite,
     once,
     conf,
-    noEscape
+    noEscape,
+    startLinePatt,
+    endLinePatt
   }
 }
 
@@ -316,12 +346,23 @@ module.exports = async (input, flags) => {
       csv !== -1 && (flags.csv = csv)
       template !== -1 && (flags.template = template)
       excludeReg !== -1 && (flags.excludeReg = excludeReg)
-      const { verbose, debug, overwrite, once, conf, noEscape } = await receiveFlagOptions()
+      const {
+        verbose,
+        debug,
+        overwrite,
+        once,
+        conf,
+        noEscape,
+        startLinePatt,
+        endLinePatt
+      } = await receiveFlagOptions()
       flags.verboseOpt = verbose
       flags.debugOpt = debug
       flags.overwriteOpt = overwrite
       flags.onceOpt = once
       flags.confOpt = conf
+      flags.startLinePatt = startLinePatt
+      flags.endLinePatt = endLinePatt
       flags['no-escape'] = noEscape
       console.log()
       codeReplace(flags)
