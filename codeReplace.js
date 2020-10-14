@@ -8,12 +8,12 @@ const { HELP_STRING } = require('./constant')
 
 const handleOptions = (commandArguments) => {
   const optionManager = require('./optionManager')
-  optionManager.getInstance().verboseOpt = commandArguments.verbose
-  optionManager.getInstance().onceOpt = commandArguments.once
-  optionManager.getInstance().confOpt = commandArguments.conf
-  optionManager.getInstance().debugOpt = commandArguments.debug
-  optionManager.getInstance().overwriteOpt = commandArguments.overwrite
-  optionManager.getInstance()['no-escape'] = commandArguments.noEscape
+  optionManager.getInstance().verboseOpt = commandArguments.verboseOpt
+  optionManager.getInstance().onceOpt = commandArguments.onceOpt
+  optionManager.getInstance().confOpt = commandArguments.confOpt
+  optionManager.getInstance().debugOpt = commandArguments.debugOpt
+  optionManager.getInstance().overwriteOpt = commandArguments.overwriteOpt
+  optionManager.getInstance()['no-escape'] = commandArguments['no-escape']
 }
 
 module.exports = (commandArguments) => {

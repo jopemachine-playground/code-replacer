@@ -95,25 +95,79 @@ const receiveCSVOption = async () => {
 const receiveSrcOption = async () => {
   const srcUsageLogs = fetchLog({ keyName: 'src' })
   let srcFilePath = -1
+  let dir = -1
+  let ext = -1
+
   await inquirer
     .prompt([
       {
         type: 'list',
-        name: 'src',
-        message: chalk.dim('Choose src file by below options'),
+        name: 'srcOpt',
+        message: chalk.dim('Select Src option.'),
         choices: [
-          ...srcUsageLogs,
-          STRING_CONSTANT.TYPE_INPUT,
-          STRING_CONSTANT.FILE_DIR
+          STRING_CONSTANT.SELECT_SRC,
+          STRING_CONSTANT.SELECT_DIR
         ]
-      }]).then(async (srcOpt) => {
-      if (srcOpt.src === STRING_CONSTANT.FILE_DIR) {
+      }]).then(async (isSrcOrDirOpt) => {
+      if (isSrcOrDirOpt.srcOpt === STRING_CONSTANT.SELECT_SRC) {
+        await inquirer
+          .prompt([
+            {
+              type: 'list',
+              name: 'src',
+              message: chalk.dim('Choose src file by below options'),
+              choices: [
+                ...srcUsageLogs,
+                STRING_CONSTANT.TYPE_INPUT,
+                STRING_CONSTANT.FILE_DIR
+              ]
+            }]).then(async (srcOpt) => {
+            if (srcOpt.src === STRING_CONSTANT.FILE_DIR) {
+              await inquirer
+                .prompt([
+                  {
+                    type: 'file-tree-selection',
+                    name: 'file',
+                    message: chalk.dim('Choose src file'),
+                    transformer: (input) => {
+                      const name = input.split(path.sep).pop()
+                      if (name[0] === '.') {
+                        return chalk.grey(name)
+                      }
+                      return name
+                    },
+                    validate: (input) => {
+                      return fs.lstatSync(input).isFile()
+                    }
+                  }
+                ]).then((fileSelectionOutput) => {
+                  srcFilePath = fileSelectionOutput.file
+                })
+            } else if (srcOpt.src === STRING_CONSTANT.TYPE_INPUT) {
+              await inquirer
+                .prompt([
+                  {
+                    type: 'input',
+                    name: 'srcManual',
+                    message: chalk.dim("Enter src file's path"),
+                    validate: (input) => {
+                      return fs.lstatSync(input).isFile()
+                    }
+                  }
+                ]).then(async (srcManualOutput) => {
+                  srcFilePath = srcManualOutput.srcManual
+                })
+            } else {
+              srcFilePath = srcOpt.src
+            }
+          })
+      } else if (isSrcOrDirOpt.srcOpt === STRING_CONSTANT.SELECT_DIR) {
         await inquirer
           .prompt([
             {
               type: 'file-tree-selection',
-              name: 'file',
-              message: chalk.dim('Choose src file'),
+              name: 'dir',
+              message: chalk.dim('Choose a directory you want to target'),
               transformer: (input) => {
                 const name = input.split(path.sep).pop()
                 if (name[0] === '.') {
@@ -122,31 +176,57 @@ const receiveSrcOption = async () => {
                 return name
               },
               validate: (input) => {
-                return fs.lstatSync(input).isFile()
+                return fs.lstatSync(input).isDirectory()
               }
             }
-          ]).then((fileSelectionOutput) => {
-            srcFilePath = fileSelectionOutput.file
+          ]).then(async (dirOpt) => {
+            dir = dirOpt.dir
+            await inquirer
+              .prompt([
+                {
+                  type: 'list',
+                  name: 'methodToTarget',
+                  message: chalk.dim('Select how you want to specify the target file.'),
+                  choices: [
+                    STRING_CONSTANT.SELECT_BY_EXT,
+                    STRING_CONSTANT.SELECT_BY_FILENAME
+                  ]
+                }]).then(async (opt) => {
+                if (opt.methodToTarget === STRING_CONSTANT.SELECT_BY_EXT) {
+                  await inquirer
+                    .prompt([
+                      {
+                        type: 'input',
+                        name: 'ext',
+                        message: chalk.dim("Enter src file's path"),
+                        validate: (input) => {
+                          return fs.lstatSync(input).isFile()
+                        }
+                      }
+                    ]).then(async (select) => {
+                      ext = select.ext
+                    })
+                } else if (opt.methodToTarget === STRING_CONSTANT.SELECT_BY_FILENAME) {
+                  await inquirer
+                    .prompt([
+                      {
+                        type: 'input',
+                        name: 'fileName',
+                        message: chalk.dim("Enter file name's regexp")
+                      }
+                    ]).then(async (select) => {
+                      srcFilePath = select.fileName
+                    })
+                }
+              })
           })
-      } else if (srcOpt.src === STRING_CONSTANT.TYPE_INPUT) {
-        await inquirer
-          .prompt([
-            {
-              type: 'input',
-              name: 'srcManual',
-              message: chalk.dim("Enter src file's path"),
-              validate: (input) => {
-                return fs.lstatSync(input).isFile()
-              }
-            }
-          ]).then(async (srcManualOutput) => {
-            srcFilePath = srcManualOutput.srcManual
-          })
-      } else {
-        srcFilePath = srcOpt.src
       }
     })
-  return srcFilePath
+  return {
+    srcFilePath,
+    dir,
+    ext
+  }
 }
 
 const receiveTemplateOption = async () => {
@@ -338,11 +418,13 @@ module.exports = async (input, flags) => {
     case 'sel':
     case 'select': {
       const flags = {}
-      const src = await receiveSrcOption()
+      const { srcFilePath: src, ext, dir } = await receiveSrcOption()
       const csv = await receiveCSVOption()
       const template = await receiveTemplateOption()
       const excludeReg = await receiveExcludeRegOption()
       src !== -1 && (flags.src = src)
+      ext !== -1 && (flags.ext = ext)
+      dir !== -1 && (flags.dir = dir)
       csv !== -1 && (flags.csv = csv)
       template !== -1 && (flags.template = template)
       excludeReg !== -1 && (flags.excludeReg = excludeReg)

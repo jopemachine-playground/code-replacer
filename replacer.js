@@ -340,7 +340,11 @@ const replace = ({
 
           if (yn(input) === false) {
             // skip this word. choose other candidate if you have a shorter string to replace.
-            logByFlag(confOpt || verboseOpt, chalk.red('\nskip..'))
+            logByFlag(
+              optionManager.getInstance().confOpt ||
+                optionManager.getInstance().verboseOpt,
+              chalk.red('\nskip..')
+            )
           } else if (input.startsWith('s')) {
             // skip this file.
             console.log(chalk.red(`\nskip '${srcFileName}'..`))

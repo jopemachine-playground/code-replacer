@@ -3,10 +3,14 @@ const chalk = require('chalk')
 module.exports = {
   TEMPLATE_SPLITER: '->',
   cliSelectorString: {
-    FILE_DIR: chalk.yellow('Choose from file tree'),
-    TYPE_INPUT: chalk.yellow('Type input'),
-    ENTER_TEMPLATE: chalk.yellow('Enter template'),
-    ENTER_EXCLUDE_KEY: chalk.yellow('Enter excludeKey')
+    FILE_DIR: chalk.yellow('Choose from file tree.'),
+    TYPE_INPUT: chalk.yellow('Type input.'),
+    ENTER_TEMPLATE: chalk.yellow('Enter template.'),
+    ENTER_EXCLUDE_KEY: chalk.yellow('Enter excludeKey.'),
+    SELECT_SRC: chalk.yellow('Select one source file.'),
+    SELECT_DIR: chalk.yellow('Select multiple files in target directory.'),
+    SELECT_BY_EXT: chalk.yellow('Select files by extension of files.'),
+    SELECT_BY_FILENAME: chalk.yellow('Select files by file name.')
   },
   CLI_SELCTOR_MAX_DISPLAYING_LOG: 5,
   HELP_STRING:
