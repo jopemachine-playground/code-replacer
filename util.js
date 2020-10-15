@@ -87,14 +87,14 @@ ${postLine}
   },
 
   findReplaceListFile: function (rlistDir, srcFileName) {
-    if (fs.existsSync(`${rlistDir}${path.sep}rlist_${srcFileName}`)) {
-      return `${rlistDir}${path.sep}rlist_${srcFileName}`
+    if (fs.existsSync(`${rlistDir}${path.sep}rlist_${srcFileName}.csv`)) {
+      return `${rlistDir}${path.sep}rlist_${srcFileName}.csv`
     } else if (
-      fs.existsSync(`${rlistDir}${path.sep}rlist_${srcFileName.split('.')[0]}`)
+      fs.existsSync(`${rlistDir}${path.sep}rlist_${srcFileName.split('.')[0]}.csv`)
     ) {
-      return `${rlistDir}${path.sep}rlist_${srcFileName.split('.')[0]}`
-    } else if (fs.existsSync(`.${path.sep}rlist`)) {
-      return `.${path.sep}rlist`
+      return `${rlistDir}${path.sep}rlist_${srcFileName.split('.')[0]}.csv`
+    } else if (fs.existsSync(`.${path.sep}rlist.csv`)) {
+      return `.${path.sep}rlist.csv`
     } else {
       return -1
     }

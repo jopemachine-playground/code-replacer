@@ -62,7 +62,7 @@ So the `template` value we need to forward is as follows.
 So if you type below command into the console,
 
 ```
-code-replacer --src='example/example_1/msgAlert.js' --csv='example/example_1/rlist' --template='"${source}"->i18n.t("${value}")'
+code-replacer --src='example/example_1/msgAlert.js' --csv='example/example_1/rlist.csv' --template='"${source}"->i18n.t("${value}")'
 ```
 
 Then you can get to below file.
@@ -121,13 +121,13 @@ import ghi from "ghi";
 Multiple column data from the csv file are available in the following ways.
 
 ```
-code-replacer --src='example/example_3/index.js' --csv='example/example_3/rlist' --template='${source}${index}-><div id="${id}" class="${class}" />'
+code-replacer --src='example/example_3/index.js' --csv='example/example_3/rlist.csv' --template='${source}${index}-><div id="${id}" class="${class}" />'
 ```
 
 ### Example 4, use csv's multiple value 
 
 ```
-code-replacer --src='example/example_4/index.js' --csv='example/example_4/rlist' --template='$[key1] ${source}${index} $[key2]->$[key2] ${index}${source} $[key1]'
+code-replacer --src='example/example_4/index.js' --csv='example/example_4/rlist.csv' --template='$[key1] ${source}${index} $[key2]->$[key2] ${index}${source} $[key1]'
 ```
 
 ### Example 5, use no-escape option
@@ -186,9 +186,9 @@ target the files corresponding to the name in the target directory.
 type: `string`
 
 specify csv file,
-default value is `./rlist`
+default value is `./rlist.csv`
 
-And when you specify `dir` option, name `./rlist_{fileName}`, to apply different rlist files per file.
+And when you specify `dir` option, name `./rlist_{fileName}.csv`, to apply different rlist files per file.
 
 #### --dst, -dst
 type: `string`
