@@ -27,6 +27,11 @@
     "code-replace",
     "regex-match"
   ],
+  "files": [
+    "*.js",
+    "usageLog.json",
+    "LICENSE"
+  ],
   "devDependencies": {
     "eslint": "^7.10.0",
     "eslint-config-standard": "^14.1.1",

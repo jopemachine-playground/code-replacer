@@ -34,7 +34,7 @@ module.exports = (commandArguments) => {
     }
 
     fs.writeFileSync(
-      'usageLog.json',
+      `${__dirname}${path.sep}usageLog.json`,
       '\ufeff' + JSON.stringify(usageLog, null, 2),
       { encoding: 'utf8' }
     )
