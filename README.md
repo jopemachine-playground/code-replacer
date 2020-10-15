@@ -234,12 +234,6 @@ type: `string`
 specify template.
 see example for details.
 
-#### --sep, -s
-type: `string`
-
-specify rlist's spliter. 
-default value is '='
-
 #### --overwrite, -o
 type: `boolean`
 
