@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 const fs = require('fs')
+const path = require('path')
 const replaceWithFileExec = require('./replaceWithFile')
 const replaceWithDirExec = require('./replaceWithDir')
 const usageLog = require('./usageLog.json')
