@@ -438,11 +438,11 @@ module.exports = async (input, flags) => {
         startLinePatt,
         endLinePatt
       } = await receiveFlagOptions()
-      flags.verboseOpt = verbose
-      flags.debugOpt = debug
-      flags.overwriteOpt = overwrite
-      flags.onceOpt = once
-      flags.confOpt = conf
+      flags.verbose = verbose
+      flags.debug = debug
+      flags.overwrite = overwrite
+      flags.once = once
+      flags.conf = conf
       flags.startLinePatt = startLinePatt
       flags.endLinePatt = endLinePatt
       flags['no-escape'] = noEscape

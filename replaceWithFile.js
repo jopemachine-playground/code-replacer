@@ -64,7 +64,16 @@ module.exports = async function ({
       endLinePatt
     })
   } catch (err) {
-    console.log(chalk.red(err))
+    switch (typeof err) {
+      case 'InvalidLeftReferenceError':
+      case 'InvalidLeftTemplateError':
+      case 'InvalidRightReferenceError':
+      case 'CreatingReplacingObjError':
+        console.log(chalk.red(err))
+        break
+      default:
+        throw (err)
+    }
     return
   }
 
