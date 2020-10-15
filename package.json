@@ -1,8 +1,8 @@
 {
   "name": "code-replacer",
-  "version": "0.0.1",
+  "version": "0.0.12",
   "bin": {
-    "code-replacer": "./cliEntry.js"
+    "code-replacer": "./index.js"
   },
   "description": "Replace codes line by line with regex for target files",
   "main": "index.js",
