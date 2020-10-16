@@ -36,7 +36,9 @@ Duplicate key, value: ${str}
 
 This might happens why..
 1. You might use regular expression for the left template value, and there are more than two values matched to that regexp.
-2. csv column Key is not replaced because is not valid.`,
+2. csv column Key is not replaced because is not valid.
+3. there are more than one \${key} value in the left side of the template in csv.
+`,
 
   WRONG_COLUMN_R_Template: `
 There are some columnName that does not exist in the right value of the template.

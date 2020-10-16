@@ -1,4 +1,4 @@
-const { applyCSVTable } = require("../replacer");
+const { applyCSVTable } = require("../../replacer");
 
 describe("Apply CSV Table", () => {
   test("Column variables should be appropriately replaced.", () => {

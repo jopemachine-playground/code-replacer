@@ -1,5 +1,5 @@
-const { handleTemplateLValue } = require("../template");
-const optionManager = require('../optionManager');
+const { handleTemplateLValue } = require("../../template");
+const optionManager = require('../../optionManager');
 
 describe("handleTemplateLValue", () => {
   beforeAll(() => {

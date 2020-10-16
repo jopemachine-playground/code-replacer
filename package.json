@@ -50,6 +50,9 @@
   },
   "jest": {
     "verbose": true,
-    "testMatch": ["**/test/*.test.js"]
+    "testMatch": [
+      "**/test/**.test.js",
+      "**/test/**/**.test.js"
+    ]
   }
 }

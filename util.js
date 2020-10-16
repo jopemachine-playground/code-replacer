@@ -2,8 +2,25 @@ const chalk = require('chalk')
 const fs = require('fs')
 const _ = require('lodash')
 const path = require('path')
+const csv = require('csv-parser')
 
 module.exports = {
+  readCsv: async function (csvFilePath) {
+    const csvResult = []
+    return new Promise((resolve, reject) => {
+      try {
+        fs.createReadStream(csvFilePath)
+          .pipe(csv())
+          .on('data', (data) => csvResult.push(data))
+          .on('end', () => {
+            resolve(csvResult)
+          })
+      } catch (e) {
+        reject(e)
+      }
+    })
+  },
+
   funcExecByFlag: function (flag, funcExecIfFlagIsTrue, funcExecIfFlagIsFalse) {
     return _.cond([
       [_.matches({ flag: true }), () => funcExecIfFlagIsTrue()],

@@ -1,5 +1,5 @@
-const { getMatchingPoints } = require("../replacer");
-const optionManager = require('../optionManager');
+const { getMatchingPoints } = require("../../replacer");
+const optionManager = require('../../optionManager');
 
 // Pre condition: Replacing keys are sorted by length.
 describe("Should be matched", () => {

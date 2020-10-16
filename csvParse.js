@@ -1,7 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 const chalk = require('chalk')
-const csv = require('csv-parser')
+const { readCsv } = require('./util')
 const debuggingInfoArr = require('./debuggingInfo')
 const { findReplaceListFile, funcExecByFlag } = require('./util')
 const optionManager = require('./optionManager')
@@ -15,7 +15,7 @@ module.exports = async ({
   let csvTbl = []
 
   if (!replaceListFile) {
-    replaceListFile = findReplaceListFile(`.${path.sep}rlist`, srcFileName)
+    replaceListFile = findReplaceListFile(`.${path.sep}rlist.csv`, srcFileName)
   } else if (fs.lstatSync(replaceListFile).isDirectory()) {
     replaceListFile = findReplaceListFile(replaceListFile, srcFileName)
   }
@@ -46,20 +46,4 @@ module.exports = async ({
   }
 
   return csvTbl
-}
-
-const readCsv = async (csvFilePath) => {
-  const csvResult = []
-  return new Promise((resolve, reject) => {
-    try {
-      fs.createReadStream(csvFilePath)
-        .pipe(csv())
-        .on('data', (data) => csvResult.push(data))
-        .on('end', () => {
-          resolve(csvResult)
-        })
-    } catch (e) {
-      reject(e)
-    }
-  })
 }

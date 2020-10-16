@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const meow = require('meow')
+const path = require('path')
 require('dotenv').config({ path: `${__dirname}${path.sep}.env` })
 const _ = require('lodash')
 const cliSelector = require('./cliSelector')
