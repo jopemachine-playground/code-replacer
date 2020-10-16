@@ -1,29 +1,26 @@
+const { assert } = require('console');
 const path = require('path');
 const parseSourceFile = require('../../../parseSourceFile');
-const { replace } = require("../../../replacer");
 const { readCsv } = require('../../../util')
+const ReplacerTest = require('../../util')
 
 describe("Example 1 test", () => {
   test("Example 1 replacer test.", async () => {
-    const templateLValue = "\"${source}\"";
-    const templateRValue = 'i18n.t("${value}")';
-    const csvTbl = await readCsv(`${__dirname}${path.sep}rlist.csv`);
-
-    const srcFileInfo = parseSourceFile({
-      srcFile :`${__dirname}${path.sep}msgAlert.js`
-    });
-
     const args = {
-      csvTbl,
-      srcFileLines: srcFileInfo.srcFileLines,
+      csvTbl: await readCsv(`${__dirname}${path.sep}rlist.csv`),
+      srcFileLines: (parseSourceFile({srcFile :`${__dirname}${path.sep}msgAlert.js`})).srcFileLines,
       srcFileName: `msgAlert.js`,
-      templateLValue,
-      templateRValue,
+      templateLValue: "\"${source}\"",
+      templateRValue: 'i18n.t("${value}")',
     };
 
-    const resultLines = replace(args);
+    const testPassedOrErrorLine = new ReplacerTest({
+      replaceArgs: args,
+      expectedResult:
+`alert(i18n.t("some_msg"));
+alert(i18n.t("blah_blah"));`
+    }).test()
 
-    expect(resultLines[0]).toBe(`alert(i18n.t("some_msg"));`);
-    expect(resultLines[1]).toBe(`alert(i18n.t("blah_blah"));`);
+    expect(testPassedOrErrorLine).toBe(true);
   });
 });
