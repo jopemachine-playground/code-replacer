@@ -3,20 +3,21 @@ const parseSourceFile = require('../../../parseSourceFile');
 const { readCsv } = require('../../../util')
 const ReplacerTest = require('../../util')
 
-describe("Example 1 test", () => {
-  test("Example 1 replacer test.", async () => {
+describe("Example 3 test", () => {
+  test("Example 3 replacer test.", async () => {
     const args = {
       csvTbl: await readCsv(`${__dirname}${path.sep}rlist.csv`),
-      srcFileLines: (parseSourceFile({ srcFile :`${__dirname}${path.sep}msgAlert.js` })).srcFileLines,
-      templateLValue: "\"${source}\"",
-      templateRValue: 'i18n.t("${value}")',
+      srcFileLines: (parseSourceFile({ srcFile :`${__dirname}${path.sep}index.js` })).srcFileLines,
+      templateLValue: "${source}${index}",
+      templateRValue: '<div id="${id}" class="${class}" />',
     };
 
     const testPassedOrErrorLine = new ReplacerTest({
       replaceArgs: args,
       expectedResult:
-`alert(i18n.t("some_msg"));
-alert(i18n.t("blah_blah"));`
+`<div id="id_1" class="class1" />
+<div id="id_2" class="class2" />
+<div id="id_3" class="class3" />`
     }).test()
 
     expect(testPassedOrErrorLine).toBe(true);

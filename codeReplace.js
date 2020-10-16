@@ -5,7 +5,7 @@ const replaceWithFileExec = require('./replaceWithFile')
 const replaceWithDirExec = require('./replaceWithDir')
 const usageLog = require('./usageLog.json')
 const _ = require('lodash')
-const { HELP_STRING } = require('./constant')
+const { HELP_STRING, MAX_LOG_CNT } = require('./constant')
 
 const handleOptions = (commandArguments) => {
   const optionManager = require('./optionManager')
@@ -29,7 +29,7 @@ module.exports = (commandArguments) => {
     replaceWithFileExec(commandArguments)
     usageLog[new Date().getTime()] = commandArguments
 
-    if (Object.keys(usageLog).length > 10) {
+    if (Object.keys(usageLog).length > MAX_LOG_CNT) {
       const oldest = _.min(Object.keys(usageLog).map(Number))
       delete usageLog[oldest]
     }

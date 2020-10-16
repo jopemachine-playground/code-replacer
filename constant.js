@@ -12,6 +12,7 @@ module.exports = {
     SELECT_BY_EXT: chalk.yellow('Select files by extension of files.'),
     SELECT_BY_FILENAME: chalk.yellow('Select files by file name.')
   },
+  MAX_LOG_CNT: 30,
   CLI_SELCTOR_MAX_DISPLAYING_LOG: 5,
   HELP_STRING:
   `
