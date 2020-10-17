@@ -3,7 +3,7 @@ const parseSourceFile = require('../../../parseSourceFile');
 const { readCsv } = require('../../../util')
 const ReplacerTest = require('../../util')
 
-describe("Example 3 test", () => {
+describe("Example 3, basic csv column key test", () => {
   test("Example 3 replacer test.", async () => {
     const args = {
       csvTbl: await readCsv(`${__dirname}${path.sep}rlist.csv`),

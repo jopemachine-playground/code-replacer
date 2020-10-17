@@ -21,6 +21,8 @@ module.exports = {
     str = module.exports.replaceAll(str, ']', '\\]')
     str = module.exports.replaceAll(str, '|', '\\|')
     str = module.exports.replaceAll(str, '/', '\\/')
+    str = module.exports.replaceAll(str, '+', '\\+')
+    str = module.exports.replaceAll(str, '*', '\\*')
     return str
   },
 

@@ -2,7 +2,7 @@ const path = require('path');
 const parseSourceFile = require('../../../parseSourceFile');
 const ReplacerTest = require('../../util')
 
-describe("Example 2 test", () => {
+describe("Example 2 basic left reference key test", () => {
   test("Example 2 replacer test.", async () => {
     const args = {
       csvTbl: [],

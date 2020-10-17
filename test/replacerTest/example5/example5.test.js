@@ -4,7 +4,7 @@ const { readCsv } = require('../../../util')
 const optionManager = require('../../../optionManager');
 const ReplacerTest = require('../../util')
 
-describe("Example 5 test", () => {
+describe("Example 5, regexp and left reference key, csv column key test", () => {
   beforeAll(() => {
     optionManager.getInstance()['no-escape'] = true;
   })

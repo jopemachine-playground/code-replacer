@@ -4,26 +4,31 @@ const { readCsv } = require('../../../util')
 const optionManager = require('../../../optionManager');
 const ReplacerTest = require('../../util')
 
-describe("Example 6, Left reference key and regexp test", () => {
-  beforeAll(() => {
-    optionManager.getInstance()['no-escape'] = true;
-  })
-
-  test("Example 6 replacer test.", async () => {
+describe("Example 7 test, special character test", () => {
+  test("Example 7 replacer test.", async () => {
     const args = {
-      csvTbl: [],
+      csvTbl: await readCsv(`${__dirname}${path.sep}rlist.csv`),
       srcFileLines: (parseSourceFile({ srcFile :`${__dirname}${path.sep}index.html` })).srcFileLines,
-      templateLValue: '(?<first>[0-9]{3})(?<second>[0-9]{4})(?<third>[0-9]{4})',
-      templateRValue: '$[first]-$[second]-$[third]',
+      templateLValue: '${source}',
+      templateRValue: '${value}',
     };
 
     const testPassedOrErrorLine = new ReplacerTest({
       replaceArgs: args,
       expectedResult:
-`010-1144-3343
-011-1144-3663
-019-1444-3663
-010-1444-3993`
+`hello, world!!
+hello world??
+hello, world..
+hello@, world;;
+hello_world##
+hello(world)))
+hello*world**
+hello&world&&
+hello^world^^
+hello%world%%
+hello+world++
+hello-world-
+hello, world~~`
     }).test()
 
     expect(testPassedOrErrorLine).toBe(true);
