@@ -29,7 +29,7 @@ const handleTemplateRValuesCSVColKey = ({ csvTbl, csvLineIdx, templateRValue }) 
   const findCSVColumnVariableReg = new RegExp(/\$\{(?<columnName>[\d\w]*)\}/)
   const csvColumnVars = matchAll(templateRValue, findCSVColumnVariableReg)
   for (const csvColumnVar of csvColumnVars) {
-    const columnName = csvColumnVar.groups.columnName
+    const columnName = csvColumnVar.groups!.columnName
     if (!csvTbl[0][columnName]) {
       throw new InvalidRightReferenceError(ERROR_CONSTANT.WRONG_COLUMN_R_Template)
     }

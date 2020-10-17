@@ -11,7 +11,7 @@ import { CommandArguments } from './type/commandArgument'
 inquirer.registerPrompt('file-tree-selection', inquirerFileTreeSelection)
 
 const fetchLog = ({ keyName }: { keyName: string }) => {
-  const logs = []
+  const logs: string[] = []
   const usageLogJson = require('../usageLog.json')
 
   let displayCnt = 0

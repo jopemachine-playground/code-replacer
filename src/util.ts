@@ -5,7 +5,7 @@ import path from 'path'
 import csv from 'csv-parser'
 
 export default {
-  handleSpecialCharacter (str) {
+  handleSpecialCharacter (str: string) {
     // TODO: Need to handle more special characters here
     str = this.replaceAll(str, '\\', '\\\\')
     str = this.replaceAll(str, '(', '\\(')
@@ -26,13 +26,13 @@ export default {
     return str
   },
 
-  readCsv: async function (csvFilePath) {
-    const csvResult = []
+  readCsv: async function (csvFilePath: string) {
+    const csvResult: Object[] = []
     return new Promise((resolve, reject) => {
       try {
         fs.createReadStream(csvFilePath)
           .pipe(csv())
-          .on('data', (data) => csvResult.push(data))
+          .on('data', (data: any) => csvResult.push(data))
           .on('end', () => {
             resolve(csvResult)
           })
@@ -42,7 +42,7 @@ export default {
     })
   },
 
-  funcExecByFlag: function (flag, funcExecIfFlagIsTrue) {
+  funcExecByFlag: function (flag: boolean, funcExecIfFlagIsTrue: Function) {
     return flag && funcExecIfFlagIsTrue()
   },
 
@@ -62,7 +62,7 @@ export default {
     })
   },
 
-  logByFlag: function (flag, logIfFlagIsTrue) {
+  logByFlag: function (flag: boolean, logIfFlagIsTrue: string) {
     return flag && console.log(logIfFlagIsTrue)
   },
 
@@ -75,10 +75,10 @@ export default {
   },
 
   createHighlightedLine: function (
-    srcLine,
-    previousMatchingIndex,
-    matchingWord,
-    afterMatchingIndex
+    srcLine: string,
+    previousMatchingIndex: number,
+    matchingWord: string,
+    afterMatchingIndex: number
   ) {
     return (
       srcLine.substr(0, previousMatchingIndex) +
@@ -87,7 +87,7 @@ export default {
     ).trim()
   },
 
-  getProperties: function (object) {
+  getProperties: function (object: Object) {
     let result = ''
     for (const key of Object.keys(object)) {
       result += `${key}=${object[key]}
@@ -97,12 +97,12 @@ export default {
   },
 
   printLines: function (
-    srcFileName,
-    lineIdx,
-    sourceStr,
-    replacedStr,
-    srcFileLines,
-    resultLines
+    srcFileName: string,
+    lineIdx: number,
+    sourceStr: string,
+    replacedStr: string,
+    srcFileLines: string[],
+    resultLines: string[]
   ) {
     let previousLine = ''; let postLine = ''
 
@@ -132,7 +132,7 @@ ${postLine}
 `)
   },
 
-  findReplaceListFile: function (rlistDir, srcFileName) {
+  findReplaceListFile: function (rlistDir: string, srcFileName: string) {
     if (fs.existsSync(`${rlistDir}${path.sep}rlist_${srcFileName}.csv`)) {
       return `${rlistDir}${path.sep}rlist_${srcFileName}.csv`
     } else if (
@@ -146,7 +146,7 @@ ${postLine}
     }
   },
 
-  splitWithEscape (string, spliter) {
+  splitWithEscape (string: string, spliter: string) {
     let prevChar = ''
     let matching = false
 
@@ -193,7 +193,7 @@ ${postLine}
     return [frontStrBuf, backStrBuf]
   },
 
-  setOptions (flags) {
+  setOptions (flags: Object) {
     fs.writeFileSync('.env', '\ufeff' + module.exports.getProperties(flags), {
       encoding: 'utf8'
     })
@@ -201,7 +201,7 @@ ${postLine}
     console.log(chalk.whiteBright('🌈  The current setting value has been saved! 🌈'))
   },
 
-  replaceAll (str, searchStr, replaceStr) {
+  replaceAll (str: string, searchStr: string, replaceStr: string) {
     return str.split(searchStr).join(replaceStr)
   },
 

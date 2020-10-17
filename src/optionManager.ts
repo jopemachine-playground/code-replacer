@@ -1,5 +1,7 @@
+import { OptionManager } from './type/optionManager';
+
 export default (function () {
-  let instance
+  let instance: OptionManager;
   const options = {}
   function initiate () {
     return options

@@ -5,6 +5,7 @@ import path from 'path'
 import _ from 'lodash'
 import cliSelector from './cliSelector'
 import constant from './constant'
+import { CommandArguments } from './type/commandArgument'
 require('dotenv').config({ path: `${__dirname}${path.sep}.env` })
 
 const flags: meow.AnyFlags = {

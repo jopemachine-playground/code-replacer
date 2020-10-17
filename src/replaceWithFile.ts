@@ -19,11 +19,14 @@ export default async function ({
   template,
   excludeReg: excludeRegValue
 }: CommandArguments) {
-  let templateLValue, templateRValue
+  let templateLValue: string | undefined, templateRValue: string | undefined;
+  let hasTemplate: boolean = false;
+
   if (template) {
     const templateVals = utils.splitWithEscape(template, constant.TEMPLATE_SPLITER)
     templateLValue = templateVals[0]
     templateRValue = templateVals[1]
+    hasTemplate = true
   }
 
   const { srcFileLines, srcFileName, srcFilePath } = parseSourceFile({
@@ -31,22 +34,21 @@ export default async function ({
   })
 
   const csvTbl = await parseCSV({
-    replaceListFile,
+    replaceListFile: replaceListFile as string,
     srcFileName,
-    templateLValue,
-    templateRValue
+    hasTemplate
   })
 
   if (csvTbl === -1) return
 
-  utils.funcExecByFlag(optionManager.getInstance().debugOpt, () =>
+  utils.funcExecByFlag(optionManager.getInstance().debugOpt!, () =>
     debuggingInfoArr.getInstance().append(`startLinePatt: ${startLinePatt}`)
   )
-  utils.funcExecByFlag(optionManager.getInstance().debugOpt, () =>
+  utils.funcExecByFlag(optionManager.getInstance().debugOpt!, () =>
     debuggingInfoArr.getInstance().append(`endLinePatt: ${endLinePatt}`)
   )
 
-  let resultLines = []
+  let resultLines: string[] | number = []
   try {
     resultLines = replace({
       srcFileName,
@@ -76,7 +78,7 @@ export default async function ({
     return
   }
 
-  // if (resultLines === -1) return
+  if (resultLines === -1) return
 
   const dstFilePath = optionManager.getInstance().overwriteOpt
     ? srcFile
@@ -84,15 +86,15 @@ export default async function ({
       ? path.resolve(dstFileName)
       : srcFilePath + path.sep + '__replacer__.' + srcFileName
 
-  fs.writeFileSync(dstFilePath, '\ufeff' + resultLines.join('\n'), {
+  fs.writeFileSync(dstFilePath, '\ufeff' + (resultLines as string[]).join('\n'), {
     encoding: 'utf8'
   })
 
   const debugInfoStr = debuggingInfoArr.getInstance().toString();
 
-  utils.logByFlag(optionManager.getInstance().verboseOpt, debugInfoStr)
+  utils.logByFlag(optionManager.getInstance().verboseOpt!, debugInfoStr)
 
-  utils.funcExecByFlag(optionManager.getInstance().debugOpt, () =>
+  utils.funcExecByFlag(optionManager.getInstance().debugOpt!, () =>
     fs.appendFileSync('DEBUG_INFO', '\ufeff' + debugInfoStr, {
       encoding: 'utf8'
     })

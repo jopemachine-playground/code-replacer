@@ -17,6 +17,7 @@ import {
 
 import utils from './util'
 import { MatchingPoints } from './type/matchingPoints'
+import { ReplacerArgument } from './type/replacerArgument'
 
 const displayConsoleMsg = ({
   lineIdx,
@@ -26,6 +27,14 @@ const displayConsoleMsg = ({
   srcFileLines,
   srcFileName,
   srcLine
+}: {
+  lineIdx: number;
+  matchingInfo: any;
+  replaceObj: any;
+  resultLines: string[];
+  srcFileLines: string[];
+  srcFileName: string;
+  srcLine: string;
 }) => {
   const matchingStr = matchingInfo[0]
 
@@ -43,8 +52,8 @@ const displayConsoleMsg = ({
   )
 
   utils.funcExecByFlag(
-    optionManager.getInstance().confOpt ||
-      optionManager.getInstance().verboseOpt,
+    optionManager.getInstance().confOpt! ||
+      optionManager.getInstance().verboseOpt!,
     () =>
     utils.printLines(
         srcFileName,
@@ -57,7 +66,7 @@ const displayConsoleMsg = ({
   )
 
   utils.logByFlag(
-    optionManager.getInstance().confOpt,
+    optionManager.getInstance().confOpt!,
     chalk.dim(
       chalk.italic(
         "## Press enter to replace the string or 'n' to skip this word or 's' to skip this file."
@@ -72,11 +81,11 @@ const applyCSVTable = ({
   templateRValue,
 }: {
   csvTbl: any;
-  templateLValue: string;
-  templateRValue: string;
+  templateLValue: string | undefined;
+  templateRValue: string | undefined;
 }) => {
   const replaceObj = {};
-  templateRValue = templateRValue.trim().normalize();
+  templateRValue = templateRValue && templateRValue.trim().normalize();
 
   if (csvTbl.length > 0 && templateLValue) {
     const columnNames = Object.keys(csvTbl[0]);
@@ -95,7 +104,7 @@ const applyCSVTable = ({
         );
 
         value = utils.replaceAll(
-          value,
+          value!,
           `\${${trimmedColumnName}}`,
           csvRecord[columnName]
         );
@@ -110,7 +119,7 @@ const applyCSVTable = ({
     }
   }
 
-  if (csvTbl.length < 1) {
+  if (csvTbl.length < 1 && templateLValue) {
     // assume to replace using group regular expressions only
     replaceObj[templateLValue] = templateRValue;
   }
@@ -141,10 +150,10 @@ const getMatchingPoints = ({
     const replacingKeyMatchingPts = matchAll(srcLine, replacingKeyReg);
 
     for (const replacingKeyMatchingPt of replacingKeyMatchingPts) {
-      let existingMatchingPtIdx = -1;
+      let existingMatchingPtIdx: number = -1;
 
       for (
-        let matchingPtIdx = 0;
+        let matchingPtIdx: number = 0;
         matchingPtIdx < matchingPoints.length;
         matchingPtIdx++
       ) {
@@ -179,7 +188,7 @@ const getMatchingPoints = ({
   }
 
   for (
-    let matchingPtIdx = 0;
+    let matchingPtIdx: number = 0;
     matchingPtIdx < matchingPoints.length;
     matchingPtIdx++
   ) {
@@ -235,8 +244,8 @@ const replace = ({
   excludeRegValue,
   startLinePatt,
   endLinePatt
-}) => {
-  const resultLines = []
+}: ReplacerArgument) => {
+  const resultLines: string[] = []
   const replaceObj = applyCSVTable({
     csvTbl,
     templateLValue,
@@ -244,15 +253,15 @@ const replace = ({
   })
 
   if (templateLValue === '') { throw new InvalidLeftTemplateError(ERROR_CONSTANT.LEFT_TEMPLATE_EMPTY) }
-  const replacingKeys = Object.keys(replaceObj)
+  const replacingKeys: string[] = Object.keys(replaceObj)
 
   // sort by length -> prioritize and map keys with long values first.
   replacingKeys.sort(function (a, b) {
     return b.length - a.length || b.localeCompare(a)
   })
 
-  let lineIdx = 1
-  let blockingReplaceFlag = !!startLinePatt
+  let lineIdx: number = 1
+  let blockingReplaceFlag: boolean = !!startLinePatt
 
   for (let srcLine of srcFileLines) {
     if (excludeRegValue && srcLine.match(new RegExp(excludeRegValue))) {
@@ -264,10 +273,10 @@ const replace = ({
     // handle blocking replace
     utils.funcExecByFlag(
       blockingReplaceFlag &&
-        startLinePatt &&
+        !!startLinePatt &&
         srcLine.trim() === startLinePatt.trim(),
       () => {
-        utils.funcExecByFlag(optionManager.getInstance().debugOpt, () =>
+        utils.funcExecByFlag(optionManager.getInstance().debugOpt!, () =>
           debuggingInfoArr.getInstance().append(
             `Encountered startLinePatt on line ${lineIdx}`
           )
@@ -278,10 +287,10 @@ const replace = ({
 
     utils.funcExecByFlag(
       !blockingReplaceFlag &&
-        endLinePatt &&
+        !!endLinePatt &&
         srcLine.trim() === endLinePatt.trim(),
       () => {
-        utils.funcExecByFlag(optionManager.getInstance().debugOpt, () =>
+        utils.funcExecByFlag(optionManager.getInstance().debugOpt!, () =>
           debuggingInfoArr.getInstance().append(`Encountered endLinePatt on line ${lineIdx}`)
         )
         blockingReplaceFlag = true
@@ -295,7 +304,7 @@ const replace = ({
       })
 
       for (
-        let matchingPtIdx = 0;
+        let matchingPtIdx: number = 0;
         matchingPtIdx < matchingPtCnt;
         matchingPtIdx++
       ) {
@@ -315,7 +324,7 @@ const replace = ({
             // handle grouping value
             const findLRefKey = new RegExp(/\$\[(?<lRefKey>[\d\w]*)\]/)
             const lRefKeys = matchAll(templateRValue, findLRefKey)
-            const rvalue = replaceObj[matchingPoints.replacingKey]
+            const rvalue = replaceObj[matchingPoints.replacingKey!]
 
             for (const lRefKeyInfo of lRefKeys) {
               const lRefKey = lRefKeyInfo[1]
@@ -327,7 +336,7 @@ const replace = ({
                 const findMatchingStringReg = new RegExp(regKey)
                 const groupKeyMatching = srcLine.match(findMatchingStringReg)
                 if (!groupKeyMatching) continue
-                const groupKeyMatchingStr = groupKeyMatching.groups[lRefKey]
+                const groupKeyMatchingStr = groupKeyMatching.groups![lRefKey]
 
                 if (!groupKeyMatchingStr) {
                   throw new InvalidRightReferenceError(ERROR_CONSTANT.NON_EXISTENT_GROUPKEY)
@@ -346,7 +355,7 @@ const replace = ({
                 replaceObj[matchingStr] = utils.replaceAll(
                   replaceObj[matchingStr] ? replaceObj[matchingStr] : replacedHandleRValue,
                   `$[${lRefKey}]`,
-                  groupKeyMatching.groups[lRefKey]
+                  groupKeyMatching.groups![lRefKey]
                 )
 
                 break
@@ -370,8 +379,8 @@ const replace = ({
           if (yn(input) === false) {
             // skip this word. choose other candidate if you have a shorter string to replace.
             utils.logByFlag(
-              optionManager.getInstance().confOpt ||
-                optionManager.getInstance().verboseOpt,
+              optionManager.getInstance().confOpt! ||
+                optionManager.getInstance().verboseOpt!,
               chalk.red('\nskip..')
             )
           } else if (input.startsWith('s')) {
@@ -396,8 +405,8 @@ const replace = ({
             }
 
             utils.logByFlag(
-              optionManager.getInstance().confOpt ||
-                optionManager.getInstance().verboseOpt,
+              optionManager.getInstance().confOpt! ||
+                optionManager.getInstance().verboseOpt!,
               chalk.yellow('\nreplace..')
             )
 

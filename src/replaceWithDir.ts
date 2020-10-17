@@ -5,8 +5,8 @@ import chalk from 'chalk'
 import { CommandArguments } from './type/commandArgument'
 
 export default async function (props: CommandArguments) {
-  recursive(path.resolve(props.dir), [], async (_err, files) => {
-    const targetFiles = files.map((filePath) => {
+  recursive(path.resolve(props.dir as string), [], async (_err, files) => {
+    const targetFiles = files.map((filePath: string) => {
       const targetFileName = filePath.split(path.sep).reverse()[0]
       if (props.src && targetFileName === props.src) {
         return filePath
