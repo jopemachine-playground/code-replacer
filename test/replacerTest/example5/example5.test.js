@@ -48,4 +48,24 @@ describe("Example 5 test", () => {
 
     expect(testPassedOrErrorLine).toBe(true);
   });
+
+  test("Example 5-3 replacer test.", async () => {
+    const args = {
+      csvTbl: [],
+      srcFileLines: (parseSourceFile({ srcFile :`${__dirname}${path.sep}index.html` })).srcFileLines,
+      templateLValue: '<div id="(?<id>[\\d\\w]+)" class="$[class]" />',
+      templateRValue: '<div class="$[class]" id="$[id]" />',
+    };
+
+    const testPassedOrErrorLine = new ReplacerTest({
+      replaceArgs: args,
+      expectedResult:
+`<div class="class1" id="id1" />
+<div class="clas2" id="id3" />
+<div class="classa3" id="id5" />
+<div class="clsas7" id="id9" />`
+    }).test()
+
+    expect(testPassedOrErrorLine).toBe(true);
+  });
 });
