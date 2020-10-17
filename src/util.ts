@@ -1,28 +1,28 @@
-const chalk = require('chalk')
-const fs = require('fs')
-const _ = require('lodash')
-const path = require('path')
-const csv = require('csv-parser')
+import chalk from 'chalk'
+import fs from 'fs'
+import _ from 'lodash'
+import path from 'path'
+import csv from 'csv-parser'
 
-module.exports = {
+export default {
   handleSpecialCharacter (str) {
     // TODO: Need to handle more special characters here
-    str = module.exports.replaceAll(str, '\\', '\\\\')
-    str = module.exports.replaceAll(str, '(', '\\(')
-    str = module.exports.replaceAll(str, ')', '\\)')
-    str = module.exports.replaceAll(str, '.', '\\.')
-    str = module.exports.replaceAll(str, '?', '\\?')
-    str = module.exports.replaceAll(str, '!', '\\!')
-    str = module.exports.replaceAll(str, '$', '\\$')
-    str = module.exports.replaceAll(str, '^', '\\^')
-    str = module.exports.replaceAll(str, '{', '\\{')
-    str = module.exports.replaceAll(str, '}', '\\}')
-    str = module.exports.replaceAll(str, '[', '\\[')
-    str = module.exports.replaceAll(str, ']', '\\]')
-    str = module.exports.replaceAll(str, '|', '\\|')
-    str = module.exports.replaceAll(str, '/', '\\/')
-    str = module.exports.replaceAll(str, '+', '\\+')
-    str = module.exports.replaceAll(str, '*', '\\*')
+    str = this.replaceAll(str, '\\', '\\\\')
+    str = this.replaceAll(str, '(', '\\(')
+    str = this.replaceAll(str, ')', '\\)')
+    str = this.replaceAll(str, '.', '\\.')
+    str = this.replaceAll(str, '?', '\\?')
+    str = this.replaceAll(str, '!', '\\!')
+    str = this.replaceAll(str, '$', '\\$')
+    str = this.replaceAll(str, '^', '\\^')
+    str = this.replaceAll(str, '{', '\\{')
+    str = this.replaceAll(str, '}', '\\}')
+    str = this.replaceAll(str, '[', '\\[')
+    str = this.replaceAll(str, ']', '\\]')
+    str = this.replaceAll(str, '|', '\\|')
+    str = this.replaceAll(str, '/', '\\/')
+    str = this.replaceAll(str, '+', '\\+')
+    str = this.replaceAll(str, '*', '\\*')
     return str
   },
 
@@ -42,7 +42,11 @@ module.exports = {
     })
   },
 
-  funcExecByFlag: function (flag, funcExecIfFlagIsTrue, funcExecIfFlagIsFalse) {
+  funcExecByFlag: function (flag, funcExecIfFlagIsTrue) {
+    return flag && funcExecIfFlagIsTrue()
+  },
+
+  _funcExecByFlag: function (flag, funcExecIfFlagIsTrue, funcExecIfFlagIsFalse) {
     return _.cond([
       [_.matches({ flag: true }), () => funcExecIfFlagIsTrue()],
       [
@@ -58,7 +62,11 @@ module.exports = {
     })
   },
 
-  logByFlag: function (flag, logIfFlagIsTrue, logIfFlagIsFalse) {
+  logByFlag: function (flag, logIfFlagIsTrue) {
+    return flag && console.log(logIfFlagIsTrue)
+  },
+
+  _logByFlag: function (flag, logIfFlagIsTrue, logIfFlagIsFalse) {
     module.exports.funcExecByFlag(
       flag,
       () => console.log(logIfFlagIsTrue),

@@ -1,6 +1,6 @@
 // Error when creating replacingObject with input like csv, template.
 class CreatingReplacingObjError extends Error {
-  constructor (message) {
+  constructor (message: string) {
     super(message)
     this.name = this.constructor.name
   }
@@ -8,7 +8,7 @@ class CreatingReplacingObjError extends Error {
 
 // Occurs when ${key} or $[key] is found that is not matched to the right term of the template
 class InvalidRightReferenceError extends Error {
-  constructor (message) {
+  constructor (message: string) {
     super(message)
     this.name = this.constructor.name
   }
@@ -16,21 +16,21 @@ class InvalidRightReferenceError extends Error {
 
 // Occurs when ${key} or $[key] is found that is not matched to the left term of the template
 class InvalidLeftReferenceError extends Error {
-  constructor (message) {
+  constructor (message: string) {
     super(message)
     this.name = this.constructor.name
   }
 }
 
 class InvalidLeftTemplateError extends Error {
-  constructor (message) {
+  constructor (message: string) {
     super(message)
     this.name = this.constructor.name
   }
 }
 
 const ERROR_CONSTANT = {
-  DUPLICATE_KEY: (key, value) => `
+  DUPLICATE_KEY: (key: string, value: string) => `
 Duplicate key exists in replaceObj.
 duplicated key: ${key} 
 duplicated value: ${value}
@@ -59,7 +59,7 @@ This might happens why..
 `
 }
 
-module.exports = {
+export {
   CreatingReplacingObjError,
   InvalidLeftReferenceError,
   InvalidRightReferenceError,

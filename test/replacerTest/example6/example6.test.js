@@ -1,21 +1,20 @@
-const path = require('path');
-const parseSourceFile = require('../../../parseSourceFile');
-const { readCsv } = require('../../../util')
-const optionManager = require('../../../optionManager');
+const path = require('path')
+const parseSourceFile = require('../../../src/parseSourceFile').default
+const optionManager = require('../../../src/optionManager').default
 const ReplacerTest = require('../../util')
 
-describe("Example 6, Left reference key and regexp test", () => {
+describe('Example 6, Left reference key and regexp test', () => {
   beforeAll(() => {
-    optionManager.getInstance()['no-escape'] = true;
+    optionManager.getInstance()['no-escape'] = true
   })
 
-  test("Example 6 replacer test.", async () => {
+  test('Example 6 replacer test.', async () => {
     const args = {
       csvTbl: [],
-      srcFileLines: (parseSourceFile({ srcFile :`${__dirname}${path.sep}index.html` })).srcFileLines,
+      srcFileLines: (parseSourceFile({ srcFile: `${__dirname}${path.sep}index.html` })).srcFileLines,
       templateLValue: '(?<first>[0-9]{3})(?<second>[0-9]{4})(?<third>[0-9]{4})',
-      templateRValue: '$[first]-$[second]-$[third]',
-    };
+      templateRValue: '$[first]-$[second]-$[third]'
+    }
 
     const testPassedOrErrorLine = new ReplacerTest({
       replaceArgs: args,
@@ -26,6 +25,6 @@ describe("Example 6, Left reference key and regexp test", () => {
 010-1444-3993`
     }).test()
 
-    expect(testPassedOrErrorLine).toBe(true);
-  });
-});
+    expect(testPassedOrErrorLine).toBe(true)
+  })
+})

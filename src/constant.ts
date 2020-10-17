@@ -1,6 +1,6 @@
-const chalk = require('chalk')
+import chalk from 'chalk'
 
-module.exports = {
+export default {
   TEMPLATE_SPLITER: '->',
   cliSelectorString: {
     FILE_DIR: chalk.yellow('Choose from file tree.'),

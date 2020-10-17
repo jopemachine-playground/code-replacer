@@ -1,14 +1,15 @@
 #!/usr/bin/env node
-const fs = require('fs')
-const path = require('path')
-const replaceWithFileExec = require('./replaceWithFile')
-const replaceWithDirExec = require('./replaceWithDir')
-const usageLog = require('./usageLog.json')
-const _ = require('lodash')
-const { HELP_STRING, MAX_LOG_CNT } = require('./constant')
+import fs from 'fs'
+import path from 'path'
+import replaceWithFileExec from './replaceWithFile'
+import replaceWithDirExec from './replaceWithDir'
+import usageLog from '../usageLog.json'
+import _ from 'lodash'
+import constant from './constant'
+import { CommandArguments } from './type/commandArgument'
+import optionManager from './optionManager'
 
-const handleOptions = (commandArguments) => {
-  const optionManager = require('./optionManager')
+const handleOptions = (commandArguments: CommandArguments) => {
   optionManager.getInstance().verboseOpt = commandArguments.verbose
   optionManager.getInstance().onceOpt = commandArguments.once
   optionManager.getInstance().confOpt = commandArguments.conf
@@ -17,7 +18,7 @@ const handleOptions = (commandArguments) => {
   optionManager.getInstance()['no-escape'] = commandArguments['no-escape']
 }
 
-module.exports = (commandArguments) => {
+export default (commandArguments: CommandArguments) => {
   handleOptions(commandArguments)
 
   if (
@@ -29,7 +30,7 @@ module.exports = (commandArguments) => {
     replaceWithFileExec(commandArguments)
     usageLog[new Date().getTime()] = commandArguments
 
-    if (Object.keys(usageLog).length > MAX_LOG_CNT) {
+    if (Object.keys(usageLog).length > constant.MAX_LOG_CNT) {
       const oldest = _.min(Object.keys(usageLog).map(Number))
       delete usageLog[oldest]
     }
@@ -40,6 +41,6 @@ module.exports = (commandArguments) => {
       { encoding: 'utf8' }
     )
   } else {
-    console.log(HELP_STRING)
+    console.log(constant.HELP_STRING)
   }
 }

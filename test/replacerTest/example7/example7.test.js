@@ -1,17 +1,16 @@
-const path = require('path');
-const parseSourceFile = require('../../../parseSourceFile');
-const { readCsv } = require('../../../util')
-const optionManager = require('../../../optionManager');
+const path = require('path')
+const parseSourceFile = require('../../../src/parseSourceFile').default
+const { readCsv } = require('../../../src/util').default
 const ReplacerTest = require('../../util')
 
-describe("Example 7 test, special character test", () => {
-  test("Example 7-1 replacer test.", async () => {
+describe('Example 7 test, special character test', () => {
+  test('Example 7-1 replacer test.', async () => {
     const args = {
       csvTbl: await readCsv(`${__dirname}${path.sep}rlist.csv`),
-      srcFileLines: (parseSourceFile({ srcFile :`${__dirname}${path.sep}index.html` })).srcFileLines,
+      srcFileLines: (parseSourceFile({ srcFile: `${__dirname}${path.sep}index.html` })).srcFileLines,
       templateLValue: '${source}',
-      templateRValue: '${value}',
-    };
+      templateRValue: '${value}'
+    }
 
     const testPassedOrErrorLine = new ReplacerTest({
       replaceArgs: args,
@@ -31,23 +30,23 @@ hello-world-
 hello, world~~`
     }).test()
 
-    expect(testPassedOrErrorLine).toBe(true);
-  });
+    expect(testPassedOrErrorLine).toBe(true)
+  })
 
-  test("Example 7-2 replacer test.", async () => {
+  test('Example 7-2 replacer test.', async () => {
     const args = {
       csvTbl: await readCsv(`${__dirname}${path.sep}rlist2.csv`),
-      srcFileLines: (parseSourceFile({ srcFile :`${__dirname}${path.sep}index2.html` })).srcFileLines,
+      srcFileLines: (parseSourceFile({ srcFile: `${__dirname}${path.sep}index2.html` })).srcFileLines,
       templateLValue: '${source}',
-      templateRValue: '${value}',
-    };
+      templateRValue: '${value}'
+    }
 
     const testPassedOrErrorLine = new ReplacerTest({
       replaceArgs: args,
       expectedResult:
-`"[\\d\\w]+"`
+'"[\\d\\w]+"'
     }).test()
 
-    expect(testPassedOrErrorLine).toBe(true);
-  });
-});
+    expect(testPassedOrErrorLine).toBe(true)
+  })
+})

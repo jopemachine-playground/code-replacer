@@ -1,21 +1,16 @@
-const fs = require('fs')
-const path = require('path')
-const boxen = require('boxen')
-const chalk = require('chalk')
-const parseSourceFile = require('./parseSourceFile')
-const parseCSV = require('./csvParse')
-const debuggingInfoArr = require('./debuggingInfo')
-const { replace } = require('./replacer')
-const optionManager = require('./optionManager')
-const { TEMPLATE_SPLITER } = require('./constant')
+import fs from 'fs';
+import path from 'path';
+import chalk from 'chalk';
+import parseSourceFile from './parseSourceFile';
+import parseCSV from './csvParse';
+import debuggingInfoArr from './debuggingInfo';
+import { replace } from './replacer';
+import optionManager from './optionManager';
+import constant from './constant';
+import utils from './util';
+import { CommandArguments } from './type/commandArgument';
 
-const {
-  logByFlag,
-  funcExecByFlag,
-  splitWithEscape
-} = require('./util')
-
-module.exports = async function ({
+export default async function ({
   src: srcFile,
   csv: replaceListFile,
   startLinePatt,
@@ -23,10 +18,10 @@ module.exports = async function ({
   dst: dstFileName,
   template,
   excludeReg: excludeRegValue
-}) {
+}: CommandArguments) {
   let templateLValue, templateRValue
   if (template) {
-    const templateVals = splitWithEscape(template, TEMPLATE_SPLITER)
+    const templateVals = utils.splitWithEscape(template, constant.TEMPLATE_SPLITER)
     templateLValue = templateVals[0]
     templateRValue = templateVals[1]
   }
@@ -44,10 +39,10 @@ module.exports = async function ({
 
   if (csvTbl === -1) return
 
-  funcExecByFlag(optionManager.getInstance().debugOpt, () =>
+  utils.funcExecByFlag(optionManager.getInstance().debugOpt, () =>
     debuggingInfoArr.getInstance().append(`startLinePatt: ${startLinePatt}`)
   )
-  funcExecByFlag(optionManager.getInstance().debugOpt, () =>
+  utils.funcExecByFlag(optionManager.getInstance().debugOpt, () =>
     debuggingInfoArr.getInstance().append(`endLinePatt: ${endLinePatt}`)
   )
 
@@ -64,20 +59,24 @@ module.exports = async function ({
       endLinePatt
     })
   } catch (err) {
-    switch (typeof err) {
-      case 'InvalidLeftReferenceError':
-      case 'InvalidLeftTemplateError':
-      case 'InvalidRightReferenceError':
-      case 'CreatingReplacingObjError':
-        console.log(chalk.red(err))
-        break
-      default:
-        throw (err)
-    }
+    // switch (typeof err) {
+    //   case 'InvalidLeftReferenceError':
+    //   case 'InvalidLeftTemplateError':
+    //   case 'InvalidRightReferenceError':
+    //   case 'CreatingReplacingObjError':
+    //     console.log(chalk.red(err))
+    //     break
+    //   default:
+    //     throw (err)
+    // }
+    console.log(chalk.red(err.message));
+    console.log("details:");
+    console.log(err.name);
+    console.log(err.stack);
     return
   }
 
-  if (resultLines === -1) return
+  // if (resultLines === -1) return
 
   const dstFilePath = optionManager.getInstance().overwriteOpt
     ? srcFile
@@ -89,15 +88,11 @@ module.exports = async function ({
     encoding: 'utf8'
   })
 
-  const debugInfoStr = boxen(debuggingInfoArr.getInstance().toString(), {
-    padding: 1,
-    margin: 1,
-    borderStyle: 'double'
-  })
+  const debugInfoStr = debuggingInfoArr.getInstance().toString();
 
-  logByFlag(optionManager.getInstance().verboseOpt, debugInfoStr)
+  utils.logByFlag(optionManager.getInstance().verboseOpt, debugInfoStr)
 
-  funcExecByFlag(optionManager.getInstance().debugOpt, () =>
+  utils.funcExecByFlag(optionManager.getInstance().debugOpt, () =>
     fs.appendFileSync('DEBUG_INFO', '\ufeff' + debugInfoStr, {
       encoding: 'utf8'
     })

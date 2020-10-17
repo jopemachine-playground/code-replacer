@@ -1,10 +1,11 @@
 class StringBuffer {
+  buffer: string[]
+
   constructor () {
-    // eslint-disable-next-line no-array-constructor
     this.buffer = new Array()
   }
 
-  append (obj) {
+  append (obj: string) {
     this.buffer.push(obj)
   }
 
@@ -13,4 +14,4 @@ class StringBuffer {
   }
 }
 
-module.exports = StringBuffer
+export default StringBuffer

@@ -1,9 +1,10 @@
-const path = require('path')
-const replaceWithFile = require('./replaceWithFile')
-const recursive = require('recursive-readdir')
-const chalk = require('chalk')
+import path from 'path'
+import replaceWithFile from './replaceWithFile'
+import recursive from 'recursive-readdir'
+import chalk from 'chalk'
+import { CommandArguments } from './type/commandArgument'
 
-module.exports = async function (props) {
+export default async function (props: CommandArguments) {
   recursive(path.resolve(props.dir), [], async (_err, files) => {
     const targetFiles = files.map((filePath) => {
       const targetFileName = filePath.split(path.sep).reverse()[0]

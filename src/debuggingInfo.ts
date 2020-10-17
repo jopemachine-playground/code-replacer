@@ -1,6 +1,6 @@
-const StringBuffer = require('./stringBuffer')
+import StringBuffer from './stringBuffer'
 
-module.exports = (function () {
+export default (function () {
   let instance
   const stringBuf = new StringBuffer()
   function initiate () {

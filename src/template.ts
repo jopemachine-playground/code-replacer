@@ -1,9 +1,9 @@
-const matchAll = require('./matchAll')
-const { replaceAll, handleSpecialCharacter } = require('./util')
-const optionManager = require('./optionManager')
-const { InvalidRightReferenceError, ERROR_CONSTANT } = require('./error')
+import matchAll from './matchAll'
+import utils from './util'
+import optionManager from './optionManager'
+import { InvalidRightReferenceError, ERROR_CONSTANT } from './error'
 
-const changeLRefKeyToGroupKeys = (string, hasEscaped) => {
+const changeLRefKeyToGroupKeys = (string: string, hasEscaped: boolean) => {
   const findLRefKeyReg = hasEscaped
     ? /\\\$\\\[(?<lRefKey>[\d\w]*)\\\]/
     : /\$\[(?<lRefKey>[\d\w]*)\]/
@@ -13,7 +13,7 @@ const changeLRefKeyToGroupKeys = (string, hasEscaped) => {
   for (const LRefKeyInfo of LReftKeysInLValue) {
     const lRefKey = LRefKeyInfo[1]
     const lRefKeyReg = hasEscaped ? `\\$\\[${lRefKey}\\]` : `$[${lRefKey}]`
-    string = replaceAll(
+    string = utils.replaceAll(
       string,
       lRefKeyReg,
       `(?<${lRefKey}>[\\d\\w]*)`
@@ -34,7 +34,7 @@ const handleTemplateRValuesCSVColKey = ({ csvTbl, csvLineIdx, templateRValue }) 
       throw new InvalidRightReferenceError(ERROR_CONSTANT.WRONG_COLUMN_R_Template)
     }
 
-    value = replaceAll(
+    value = utils.replaceAll(
       value,
       `\${${columnName}}`,
       csvTbl[csvLineIdx][columnName]
@@ -44,11 +44,17 @@ const handleTemplateRValuesCSVColKey = ({ csvTbl, csvLineIdx, templateRValue }) 
   return value
 }
 
-const handleTemplateLValuesLRefKey = ({ templateLValue, escaped }) => {
-  return changeLRefKeyToGroupKeys(templateLValue, escaped)
-}
+const handleTemplateLValuesLRefKey = ({
+  templateLValue,
+  escaped,
+}: {
+  templateLValue: string;
+  escaped: boolean;
+}) => {
+  return changeLRefKeyToGroupKeys(templateLValue, escaped);
+};
 
-const handleTemplateLValuesSpecialCharEscape = (templateLValue) => {
+const handleTemplateLValuesSpecialCharEscape = (templateLValue: string) => {
   if (optionManager.getInstance()['no-escape']) {
     return {
       escaped: false,
@@ -57,12 +63,12 @@ const handleTemplateLValuesSpecialCharEscape = (templateLValue) => {
   } else {
     return {
       escaped: true,
-      str: handleSpecialCharacter(templateLValue)
+      str: utils.handleSpecialCharacter(templateLValue)
     }
   }
 }
 
-module.exports = {
+export {
   handleTemplateLValuesLRefKey,
   handleTemplateLValuesSpecialCharEscape,
   handleTemplateRValuesCSVColKey

@@ -1,15 +1,15 @@
-const path = require('path');
-const parseSourceFile = require('../../../parseSourceFile');
+const path = require('path')
+const parseSourceFile = require('../../../src/parseSourceFile').default
 const ReplacerTest = require('../../util')
 
-describe("Example 2 basic left reference key test", () => {
-  test("Example 2 replacer test.", async () => {
+describe('Example 2 basic left reference key test', () => {
+  test('Example 2 replacer test.', async () => {
     const args = {
       csvTbl: [],
-      srcFileLines: (parseSourceFile({ srcFile :`${__dirname}${path.sep}index.js` })).srcFileLines,
+      srcFileLines: (parseSourceFile({ srcFile: `${__dirname}${path.sep}index.js` })).srcFileLines,
       templateLValue: ('require("$[key]")'),
-      templateRValue: 'import $[key] from "$[key]"',
-    };
+      templateRValue: 'import $[key] from "$[key]"'
+    }
 
     const testPassedOrErrorLine = new ReplacerTest({
       replaceArgs: args,
@@ -17,8 +17,8 @@ describe("Example 2 basic left reference key test", () => {
 `import abc from "abc";
 import def from "def";
 import ghi from "ghi";`
-    }).test();
+    }).test()
 
-    expect(testPassedOrErrorLine).toBe(true);
-  });
-});
+    expect(testPassedOrErrorLine).toBe(true)
+  })
+})

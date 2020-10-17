@@ -1,26 +1,26 @@
-const { handleTemplateLValuesLRefKey, handleTemplateLValuesSpecialCharEscape } = require("../../template");
-const optionManager = require('../../optionManager');
+const { handleTemplateLValuesLRefKey, handleTemplateLValuesSpecialCharEscape } = require('../../src/template')
+const optionManager = require('../../src/optionManager').default
 
-describe("handleTemplateLValuesLRefKey", () => {
+describe('handleTemplateLValuesLRefKey', () => {
   beforeAll(() => {
-    optionManager.getInstance()['no-escape'] = false;
+    optionManager.getInstance()['no-escape'] = false
   })
 
-  test("With escape", () => {
-    const { escaped, str } = handleTemplateLValuesSpecialCharEscape('$[key1] ${source}${index} $[key2]');
-    const result = handleTemplateLValuesLRefKey({ templateLValue: str, escaped });
-    expect(result).toBe("(?<key1>[\\d\\w]*) \\$\\{source\\}\\$\\{index\\} (?<key2>[\\d\\w]*)")
-  });
-});
+  test('With escape', () => {
+    const { escaped, str } = handleTemplateLValuesSpecialCharEscape('$[key1] ${source}${index} $[key2]')
+    const result = handleTemplateLValuesLRefKey({ templateLValue: str, escaped })
+    expect(result).toBe('(?<key1>[\\d\\w]*) \\$\\{source\\}\\$\\{index\\} (?<key2>[\\d\\w]*)')
+  })
+})
 
-describe("Handle template", () => {
+describe('Handle template', () => {
   beforeAll(() => {
-    optionManager.getInstance()['no-escape'] = true;
+    optionManager.getInstance()['no-escape'] = true
   })
 
-  test("With no-escape", () => {
-    const templateLValue = '$[key1] ${source}${index} $[key2]';
-    const result = handleTemplateLValuesLRefKey({ templateLValue: templateLValue, escaped: false });
-    expect(result).toBe("(?<key1>[\\\d\\\w]*) ${source}${index} (?<key2>[\\\d\\\w]*)")
-  });
-});
+  test('With no-escape', () => {
+    const templateLValue = '$[key1] ${source}${index} $[key2]'
+    const result = handleTemplateLValuesLRefKey({ templateLValue: templateLValue, escaped: false })
+    expect(result).toBe('(?<key1>[\\\d\\\w]*) ${source}${index} (?<key2>[\\\d\\\w]*)')
+  })
+})

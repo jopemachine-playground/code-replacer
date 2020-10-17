@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 
-const meow = require('meow')
-const path = require('path')
+import meow from 'meow'
+import path from 'path'
+import _ from 'lodash'
+import cliSelector from './cliSelector'
+import constant from './constant'
 require('dotenv').config({ path: `${__dirname}${path.sep}.env` })
-const _ = require('lodash')
-const cliSelector = require('./cliSelector')
-const { HELP_STRING } = require('./constant')
 
-const flags = {
+const flags: meow.AnyFlags = {
   dir: {
     type: 'string',
     alias: 'd',
@@ -83,14 +83,14 @@ const flags = {
   }
 }
 
-_.map(Object.keys(flags), (flagKey) => {
+_.map(Object.keys(flags), (flagKey: string) => {
   if (process.env[flagKey]) {
     if (process.env[flagKey] === 'true' || process.env[flagKey] === 'false') {
-      flags[flagKey].default = Boolean(process.env[flagKey])
-    } else flags[flagKey].default = process.env[flagKey]
+      (flags[flagKey] as any)['default'] = Boolean(process.env[flagKey])
+    } else (flags[flagKey] as any)['default'] = process.env[flagKey]
   }
 })
 
-const meowCli = meow(HELP_STRING, { flags })
+const meowCli = meow(constant.HELP_STRING, { flags })
 
-cliSelector(meowCli.input[0], meowCli.flags)
+cliSelector(meowCli.input[0], meowCli.flags as unknown as CommandArguments)

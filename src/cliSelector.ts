@@ -1,21 +1,21 @@
-const { setOptions, showDefaultOptions } = require('./util')
-const codeReplace = require('./codeReplace')
-const path = require('path')
-const chalk = require('chalk')
-const inquirer = require('inquirer')
-const inquirerFileTreeSelection = require('inquirer-file-tree-selection-prompt')
-const STRING_CONSTANT = require('./constant').cliSelectorString
-const { TEMPLATE_SPLITER, CLI_SELCTOR_MAX_DISPLAYING_LOG } = require('./constant')
-const fs = require('fs')
+import utils from './util'
+import codeReplace from './codeReplace'
+import path from 'path'
+import chalk from 'chalk'
+import inquirer from 'inquirer'
+import inquirerFileTreeSelection from 'inquirer-file-tree-selection-prompt'
+import constant from './constant'
+import fs from 'fs'
+import { CommandArguments } from './type/commandArgument'
 
 inquirer.registerPrompt('file-tree-selection', inquirerFileTreeSelection)
 
-const fetchLog = ({ keyName }) => {
+const fetchLog = ({ keyName }: { keyName: string }) => {
   const logs = []
-  const usageLogJson = require('./usageLog.json')
+  const usageLogJson = require('../usageLog.json')
 
   let displayCnt = 0
-  const maxDisplayCnt = CLI_SELCTOR_MAX_DISPLAYING_LOG
+  const maxDisplayCnt = constant.CLI_SELCTOR_MAX_DISPLAYING_LOG
   const keys = Object.keys(usageLogJson).reverse()
 
   for (const usageLogKey of keys) {
@@ -49,12 +49,12 @@ const receiveCSVOption = async () => {
             message: chalk.dim('Choose options'),
             choices: [
               ...csvUsageLogs,
-              STRING_CONSTANT.TYPE_INPUT,
-              STRING_CONSTANT.FILE_DIR
+              constant.cliSelectorString.TYPE_INPUT,
+              constant.cliSelectorString.FILE_DIR
             ]
           }
         ]).then(async (listSelect) => {
-          if (listSelect.csvOpt === STRING_CONSTANT.FILE_DIR) {
+          if (listSelect.csvOpt === constant.cliSelectorString.FILE_DIR) {
             await inquirer
               .prompt([
                 {
@@ -76,7 +76,7 @@ const receiveCSVOption = async () => {
               .then((fileSelectionOutput) => {
                 csvFilePath = fileSelectionOutput.file
               })
-          } else if (listSelect.csvOpt === STRING_CONSTANT.TYPE_INPUT) {
+          } else if (listSelect.csvOpt === constant.cliSelectorString.TYPE_INPUT) {
             await inquirer
               .prompt([
                 {
@@ -98,9 +98,9 @@ const receiveCSVOption = async () => {
 
 const receiveSrcOption = async () => {
   const srcUsageLogs = fetchLog({ keyName: 'src' })
-  let srcFilePath = -1
-  let dir = -1
-  let ext = -1
+  let srcFilePath: number | string = -1
+  let dir: number | string = -1
+  let ext: number | string = -1
 
   await inquirer
     .prompt([
@@ -109,11 +109,11 @@ const receiveSrcOption = async () => {
         name: 'srcOpt',
         message: chalk.dim('Select Src option.'),
         choices: [
-          STRING_CONSTANT.SELECT_SRC,
-          STRING_CONSTANT.SELECT_DIR
+          constant.cliSelectorString.SELECT_SRC,
+          constant.cliSelectorString.SELECT_DIR
         ]
       }]).then(async (isSrcOrDirOpt) => {
-      if (isSrcOrDirOpt.srcOpt === STRING_CONSTANT.SELECT_SRC) {
+      if (isSrcOrDirOpt.srcOpt === constant.cliSelectorString.SELECT_SRC) {
         await inquirer
           .prompt([
             {
@@ -122,11 +122,11 @@ const receiveSrcOption = async () => {
               message: chalk.dim('Choose src file by below options'),
               choices: [
                 ...srcUsageLogs,
-                STRING_CONSTANT.TYPE_INPUT,
-                STRING_CONSTANT.FILE_DIR
+                constant.cliSelectorString.TYPE_INPUT,
+                constant.cliSelectorString.FILE_DIR
               ]
             }]).then(async (srcOpt) => {
-            if (srcOpt.src === STRING_CONSTANT.FILE_DIR) {
+            if (srcOpt.src === constant.cliSelectorString.FILE_DIR) {
               await inquirer
                 .prompt([
                   {
@@ -147,7 +147,7 @@ const receiveSrcOption = async () => {
                 ]).then((fileSelectionOutput) => {
                   srcFilePath = fileSelectionOutput.file
                 })
-            } else if (srcOpt.src === STRING_CONSTANT.TYPE_INPUT) {
+            } else if (srcOpt.src === constant.cliSelectorString.TYPE_INPUT) {
               await inquirer
                 .prompt([
                   {
@@ -165,7 +165,7 @@ const receiveSrcOption = async () => {
               srcFilePath = srcOpt.src
             }
           })
-      } else if (isSrcOrDirOpt.srcOpt === STRING_CONSTANT.SELECT_DIR) {
+      } else if (isSrcOrDirOpt.srcOpt === constant.cliSelectorString.SELECT_DIR) {
         await inquirer
           .prompt([
             {
@@ -192,11 +192,11 @@ const receiveSrcOption = async () => {
                   name: 'methodToTarget',
                   message: chalk.dim('Select how you want to specify the target file.'),
                   choices: [
-                    STRING_CONSTANT.SELECT_BY_EXT,
-                    STRING_CONSTANT.SELECT_BY_FILENAME
+                    constant.cliSelectorString.SELECT_BY_EXT,
+                    constant.cliSelectorString.SELECT_BY_FILENAME
                   ]
                 }]).then(async (opt) => {
-                if (opt.methodToTarget === STRING_CONSTANT.SELECT_BY_EXT) {
+                if (opt.methodToTarget === constant.cliSelectorString.SELECT_BY_EXT) {
                   await inquirer
                     .prompt([
                       {
@@ -210,7 +210,7 @@ const receiveSrcOption = async () => {
                     ]).then(async (select) => {
                       ext = select.ext
                     })
-                } else if (opt.methodToTarget === STRING_CONSTANT.SELECT_BY_FILENAME) {
+                } else if (opt.methodToTarget === constant.cliSelectorString.SELECT_BY_FILENAME) {
                   await inquirer
                     .prompt([
                       {
@@ -234,7 +234,7 @@ const receiveSrcOption = async () => {
 }
 
 const receiveTemplateOption = async () => {
-  let template = -1
+  let template: number | string = -1
   const templateUsageLogs = fetchLog({ keyName: 'template' })
 
   await inquirer
@@ -254,12 +254,12 @@ const receiveTemplateOption = async () => {
             message: chalk.dim('Choose template'),
             choices: [
               ...templateUsageLogs,
-              STRING_CONSTANT.ENTER_TEMPLATE
+              constant.cliSelectorString.ENTER_TEMPLATE
             ]
           }
         ])
         .then(async (templateOutput) => {
-          if (templateOutput.template === STRING_CONSTANT.ENTER_TEMPLATE) {
+          if (templateOutput.template === constant.cliSelectorString.ENTER_TEMPLATE) {
             await inquirer
               .prompt([
                 {
@@ -267,7 +267,7 @@ const receiveTemplateOption = async () => {
                   name: 'templateManual',
                   message: chalk.dim('Enter template value'),
                   validate: (input) => {
-                    return input.includes(TEMPLATE_SPLITER)
+                    return input.includes(constant.TEMPLATE_SPLITER)
                   }
                 }
               ]).then(async (templateManualOutput) => {
@@ -376,7 +376,7 @@ const receiveFlagOptions = async () => {
 }
 
 const receiveExcludeRegOption = async () => {
-  let excludeReg = -1
+  let excludeReg: number | string = -1
   const excludeRegUsageLogs = fetchLog({ keyName: 'excludeReg' })
 
   await inquirer
@@ -395,7 +395,7 @@ const receiveExcludeRegOption = async () => {
             message: chalk.dim('Choose exclude key'),
             choices: [
               ...excludeRegUsageLogs,
-              STRING_CONSTANT.ENTER_EXCLUDE_KEY
+              constant.cliSelectorString.ENTER_EXCLUDE_KEY
             ]
           }
         ])
@@ -417,21 +417,20 @@ const receiveExcludeRegOption = async () => {
   return excludeReg
 }
 
-module.exports = async (input, flags) => {
+export default async (input: string, args: CommandArguments) => {
   switch (input) {
     case 'sel':
     case 'select': {
-      const flags = {}
       const { srcFilePath: src, ext, dir } = await receiveSrcOption()
       const csv = await receiveCSVOption()
       const template = await receiveTemplateOption()
       const excludeReg = await receiveExcludeRegOption()
-      src !== -1 && (flags.src = src)
-      ext !== -1 && (flags.ext = ext)
-      dir !== -1 && (flags.dir = dir)
-      csv !== -1 && (flags.csv = csv)
-      template !== -1 && (flags.template = template)
-      excludeReg !== -1 && (flags.excludeReg = excludeReg)
+      src !== -1 && (args.src = src as unknown as string)
+      ext !== -1 && (args.ext = ext as unknown as string)
+      dir !== -1 && (args.dir = dir as unknown as string)
+      csv !== -1 && (args.csv = csv as unknown as string)
+      template !== -1 && (args.template = template as unknown as string)
+      excludeReg !== -1 && (args.excludeReg = excludeReg as unknown as string)
       const {
         verbose,
         debug,
@@ -442,27 +441,27 @@ module.exports = async (input, flags) => {
         startLinePatt,
         endLinePatt
       } = await receiveFlagOptions()
-      flags.verbose = verbose
-      flags.debug = debug
-      flags.overwrite = overwrite
-      flags.once = once
-      flags.conf = conf
-      flags.startLinePatt = startLinePatt
-      flags.endLinePatt = endLinePatt
-      flags['no-escape'] = noEscape
+      args.verbose = verbose
+      args.debug = debug
+      args.overwrite = overwrite
+      args.once = once
+      args.conf = conf
+      args.startLinePatt = startLinePatt
+      args.endLinePatt = endLinePatt
+      args['no-escape'] = noEscape
       console.log()
-      codeReplace(flags)
+      codeReplace(args)
       break
     }
     case 'set':
-      setOptions(flags)
+      utils.setOptions(args)
       break
     case 'd':
     case 'default':
-      showDefaultOptions()
+      utils.showDefaultOptions()
       break
     default:
-      codeReplace(flags)
+      codeReplace(args)
       break
   }
 }
