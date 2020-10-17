@@ -2,7 +2,6 @@ const path = require('path');
 const parseSourceFile = require('../../../parseSourceFile');
 const { readCsv } = require('../../../util')
 const ReplacerTest = require('../../util')
-const { handleTemplateLValue } = require('../../../template')
 
 describe("Example 4 test", () => {
   test("Example 4 replacer test.", async () => {

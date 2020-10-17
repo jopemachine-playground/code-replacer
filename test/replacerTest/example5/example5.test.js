@@ -1,7 +1,6 @@
 const path = require('path');
 const parseSourceFile = require('../../../parseSourceFile');
 const { readCsv } = require('../../../util')
-const { handleTemplateLValue } = require('../../../template')
 const optionManager = require('../../../optionManager');
 const ReplacerTest = require('../../util')
 

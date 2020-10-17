@@ -2,7 +2,7 @@ const chalk = require('chalk')
 const matchAll = require('./matchAll')
 const yn = require('yn')
 const readlineSync = require('readline-sync')
-const { handleTemplateLValue, handleTemplateRValue } = require('./template')
+const { handleTemplateLValuesLRefKey, handleTemplateLValuesSpecialCharEscape } = require('./template')
 const debuggingInfoArr = require('./debuggingInfo')
 const optionManager = require('./optionManager')
 const {
@@ -122,7 +122,8 @@ const getMatchingPoints = ({ srcLine, replacingKeys }) => {
 
   for (const replacingKey of replacingKeys) {
     // reg of replacingKey is already processed
-    const regKey = handleTemplateLValue(replacingKey)
+    const { escaped, str: escapedKey } = handleTemplateLValuesSpecialCharEscape(replacingKey)
+    const regKey = handleTemplateLValuesLRefKey({ escaped, templateLValue: escapedKey })
     const replacingKeyReg = new RegExp(regKey)
     const replacingKeyMatchingPts = matchAll(srcLine, replacingKeyReg)
 
@@ -293,14 +294,15 @@ const replace = ({
             // handle grouping value
             const findLRefKey = new RegExp(/\$\[(?<lRefKey>[\d\w]*)\]/)
             const lRefKeys = matchAll(templateRValue, findLRefKey)
-            const value = replaceObj[matchingPoints.replacingKey]
+            const rvalue = replaceObj[matchingPoints.replacingKey]
 
             for (const lRefKeyInfo of lRefKeys) {
               const lRefKey = lRefKeyInfo[1]
               for (let regKey of Object.keys(replaceObj)) {
-                regKey = handleTemplateLValue(regKey)
+                const { escaped, str: escapedKey } = handleTemplateLValuesSpecialCharEscape(regKey)
+                regKey = handleTemplateLValuesLRefKey({ escaped, templateLValue: escapedKey })
 
-                const replacedHandleRValue = value
+                const replacedHandleRValue = rvalue
                 const findMatchingStringReg = new RegExp(regKey)
                 const groupKeyMatching = srcLine.match(findMatchingStringReg)
                 if (!groupKeyMatching) continue
@@ -326,7 +328,6 @@ const replace = ({
                   groupKeyMatching.groups[lRefKey]
                 )
 
-                console.log(replaceObj[matchingStr])
                 break
               }
             }

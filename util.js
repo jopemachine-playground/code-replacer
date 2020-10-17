@@ -5,6 +5,25 @@ const path = require('path')
 const csv = require('csv-parser')
 
 module.exports = {
+  handleSpecialCharacter (str) {
+    // TODO: Need to handle more special characters here
+    str = module.exports.replaceAll(str, '\\', '\\\\')
+    str = module.exports.replaceAll(str, '(', '\\(')
+    str = module.exports.replaceAll(str, ')', '\\)')
+    str = module.exports.replaceAll(str, '.', '\\.')
+    str = module.exports.replaceAll(str, '?', '\\?')
+    str = module.exports.replaceAll(str, '!', '\\!')
+    str = module.exports.replaceAll(str, '$', '\\$')
+    str = module.exports.replaceAll(str, '^', '\\^')
+    str = module.exports.replaceAll(str, '{', '\\{')
+    str = module.exports.replaceAll(str, '}', '\\}')
+    str = module.exports.replaceAll(str, '[', '\\[')
+    str = module.exports.replaceAll(str, ']', '\\]')
+    str = module.exports.replaceAll(str, '|', '\\|')
+    str = module.exports.replaceAll(str, '/', '\\/')
+    return str
+  },
+
   readCsv: async function (csvFilePath) {
     const csvResult = []
     return new Promise((resolve, reject) => {

@@ -1,49 +1,30 @@
 const matchAll = require('./matchAll')
-const { replaceAll } = require('./util')
+const { replaceAll, handleSpecialCharacter } = require('./util')
 const optionManager = require('./optionManager')
 const { InvalidRightReferenceError, ERROR_CONSTANT } = require('./error')
 
-const handleSpecialCharacter = (str) => {
-  // TODO: Need to handle more special characters here
-  str = replaceAll(str, '\\', '\\\\')
-  str = replaceAll(str, '(', '\\(')
-  str = replaceAll(str, ')', '\\)')
-  str = replaceAll(str, '.', '\\.')
-  str = replaceAll(str, '?', '\\?')
-  str = replaceAll(str, '!', '\\!')
-  str = replaceAll(str, '$', '\\$')
-  str = replaceAll(str, '^', '\\^')
-  str = replaceAll(str, '{', '\\{')
-  str = replaceAll(str, '}', '\\}')
-  str = replaceAll(str, '[', '\\[')
-  str = replaceAll(str, ']', '\\]')
-  str = replaceAll(str, '|', '\\|')
-  str = replaceAll(str, '/', '\\/')
+const changeLRefKeyToGroupKeys = (string, hasEscaped) => {
+  const findLRefKeyReg = hasEscaped
+    ? /\\\$\\\[(?<lRefKey>[\d\w]*)\\\]/
+    : /\$\[(?<lRefKey>[\d\w]*)\]/
+  const findLRefKeyRegExp = new RegExp(findLRefKeyReg)
+  const LReftKeysInLValue = matchAll(string, findLRefKeyRegExp)
 
-  return str
-}
-
-const changeTemplateStringToGroupKeys = (string, hasEscaped) => {
-  const findGroupKeyReg = hasEscaped
-    ? /\\\$\\\[(?<groupKey>[\d\w]*)\\\]/
-    : /\$\[(?<groupKey>[\d\w]*)\]/
-  const findGroupKeyRegExp = new RegExp(findGroupKeyReg)
-  const groupKeysInLValue = matchAll(string, findGroupKeyRegExp)
-
-  for (const groupKeyInfo of groupKeysInLValue) {
-    const groupKey = groupKeyInfo[1]
-    const groupKeyReg = hasEscaped ? `\\$\\[${groupKey}\\]` : `$[${groupKey}]`
+  for (const LRefKeyInfo of LReftKeysInLValue) {
+    const lRefKey = LRefKeyInfo[1]
+    const lRefKeyReg = hasEscaped ? `\\$\\[${lRefKey}\\]` : `$[${lRefKey}]`
     string = replaceAll(
       string,
-      groupKeyReg,
-      `(?<${groupKey}>[\\d\\w]*)`
+      lRefKeyReg,
+      `(?<${lRefKey}>[\\d\\w]*)`
     )
   }
 
   return string
 }
 
-const handleTemplateRValue = ({ csvTbl, csvLineIdx, templateRValue }) => {
+// Not used
+const handleTemplateRValuesCSVColKey = ({ csvTbl, csvLineIdx, templateRValue }) => {
   let value = templateRValue
   const findCSVColumnVariableReg = new RegExp(/\$\{(?<columnName>[\d\w]*)\}/)
   const csvColumnVars = matchAll(templateRValue, findCSVColumnVariableReg)
@@ -63,19 +44,26 @@ const handleTemplateRValue = ({ csvTbl, csvLineIdx, templateRValue }) => {
   return value
 }
 
-const handleTemplateLValue = (templateLValue) => {
-  const isReg = optionManager.getInstance()['no-escape']
-  if (isReg) {
-    return changeTemplateStringToGroupKeys(templateLValue, false)
+const handleTemplateLValuesLRefKey = ({ templateLValue, escaped }) => {
+  return changeLRefKeyToGroupKeys(templateLValue, escaped)
+}
+
+const handleTemplateLValuesSpecialCharEscape = (templateLValue) => {
+  if (optionManager.getInstance()['no-escape']) {
+    return {
+      escaped: false,
+      str: templateLValue
+    }
   } else {
-    return changeTemplateStringToGroupKeys(
-      handleSpecialCharacter(templateLValue),
-      true
-    )
+    return {
+      escaped: true,
+      str: handleSpecialCharacter(templateLValue)
+    }
   }
 }
 
 module.exports = {
-  handleTemplateLValue,
-  handleTemplateRValue
+  handleTemplateLValuesLRefKey,
+  handleTemplateLValuesSpecialCharEscape,
+  handleTemplateRValuesCSVColKey
 }
