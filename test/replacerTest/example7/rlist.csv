@@ -12,3 +12,4 @@ hello%world,hello%world%%
 hello+world,hello+world++
 hello-world,hello-world-
 "hello, world~","hello, world~~"
+'[\d\w]+',"""[\d\w]+"""

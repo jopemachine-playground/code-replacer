@@ -192,17 +192,19 @@ const getMatchingPoints = ({ srcLine, replacingKeys }) => {
 }
 
 const getReplacedString = ({ replaceObj, matchingStr }) => {
-  let replacedString = replaceObj[matchingStr]
   const noEscapeOpt = optionManager.getInstance()['no-escape']
 
-  if (noEscapeOpt) {
+  // exactly match :: use regexp and insert new item
+  // not exactly match, but match in regexp :: use regexp and dont insert one
+  if (noEscapeOpt && !replaceObj[matchingStr]) {
     for (const key of Object.keys(replaceObj)) {
       if (new RegExp(key).test(matchingStr)) {
-        replacedString = replaceObj[key]
+        return replaceObj[key]
       }
     }
   }
-  return replacedString
+
+  return replaceObj[matchingStr]
 }
 
 const replace = ({
