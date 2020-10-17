@@ -14,9 +14,9 @@ const fetchLog = ({ keyName }: { keyName: string }) => {
   const logs: string[] = []
   const usageLogJson = require('../usageLog.json')
 
-  let displayCnt = 0
-  const maxDisplayCnt = constant.CLI_SELCTOR_MAX_DISPLAYING_LOG
-  const keys = Object.keys(usageLogJson).reverse()
+  let displayCnt: number = 0
+  const maxDisplayCnt: number = constant.CLI_SELCTOR_MAX_DISPLAYING_LOG
+  const keys: string[] = Object.keys(usageLogJson).reverse()
 
   for (const usageLogKey of keys) {
     if (usageLogJson[usageLogKey][keyName] && !logs.includes(usageLogJson[usageLogKey][keyName]) && (displayCnt < maxDisplayCnt)) {

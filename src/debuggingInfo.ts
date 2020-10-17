@@ -1,7 +1,7 @@
 import StringBuffer from './stringBuffer'
 
 export default (function () {
-  let instance
+  let instance: StringBuffer
   const stringBuf = new StringBuffer()
   function initiate () {
     return stringBuf

@@ -6,23 +6,29 @@ import csv from 'csv-parser'
 
 export default {
   handleSpecialCharacter (str: string) {
-    // TODO: Need to handle more special characters here
-    str = this.replaceAll(str, '\\', '\\\\')
-    str = this.replaceAll(str, '(', '\\(')
-    str = this.replaceAll(str, ')', '\\)')
-    str = this.replaceAll(str, '.', '\\.')
-    str = this.replaceAll(str, '?', '\\?')
-    str = this.replaceAll(str, '!', '\\!')
-    str = this.replaceAll(str, '$', '\\$')
-    str = this.replaceAll(str, '^', '\\^')
-    str = this.replaceAll(str, '{', '\\{')
-    str = this.replaceAll(str, '}', '\\}')
-    str = this.replaceAll(str, '[', '\\[')
-    str = this.replaceAll(str, ']', '\\]')
-    str = this.replaceAll(str, '|', '\\|')
-    str = this.replaceAll(str, '/', '\\/')
-    str = this.replaceAll(str, '+', '\\+')
-    str = this.replaceAll(str, '*', '\\*')
+    // TODO: Handle more special characters here if needed
+    const spChars = [
+      '\\',
+      '(',
+      ')',
+      '.',
+      '?',
+      '!',
+      '$',
+      '^',
+      '{',
+      '}',
+      '[',
+      ']',
+      '|',
+      '/',
+      '+',
+      '*'
+    ]
+
+    for (const spChar of spChars) {
+      str = this.replaceAll(str, spChar, `\\${spChar}`)
+    }
     return str
   },
 

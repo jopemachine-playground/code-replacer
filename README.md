@@ -4,17 +4,36 @@
 
 ## Installation
 
+* code-replacer
+
 ```
 npm i -g code-replacer
 ```
 
+* [code-replacer-vscode-plugin](https://github.com/jopemachine/code-replacer-vscode-plugin)
+
+If you like the idea of code-replacer, how about trying to use vscode plugin?
+
 ## How to use
+
+* On cli
 
 1. Write `csv` file to replace text or `template` to change your codes.
 
 2. Type the command
 
 3. Output files is `__replacer__.{original file name}`.
+
+* On cli, using [inquirer](https://github.com/SBoudrias/Inquirer.js)
+
+you can use `inquirer`'s cli menu to select options.
+
+<img src="./image/inquirer.png" />
+
+
+* On vscode
+
+See [vscode-replacer-vscode-plugin](https://github.com/jopemachine/code-replacer-vscode-plugin).
 
 ## Simple example
 
@@ -130,9 +149,6 @@ code-replacer --src='example/example_3/index.js' --csv='example/example_3/rlist.
 code-replacer --src='example/example_4/index.js' --csv='example/example_4/rlist.csv' --template='$[key1] ${source}${index} $[key2]->$[key2] ${index}${source} $[key1]'
 ```
 
-### Example 5, use no-escape option
-
-<img src="./image/1.png" />
 
 
 ## Tips
