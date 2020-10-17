@@ -7,7 +7,9 @@
   "description": "Replace codes line by line with regex for target files",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "npm run unitTest && npm run replacerTest",
+    "unitTest": "jest ./test/unitTest/**.test.js",
+    "replacerTest": "jest ./test/replacerTest/**/**.test.js"
   },
   "author": "jopemachine",
   "license": "MIT",
@@ -44,15 +46,14 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run test",
-      "pre-push": "npm run test"
+      "pre-commit": "npm run test && jest ./test/commitHook.test.js",
+      "pre-push": "npm run test && jest ./test/commitHook.test.js"
     }
   },
   "jest": {
     "verbose": true,
-    "modulePathIgnorePatterns": ["commitHook.test.js"],
     "testMatch": [
-      "**/test/**/**.test.js"
+      "**.test.js"
     ]
   }
 }
