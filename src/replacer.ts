@@ -36,15 +36,15 @@ const displayConsoleMsg = ({
   srcFileName: string;
   srcLine: string;
 }) => {
-  const matchingStr = matchingInfo[0]
+  const matchingStr: string = matchingInfo[0]
 
-  const sourceStr = utils.createHighlightedLine(
+  const sourceStr: string = utils.createHighlightedLine(
     srcLine,
     matchingInfo.index,
     matchingStr,
     matchingInfo.index + matchingStr.length
   )
-  const replacedStr = utils.createHighlightedLine(
+  const replacedStr: string = utils.createHighlightedLine(
     srcLine,
     matchingInfo.index,
     replaceObj[matchingStr],
@@ -84,16 +84,16 @@ const applyCSVTable = ({
   templateLValue: string | undefined;
   templateRValue: string | undefined;
 }) => {
-  const replaceObj = {};
+  const replaceObj: Object = {};
   templateRValue = templateRValue && templateRValue.trim().normalize();
 
   if (csvTbl.length > 0 && templateLValue) {
-    const columnNames = Object.keys(csvTbl[0]);
+    const csvColumnNames: string[] = Object.keys(csvTbl[0]);
     for (const csvRecord of csvTbl) {
       let key = templateLValue;
       let value = templateRValue;
 
-      for (const columnName of columnNames) {
+      for (const columnName of csvColumnNames) {
         const trimmedColumnName = columnName.trim();
 
         // TODO: make me handleCSVColKey
@@ -322,21 +322,20 @@ const replace = ({
           // TODO: Remove this if statement
           if (templateLValue && templateRValue) {
             // handle grouping value
-            const findLRefKey = new RegExp(/\$\[(?<lRefKey>[\d\w]*)\]/)
+            const findLRefKey: RegExp = new RegExp(/\$\[(?<lRefKey>[\d\w]*)\]/)
             const lRefKeys = matchAll(templateRValue, findLRefKey)
-            const rvalue = replaceObj[matchingPoints.replacingKey!]
+            const rvalue: string = replaceObj[matchingPoints.replacingKey!]
 
             for (const lRefKeyInfo of lRefKeys) {
-              const lRefKey = lRefKeyInfo[1]
+              const lRefKey: string = lRefKeyInfo[1]
               for (let regKey of Object.keys(replaceObj)) {
                 const { escaped, str: escapedKey } = handleTemplateLValuesSpecialCharEscape(regKey)
                 regKey = handleTemplateLValuesLRefKey({ escaped, templateLValue: escapedKey })
 
-                const replacedHandleRValue = rvalue
-                const findMatchingStringReg = new RegExp(regKey)
-                const groupKeyMatching = srcLine.match(findMatchingStringReg)
+                const findMatchingStringReg: RegExp = new RegExp(regKey)
+                const groupKeyMatching: RegExpMatchArray | null = srcLine.match(findMatchingStringReg)
                 if (!groupKeyMatching) continue
-                const groupKeyMatchingStr = groupKeyMatching.groups![lRefKey]
+                const groupKeyMatchingStr: string | undefined = groupKeyMatching.groups![lRefKey]
 
                 if (!groupKeyMatchingStr) {
                   throw new InvalidRightReferenceError(ERROR_CONSTANT.NON_EXISTENT_GROUPKEY)
@@ -353,7 +352,7 @@ const replace = ({
 
                 // TODO: make me handleTemplateRValuesLRefKey
                 replaceObj[matchingStr] = utils.replaceAll(
-                  replaceObj[matchingStr] ? replaceObj[matchingStr] : replacedHandleRValue,
+                  replaceObj[matchingStr] ? replaceObj[matchingStr] : rvalue,
                   `$[${lRefKey}]`,
                   groupKeyMatching.groups![lRefKey]
                 )
@@ -373,7 +372,7 @@ const replace = ({
             resultLines
           })
 
-          let input = 'y'
+          let input: string = 'y'
           optionManager.getInstance().confOpt && (input = readlineSync.prompt())
 
           if (yn(input) === false) {

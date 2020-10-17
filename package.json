@@ -10,7 +10,7 @@
     "test": "npm run unitTest && npm run replacerTest",
     "unitTest": "jest ./test/unitTest/**.test.js",
     "replacerTest": "jest ./test/replacerTest/**/**.test.js",
-    "build": "tsc --resolveJsonModule"
+    "build": "tsc"
   },
   "author": "jopemachine",
   "license": "MIT",

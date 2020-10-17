@@ -3,11 +3,12 @@ import fs from 'fs'
 import path from 'path'
 import replaceWithFileExec from './replaceWithFile'
 import replaceWithDirExec from './replaceWithDir'
-import usageLog from '../usageLog.json'
 import _ from 'lodash'
 import constant from './constant'
 import { CommandArguments } from './type/commandArgument'
 import optionManager from './optionManager'
+import './type/json'
+import usageLog from '../usageLog.json'
 
 const handleOptions = (commandArguments: CommandArguments) => {
   optionManager.getInstance().verboseOpt = commandArguments.verbose
