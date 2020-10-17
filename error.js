@@ -30,9 +30,10 @@ class InvalidLeftTemplateError extends Error {
 }
 
 const ERROR_CONSTANT = {
-  DUPLICATE_KEY: (str) => `
+  DUPLICATE_KEY: (key, value) => `
 Duplicate key exists in replaceObj.
-Duplicate key, value: ${str}
+duplicated key: ${key} 
+duplicated value: ${value}
 
 This might happens why..
 1. You might use regular expression for the left template value, and there are more than two values matched to that regexp.

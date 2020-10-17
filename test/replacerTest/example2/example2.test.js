@@ -1,13 +1,14 @@
 const path = require('path');
 const parseSourceFile = require('../../../parseSourceFile');
 const ReplacerTest = require('../../util')
+const { handleTemplateLValue } = require('../../../template')
 
 describe("Example 2 test", () => {
   test("Example 2 replacer test.", async () => {
     const args = {
       csvTbl: [],
       srcFileLines: (parseSourceFile({ srcFile :`${__dirname}${path.sep}index.js` })).srcFileLines,
-      templateLValue: 'require("$[key]")',
+      templateLValue: ('require("$[key]")'),
       templateRValue: 'import $[key] from "$[key]"',
     };
 

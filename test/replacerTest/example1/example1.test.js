@@ -8,7 +8,7 @@ describe("Example 1 test", () => {
     const args = {
       csvTbl: await readCsv(`${__dirname}${path.sep}rlist.csv`),
       srcFileLines: (parseSourceFile({ srcFile :`${__dirname}${path.sep}msgAlert.js` })).srcFileLines,
-      templateLValue: "\"${source}\"",
+      templateLValue: '"${source}"',
       templateRValue: 'i18n.t("${value}")',
     };
 

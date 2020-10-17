@@ -84,11 +84,14 @@ const applyCSVTable = ({
 
       for (const columnName of columnNames) {
         const trimmedColumnName = columnName.trim()
+
+        // TODO: make me handleCSVColKey
         key = replaceAll(
           key,
           `\${${trimmedColumnName}}`,
           csvRecord[columnName]
         )
+
         value = replaceAll(
           value,
           `\${${trimmedColumnName}}`,
@@ -98,7 +101,7 @@ const applyCSVTable = ({
 
       if (replaceObj[key]) {
         throw new CreatingReplacingObjError(
-          ERROR_CONSTANT.DUPLICATE_KEY(key + ', ' + replaceObj[key])
+          ERROR_CONSTANT.DUPLICATE_KEY(key, replaceObj[key])
         )
       }
       replaceObj[key] = value
@@ -152,6 +155,7 @@ const getMatchingPoints = ({ srcLine, replacingKeys }) => {
         }
       }
 
+      matchingPoints.replacingKey = replacingKey
       if (existingMatchingPtIdx === -1) {
         matchingPoints[matchingPtCnt++] = [replacingKeyMatchingPt]
       } else {
@@ -225,7 +229,6 @@ const replace = ({
     return b.length - a.length || b.localeCompare(a)
   })
 
-  let csvLineIdx = 0
   let lineIdx = 1
   let blockingReplaceFlag = !!startLinePatt
 
@@ -288,12 +291,12 @@ const replace = ({
           // TODO: Remove this if statement
           if (templateLValue && templateRValue) {
             // handle grouping value
-            const findGroupKeyReg = new RegExp(/\$\[(?<groupKey>[\d\w]*)\]/)
-            const groupKeys = matchAll(templateRValue, findGroupKeyReg)
-            const value = handleTemplateRValue({ templateRValue, csvTbl, csvLineIdx })
+            const findLRefKey = new RegExp(/\$\[(?<lRefKey>[\d\w]*)\]/)
+            const lRefKeys = matchAll(templateRValue, findLRefKey)
+            const value = replaceObj[matchingPoints.replacingKey]
 
-            for (const groupKeyInfo of groupKeys) {
-              const groupKey = groupKeyInfo[1]
+            for (const lRefKeyInfo of lRefKeys) {
+              const lRefKey = lRefKeyInfo[1]
               for (let regKey of Object.keys(replaceObj)) {
                 regKey = handleTemplateLValue(regKey)
 
@@ -301,28 +304,32 @@ const replace = ({
                 const findMatchingStringReg = new RegExp(regKey)
                 const groupKeyMatching = srcLine.match(findMatchingStringReg)
                 if (!groupKeyMatching) continue
-                const groupKeyMatchingStr = groupKeyMatching.groups[groupKey]
+                const groupKeyMatchingStr = groupKeyMatching.groups[lRefKey]
 
                 if (!groupKeyMatchingStr) {
                   throw new InvalidRightReferenceError(ERROR_CONSTANT.NON_EXISTENT_GROUPKEY)
                 }
 
+                // 1. handle replacingKey's $[key] (transformed into group key)
                 matchingStr = replaceAll(
                   matchingStr,
-                  `(?<${groupKey}>)`,
+                  `(?<${lRefKey}>)`,
                   groupKeyMatchingStr
                 )
 
+                // 2. handle replacingObject's $[key]
+
+                // TODO: make me handleTemplateRValuesLRefKey
                 replaceObj[matchingStr] = replaceAll(
                   replaceObj[matchingStr] ? replaceObj[matchingStr] : replacedHandleRValue,
-                  `$[${groupKey}]`,
-                  groupKeyMatching.groups[groupKey]
+                  `$[${lRefKey}]`,
+                  groupKeyMatching.groups[lRefKey]
                 )
 
+                console.log(replaceObj[matchingStr])
                 break
               }
             }
-            csvLineIdx++
           }
 
           displayConsoleMsg({
