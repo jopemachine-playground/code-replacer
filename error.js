@@ -38,7 +38,7 @@ duplicated value: ${value}
 This might happens why..
 1. You might use regular expression for the left template value, and there are more than two values matched to that regexp.
 2. csv column Key is not replaced because is not valid.
-3. there are more than one \${key} value in the left side of the template in csv.
+3. there are more than one matching csv column key in the left side of the template in csv.
 `,
 
   WRONG_COLUMN_R_Template: `

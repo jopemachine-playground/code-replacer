@@ -38,8 +38,8 @@ module.exports = {
                                           (no need to ext)
 
             --csv, -c                     specify replace properties file, 
-                                          default value is './rlist'
-                                          name './rlist_{fileName}',
+                                          default value is './rlist.csv'
+                                          name './rlist_{fileName}.csv',
                                           if you want to apply different rlist files per file
 
         <optional argument>
@@ -74,8 +74,8 @@ module.exports = {
 
     Examples
 
-        $ code-replacer --target=./abc.java --replaceList=./rlist
-        $ code-replacer --dir=./ ext=java --replaceList=./rlist
+        $ code-replacer --target=./abc.java --csv=./rlist.csv
+        $ code-replacer --dir=./ ext=java --csv=./rlist.csv
 
 
     See README.md for more details.
