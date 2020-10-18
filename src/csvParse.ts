@@ -5,7 +5,7 @@ import debuggingInfoArr from './debuggingInfo'
 import utils from './util'
 import optionManager from './optionManager'
 
-export default async ({
+const csvParse = async ({
   replaceListFile,
   srcFileName,
   hasTemplate
@@ -44,4 +44,8 @@ export default async ({
     )
     return -1
   }
+
+  return -1
 }
+
+export default csvParse;

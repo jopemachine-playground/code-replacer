@@ -2,7 +2,7 @@
   "name": "code-replacer",
   "version": "0.0.14",
   "bin": {
-    "code-replacer": "./index.js"
+    "code-replacer": "./dist/index.js"
   },
   "description": "Replace codes line by line with regex for target files",
   "main": "index.js",
@@ -31,7 +31,7 @@
     "regex-match"
   ],
   "files": [
-    "*.js",
+    "src/*.ts",
     "usageLog.json",
     "LICENSE"
   ],

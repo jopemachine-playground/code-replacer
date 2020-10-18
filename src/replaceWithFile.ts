@@ -23,7 +23,7 @@ export default async function ({
   let hasTemplate: boolean = false;
 
   if (template) {
-    const templateVals = utils.splitWithEscape(template, constant.TEMPLATE_SPLITER)
+    const templateVals: string[] = utils.splitWithEscape(template, constant.TEMPLATE_SPLITER)
     templateLValue = templateVals[0]
     templateRValue = templateVals[1]
     hasTemplate = true
@@ -61,21 +61,11 @@ export default async function ({
       endLinePatt
     })
   } catch (err) {
-    // switch (typeof err) {
-    //   case 'InvalidLeftReferenceError':
-    //   case 'InvalidLeftTemplateError':
-    //   case 'InvalidRightReferenceError':
-    //   case 'CreatingReplacingObjError':
-    //     console.log(chalk.red(err))
-    //     break
-    //   default:
-    //     throw (err)
-    // }
     console.log(chalk.red(err.message));
     console.log("details:");
     console.log(err.name);
     console.log(err.stack);
-    return
+    throw err;
   }
 
   if (resultLines === -1) return
@@ -83,14 +73,16 @@ export default async function ({
   const dstFilePath = optionManager.getInstance().overwriteOpt
     ? srcFile
     : dstFileName
-      ? path.resolve(dstFileName)
-      : srcFilePath + path.sep + '__replacer__.' + srcFileName
+    ? path.resolve(dstFileName)
+    : srcFileName.startsWith("__replaced__.")
+    ? srcFilePath + path.sep + srcFileName
+    : srcFilePath + path.sep + "__replaced__." + srcFileName;
 
   fs.writeFileSync(dstFilePath, '\ufeff' + (resultLines as string[]).join('\n'), {
     encoding: 'utf8'
   })
 
-  const debugInfoStr = debuggingInfoArr.getInstance().toString();
+  const debugInfoStr: string = debuggingInfoArr.getInstance().toString();
 
   utils.logByFlag(optionManager.getInstance().verboseOpt!, debugInfoStr)
 

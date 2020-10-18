@@ -29,6 +29,13 @@ class InvalidLeftTemplateError extends Error {
   }
 }
 
+class CSVParsingError extends Error {
+  constructor (message: string) {
+    super(message)
+    this.name = this.constructor.name
+  }
+}
+
 const ERROR_CONSTANT = {
   DUPLICATE_KEY: (key: string, value: string) => `
 Duplicate key exists in replaceObj.
@@ -64,5 +71,6 @@ export {
   InvalidLeftReferenceError,
   InvalidRightReferenceError,
   InvalidLeftTemplateError,
+  CSVParsingError,
   ERROR_CONSTANT
 }

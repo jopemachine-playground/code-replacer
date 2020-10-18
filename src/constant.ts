@@ -45,7 +45,7 @@ export default {
         <optional argument>
 
             --dst, -dst                   specify the name of the output file. 
-                                          default value is '__replace__.{originalFileName}'.
+                                          default value is '__replaced__.{originalFileName}'.
 
             --verbose, -v                 print all information about the text replaced in console.
                                           default is 'false'

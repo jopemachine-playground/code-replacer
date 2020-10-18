@@ -33,7 +33,7 @@ you can use `inquirer`'s cli menu to select options.
 
 * On vscode
 
-See [vscode-replacer-vscode-plugin](https://github.com/jopemachine/code-replacer-vscode-plugin).
+See [code-replacer-vscode-plugin](https://github.com/jopemachine/code-replacer-vscode-plugin).
 
 ## Simple example
 
@@ -210,7 +210,7 @@ And when you specify `dir` option, name `./rlist_{fileName}.csv`, to apply diffe
 type: `string`
 
 specify the name of the output file. 
-default value is `__replace__.{originalFileName}`.
+default value is `__replaced__.{originalFileName}`.
 
 #### --verbose, -v
 type: `boolean`

@@ -32,6 +32,25 @@ export default {
     return str
   },
 
+  handleCSVColKey ({ csvRecord, columnName, templateLValue, templateRValue }) {
+    templateLValue = this.replaceAll(
+      templateLValue,
+      `\${${columnName}}`,
+      csvRecord[columnName]
+    );
+
+    templateRValue = this.replaceAll(
+      templateRValue!,
+      `\${${columnName}}`,
+      csvRecord[columnName]
+    );
+
+    return {
+      templateLValue,
+      templateRValue
+    }
+  },
+
   readCsv: async function (csvFilePath: string) {
     const csvResult: Object[] = []
     return new Promise((resolve, reject) => {

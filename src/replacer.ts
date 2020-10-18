@@ -18,6 +18,7 @@ import {
 import utils from './util'
 import { MatchingPoints } from './type/matchingPoints'
 import { ReplacerArgument } from './type/replacerArgument'
+import util from './util'
 
 const displayConsoleMsg = ({
   lineIdx,
@@ -95,19 +96,14 @@ const applyCSVTable = ({
 
       for (const columnName of csvColumnNames) {
         const trimmedColumnName = columnName.trim();
-
-        // TODO: make me handleCSVColKey
-        key = utils.replaceAll(
-          key,
-          `\${${trimmedColumnName}}`,
-          csvRecord[columnName]
-        );
-
-        value = utils.replaceAll(
-          value!,
-          `\${${trimmedColumnName}}`,
-          csvRecord[columnName]
-        );
+        const result = util.handleCSVColKey({
+          csvRecord, 
+          columnName: trimmedColumnName,
+          templateLValue: key,
+          templateRValue: value
+        })
+        key = result.templateLValue;
+        value = result.templateRValue;
       }
 
       if (replaceObj[key]) {
@@ -135,19 +131,23 @@ const getMatchingPoints = ({
   replacingKeys: string[];
 }) => {
   let matchingPoints: MatchingPoints = [];
-  let matchingPtCnt = 0;
+  let matchingPtCnt: number = 0;
 
   for (const replacingKey of replacingKeys) {
     // reg of replacingKey is already processed
     const { escaped, str: escapedKey } = handleTemplateLValuesSpecialCharEscape(
       replacingKey
     );
-    const regKey = handleTemplateLValuesLRefKey({
+    const regKey: string = handleTemplateLValuesLRefKey({
       escaped,
       templateLValue: escapedKey,
     });
-    const replacingKeyReg = new RegExp(regKey);
-    const replacingKeyMatchingPts = matchAll(srcLine, replacingKeyReg);
+    const replacingKeyReg: RegExp = new RegExp(regKey);
+    const replacingKeyMatchingPts: Generator<
+      RegExpExecArray,
+      void,
+      unknown
+    > = matchAll(srcLine, replacingKeyReg);
 
     for (const replacingKeyMatchingPt of replacingKeyMatchingPts) {
       let existingMatchingPtIdx: number = -1;
@@ -202,11 +202,13 @@ const getMatchingPoints = ({
     }
   }
 
+
   // Sort matching points to match in asc order
   matchingPoints.sort((lPt, rPt) => {
     return lPt.leastIdx - rPt.leastIdx;
   });
 
+  console.log(matchingPoints)
   return {
     matchingPoints,
     matchingPtCnt,
@@ -252,7 +254,9 @@ const replace = ({
     templateRValue
   })
 
-  if (templateLValue === '') { throw new InvalidLeftTemplateError(ERROR_CONSTANT.LEFT_TEMPLATE_EMPTY) }
+  if (templateLValue === "") {
+    throw new InvalidLeftTemplateError(ERROR_CONSTANT.LEFT_TEMPLATE_EMPTY);
+  }
   const replacingKeys: string[] = Object.keys(replaceObj)
 
   // sort by length -> prioritize and map keys with long values first.
@@ -265,9 +269,9 @@ const replace = ({
 
   for (let srcLine of srcFileLines) {
     if (excludeRegValue && srcLine.match(new RegExp(excludeRegValue))) {
-      lineIdx++
-      resultLines.push(srcLine)
-      continue
+      lineIdx++;
+      resultLines.push(srcLine);
+      continue;
     }
 
     // handle blocking replace
@@ -312,7 +316,7 @@ const replace = ({
         const matchingCandidates = matchingPoints[matchingPtIdx]
 
         for (
-          let candidateIdx = 0;
+          let candidateIdx: number = 0;
           candidateIdx < matchingCandidates.length;
           candidateIdx++
         ) {
