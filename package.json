@@ -1,16 +1,18 @@
 {
   "name": "code-replacer",
-  "version": "0.0.202",
+  "version": "0.0.207",
   "bin": {
-    "code-replacer": "./dist/src/index.js"
+    "code-replacer": "./dist/index.js"
   },
   "description": "Replace codes line by line with regex for target files",
-  "main": "index.js",
+  "main": "./dist/index.js",
   "scripts": {
     "test": "npm run unitTest && npm run replacerTest",
     "unitTest": "jest ./test/unitTest/**.test.js",
     "replacerTest": "jest ./test/replacerTest/**/**.test.js",
-    "build": "tsc"
+    "build": "tsc",
+    "rebuild": "rm -rf dist && npm run build",
+    "pub": "npm run build && npm publish --access public"
   },
   "author": "jopemachine",
   "license": "MIT",
@@ -31,7 +33,7 @@
     "regex-match"
   ],
   "files": [
-    "dist/src/*.js",
+    "dist/*.js",
     "dist/usageLog.json",
     "LICENSE"
   ],
@@ -53,8 +55,8 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run test && jest ./test/commitHook.test.js",
-      "pre-push": "npm run test && jest ./test/commitHook.test.js"
+      "pre-commit": "npm run test",
+      "pre-push": "npm run test"
     }
   },
   "jest": {

@@ -234,52 +234,45 @@ const receiveSrcOption = async () => {
 }
 
 const receiveTemplateOption = async () => {
-  let template: number | string = -1
-  const templateUsageLogs = fetchLog({ keyName: 'template' })
+  let template: number | string = -1;
+  const templateUsageLogs = fetchLog({ keyName: "template" });
 
   await inquirer
     .prompt([
       {
-        type: 'confirm',
-        name: 'templateYn',
-        message: chalk.dim('Would you like to use template?')
+        type: "list",
+        name: "template",
+        message: chalk.dim("Choose template"),
+        choices: [
+          ...templateUsageLogs,
+          constant.cliSelectorString.ENTER_TEMPLATE,
+        ],
+      },
+    ])
+    .then(async (templateOutput) => {
+      if (
+        templateOutput.template === constant.cliSelectorString.ENTER_TEMPLATE
+      ) {
+        await inquirer
+          .prompt([
+            {
+              type: "input",
+              name: "templateManual",
+              message: chalk.dim("Enter template value"),
+              validate: (input) => {
+                return input.includes(constant.TEMPLATE_SPLITER);
+              },
+            },
+          ])
+          .then(async (templateManualOutput) => {
+            template = templateManualOutput.templateManual;
+          });
+      } else {
+        template = templateOutput.template;
       }
-    ]).then(async (ynOutput) => {
-      if (!ynOutput.templateYn) return
-      await inquirer
-        .prompt([
-          {
-            type: 'list',
-            name: 'template',
-            message: chalk.dim('Choose template'),
-            choices: [
-              ...templateUsageLogs,
-              constant.cliSelectorString.ENTER_TEMPLATE
-            ]
-          }
-        ])
-        .then(async (templateOutput) => {
-          if (templateOutput.template === constant.cliSelectorString.ENTER_TEMPLATE) {
-            await inquirer
-              .prompt([
-                {
-                  type: 'input',
-                  name: 'templateManual',
-                  message: chalk.dim('Enter template value'),
-                  validate: (input) => {
-                    return input.includes(constant.TEMPLATE_SPLITER)
-                  }
-                }
-              ]).then(async (templateManualOutput) => {
-                template = templateManualOutput.templateManual
-              })
-          } else {
-            template = templateOutput.template
-          }
-        })
-    })
-  return template
-}
+    });
+  return template;
+};
 
 const receiveFlagOptions = async () => {
   let verbose,
