@@ -19,6 +19,7 @@ import utils from './util'
 import { MatchingPoints } from './type/matchingPoints'
 import { ReplacerArgument } from './type/replacerArgument'
 import util from './util'
+import { MatchingPoint } from './type/matchingPoint'
 
 const displayConsoleMsg = ({
   lineIdx,
@@ -95,7 +96,7 @@ const applyCSVTable = ({
       let value = templateRValue;
 
       for (const columnName of csvColumnNames) {
-        const trimmedColumnName = columnName.trim();
+        const trimmedColumnName: string = columnName.trim();
         const result = util.handleCSVColKey({
           csvRecord, 
           columnName: trimmedColumnName,
@@ -157,9 +158,9 @@ const getMatchingPoints = ({
         matchingPtIdx < matchingPoints.length;
         matchingPtIdx++
       ) {
-        const cands = matchingPoints[matchingPtIdx];
-        const replacingKeyMatchingStr = replacingKeyMatchingPt[0];
-        const longestStrInMatchingPt = cands[0][0];
+        const cands: MatchingPoint = matchingPoints[matchingPtIdx];
+        const replacingKeyMatchingStr: string = replacingKeyMatchingPt[0];
+        const longestStrInMatchingPt: string = cands[0][0];
 
         if (
           replacingKeyMatchingStr === longestStrInMatchingPt ||
@@ -192,7 +193,7 @@ const getMatchingPoints = ({
     matchingPtIdx < matchingPoints.length;
     matchingPtIdx++
   ) {
-    const cands = matchingPoints[matchingPtIdx];
+    const cands: MatchingPoint = matchingPoints[matchingPtIdx];
     cands.leastIdx = Number.MAX_SAFE_INTEGER;
 
     for (let candIdx = 0; candIdx < cands.length; candIdx++) {
@@ -208,7 +209,6 @@ const getMatchingPoints = ({
     return lPt.leastIdx - rPt.leastIdx;
   });
 
-  console.log(matchingPoints)
   return {
     matchingPoints,
     matchingPtCnt,
@@ -313,22 +313,26 @@ const replace = ({
         matchingPtIdx++
       ) {
         // Match the longest string first
-        const matchingCandidates = matchingPoints[matchingPtIdx]
+        const matchingCandidates: MatchingPoint = matchingPoints[matchingPtIdx]
 
         for (
           let candidateIdx: number = 0;
           candidateIdx < matchingCandidates.length;
           candidateIdx++
         ) {
-          const matchingInfo = matchingCandidates[candidateIdx]
-          let matchingStr = matchingInfo[0]
+          const matchingInfo: RegExpExecArray = matchingCandidates[candidateIdx]
+          let matchingStr: string = matchingInfo[0]
 
           // TODO: Remove this if statement
           if (templateLValue && templateRValue) {
             // handle grouping value
-            const findLRefKey: RegExp = new RegExp(/\$\[(?<lRefKey>[\d\w]*)\]/)
-            const lRefKeys = matchAll(templateRValue, findLRefKey)
-            const rvalue: string = replaceObj[matchingPoints.replacingKey!]
+            const findLRefKey: RegExp = new RegExp(/\$\[(?<lRefKey>[\d\w]*)\]/);
+            const lRefKeys: Generator<
+              RegExpExecArray,
+              void,
+              unknown
+            > = matchAll(templateRValue, findLRefKey);
+            const rvalue: string = replaceObj[matchingPoints.replacingKey!];
 
             for (const lRefKeyInfo of lRefKeys) {
               const lRefKey: string = lRefKeyInfo[1]
@@ -392,7 +396,7 @@ const replace = ({
             return -1
           } else {
             // replace string
-            const replacedString = getReplacedString({ replaceObj, matchingStr })
+            const replacedString: string = getReplacedString({ replaceObj, matchingStr })
 
             // push the index value of the other matching points.
             for (
@@ -400,7 +404,7 @@ const replace = ({
               otherPtsCandidateIdx < matchingPtCnt;
               otherPtsCandidateIdx++
             ) {
-              const otherPts = matchingPoints[otherPtsCandidateIdx]
+              const otherPts: MatchingPoint = matchingPoints[otherPtsCandidateIdx]
 
               for (const candItem of otherPts) {
                 candItem.index += replacedString.length - matchingStr.length

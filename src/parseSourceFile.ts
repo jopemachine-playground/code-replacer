@@ -6,7 +6,7 @@ import debuggingInfoArr from './debuggingInfo'
 import optionManager from './optionManager'
 
 export default ({ srcFile }: { srcFile: string }) => {
-  const absPath = path.resolve(srcFile);
+  const absPath: string = path.resolve(srcFile);
   const [srcFileName, ...srcFilePathArr] = absPath.split(path.sep).reverse();
   utils.logByFlag(
     !optionManager.getInstance().verboseOpt,
@@ -19,8 +19,8 @@ export default ({ srcFile }: { srcFile: string }) => {
       .append("** target file: " + path.resolve(srcFile))
   );
 
-  const srcFileLines = fs.readFileSync(srcFile).toString().split("\n");
-  const srcFilePath = srcFilePathArr.reverse().join(path.sep);
+  const srcFileLines: string[] = fs.readFileSync(srcFile).toString().split("\n");
+  const srcFilePath: string = srcFilePathArr.reverse().join(path.sep);
 
   return {
     srcFileLines,

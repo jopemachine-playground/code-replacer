@@ -1,6 +1,7 @@
 import chalk from 'chalk'
 
 export default {
+  REPLACED_PREPOSITION: '__replaced__.',
   TEMPLATE_SPLITER: '->',
   cliSelectorString: {
     FILE_DIR: chalk.yellow('Choose from file tree.'),

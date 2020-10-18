@@ -70,13 +70,13 @@ export default async function ({
 
   if (resultLines === -1) return
 
-  const dstFilePath = optionManager.getInstance().overwriteOpt
+  const dstFilePath: string = optionManager.getInstance().overwriteOpt
     ? srcFile
     : dstFileName
     ? path.resolve(dstFileName)
-    : srcFileName.startsWith("__replaced__.")
+    : srcFileName.startsWith(constant.REPLACED_PREPOSITION)
     ? srcFilePath + path.sep + srcFileName
-    : srcFilePath + path.sep + "__replaced__." + srcFileName;
+    : srcFilePath + path.sep + constant.REPLACED_PREPOSITION + srcFileName;
 
   fs.writeFileSync(dstFilePath, '\ufeff' + (resultLines as string[]).join('\n'), {
     encoding: 'utf8'

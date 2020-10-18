@@ -12,7 +12,7 @@ inquirer.registerPrompt('file-tree-selection', inquirerFileTreeSelection)
 
 const fetchLog = ({ keyName }: { keyName: string }) => {
   const logs: string[] = []
-  const usageLogJson = require('../usageLog.json')
+  const usageLogJson: JSON = require('../usageLog.json')
 
   let displayCnt: number = 0
   const maxDisplayCnt: number = constant.CLI_SELCTOR_MAX_DISPLAYING_LOG

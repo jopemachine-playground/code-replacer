@@ -3,8 +3,8 @@ function ensureFlag (flags, flag) {
 }
 
 function * matchAll (str: string, regex: RegExp) {
-  const localCopy = new RegExp(regex, ensureFlag(regex.flags, 'g'))
-  let match = localCopy.exec(str)
+  const localCopy: RegExp = new RegExp(regex, ensureFlag(regex.flags, 'g'))
+  let match: RegExpExecArray | null = localCopy.exec(str)
   while (match) {
     yield match
     match = localCopy.exec(str)
