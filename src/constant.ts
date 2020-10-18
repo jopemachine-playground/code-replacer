@@ -23,11 +23,11 @@ export default {
 
     Usage
 
-        $ code-replacer <...args>
+        $ code-replacer <...arguments>
 
     Required arguments
 
-        <required args>
+        <required argument>
 
             --dir, -d                     specify target directory
             --ext, -e                     specify target file's extension.
@@ -42,6 +42,10 @@ export default {
                                           default value is './rlist.csv'
                                           name './rlist_{fileName}.csv',
                                           if you want to apply different rlist files per file
+
+            --template, -tem              specify template string.
+                                          see README.md for more detail usage.
+
 
         <optional argument>
 
@@ -61,9 +65,6 @@ export default {
             --endLine, -el                specify end line pattern.
 
             --conf, -c                    check the string values that you want to replace on each line.
-
-            --template, -tem              specify template string.
-                                          see README.md for more detail usage.
 
             --overwrite, -o               overwrite existing file.
 
