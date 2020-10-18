@@ -4,7 +4,7 @@ import _ from 'lodash'
 import cliSelector from './cliSelector'
 import constant from './constant'
 import { CommandArguments } from './type/commandArgument'
-require('dotenv').config({ path: `${__dirname}${path.sep}..${path.sep}.env` })
+require('dotenv').config({ path: `${__dirname}${path.sep}.env` })
 
 const flags: meow.AnyFlags = {
   dir: {
@@ -85,6 +85,7 @@ const flags: meow.AnyFlags = {
 _.map(Object.keys(flags), (flagKey: string) => {
   if (process.env[flagKey]) {
     if (process.env[flagKey] === 'true' || process.env[flagKey] === 'false') {
+      console.log(`Use ${flagKey} as the stored default value, ${process.env[flagKey]}.`);
       (flags[flagKey] as any)['default'] = Boolean(process.env[flagKey])
     } else (flags[flagKey] as any)['default'] = process.env[flagKey]
   }
