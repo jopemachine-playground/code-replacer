@@ -339,8 +339,8 @@ const replace = ({
   templateLValue,
   templateRValue,
   excludeRegValue,
-  startLinePatt,
-  endLinePatt
+  startLine,
+  endLine
 }: ReplacerArgument) => {
   const resultLines: string[] = []
   let replaceObj = applyCSVTable({
@@ -360,7 +360,7 @@ const replace = ({
   })
 
   let lineIdx: number = 1
-  let blockingReplaceFlag: boolean = !!startLinePatt
+  let blockingReplaceFlag: boolean = !!startLine
 
   for (let srcLine of srcFileLines) {
     if (excludeRegValue && srcLine.match(new RegExp(excludeRegValue))) {
@@ -372,12 +372,12 @@ const replace = ({
     // handle blocking replace
     utils.funcExecByFlag(
       blockingReplaceFlag &&
-        !!startLinePatt &&
-        srcLine.trim() === startLinePatt.trim(),
+        !!startLine &&
+        srcLine.trim() === startLine.trim(),
       () => {
         utils.funcExecByFlag(optionManager.getInstance().debugOpt!, () =>
           debuggingInfoArr.getInstance().append(
-            `Encountered startLinePatt on line ${lineIdx}`
+            `Encountered startLine on line ${lineIdx}`
           )
         )
         blockingReplaceFlag = false
@@ -386,11 +386,11 @@ const replace = ({
 
     utils.funcExecByFlag(
       !blockingReplaceFlag &&
-        !!endLinePatt &&
-        srcLine.trim() === endLinePatt.trim(),
+        !!endLine &&
+        srcLine.trim() === endLine.trim(),
       () => {
         utils.funcExecByFlag(optionManager.getInstance().debugOpt!, () =>
-          debuggingInfoArr.getInstance().append(`Encountered endLinePatt on line ${lineIdx}`)
+          debuggingInfoArr.getInstance().append(`Encountered endLine on line ${lineIdx}`)
         )
         blockingReplaceFlag = true
       }

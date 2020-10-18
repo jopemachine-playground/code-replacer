@@ -5,6 +5,6 @@ export interface ReplacerArgument {
   templateLValue?: string;
   templateRValue?: string;
   excludeRegValue?: string;
-  startLinePatt?: string;
-  endLinePatt?: string;
+  startLine?: string;
+  endLine?: string;
 }

@@ -13,8 +13,8 @@ import { CommandArguments } from './type/commandArgument';
 export default async function ({
   src: srcFile,
   csv: replaceListFile,
-  startLinePatt,
-  endLinePatt,
+  startLine,
+  endLine,
   dst: dstFileName,
   template,
   excludeReg: excludeRegValue
@@ -42,10 +42,10 @@ export default async function ({
   if (csvTbl === -1) return
 
   utils.funcExecByFlag(optionManager.getInstance().debugOpt!, () =>
-    debuggingInfoArr.getInstance().append(`startLinePatt: ${startLinePatt}`)
+    debuggingInfoArr.getInstance().append(`startLine: ${startLine}`)
   )
   utils.funcExecByFlag(optionManager.getInstance().debugOpt!, () =>
-    debuggingInfoArr.getInstance().append(`endLinePatt: ${endLinePatt}`)
+    debuggingInfoArr.getInstance().append(`endLine: ${endLine}`)
   )
 
   let resultLines: string[] | number = []
@@ -57,8 +57,8 @@ export default async function ({
       templateLValue,
       templateRValue,
       excludeRegValue,
-      startLinePatt,
-      endLinePatt
+      startLine,
+      endLine
     })
   } catch (err) {
     console.log(chalk.red(err.message));

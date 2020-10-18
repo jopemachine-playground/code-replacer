@@ -4,8 +4,8 @@ export interface CommandArguments {
   overwrite?: boolean;
   once?: boolean;
   conf?: boolean;
-  startLinePatt?: string;
-  endLinePatt?: string;
+  startLine?: string;
+  endLine?: string;
   template?: string;
   excludeReg?: string;
   src: string;

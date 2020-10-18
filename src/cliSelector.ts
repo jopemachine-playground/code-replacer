@@ -281,8 +281,8 @@ const receiveFlagOptions = async () => {
     once,
     conf,
     noEscape,
-    startLinePatt,
-    endLinePatt
+    startLine,
+    endLine
 
   await inquirer
     .prompt([
@@ -310,10 +310,10 @@ const receiveFlagOptions = async () => {
             name: 'no-escape'
           },
           {
-            name: 'startLinePatt'
+            name: 'startLine'
           },
           {
-            name: 'endLinePatt'
+            name: 'endLine'
           }
         ],
         validate: function (answer) {
@@ -328,30 +328,30 @@ const receiveFlagOptions = async () => {
       conf = answer.flags.includes('conf')
       noEscape = answer.flags.includes('no-escape')
 
-      if (answer.flags.includes('startLinePatt')) {
+      if (answer.flags.includes('startLine')) {
         await inquirer
           .prompt([
             {
               type: 'input',
-              name: 'startLinePatt',
-              message: chalk.dim('Please enter startLinePatt')
+              name: 'startLine',
+              message: chalk.dim('Please enter startLine')
             }
           ])
-          .then((startLinePattOutput) => {
-            startLinePatt = startLinePattOutput.startLinePatt
+          .then((startLineOutput) => {
+            startLine = startLineOutput.startLine
           })
       }
-      if (answer.flags.includes('endLinePatt')) {
+      if (answer.flags.includes('endLine')) {
         await inquirer
           .prompt([
             {
               type: 'input',
-              name: 'endLinePatt',
-              message: chalk.dim('Please enter endLinePatt')
+              name: 'endLine',
+              message: chalk.dim('Please enter endLine')
             }
           ])
-          .then((endLinePattOutput) => {
-            endLinePatt = endLinePattOutput.endLinePatt
+          .then((endLineOutput) => {
+            endLine = endLineOutput.endLine
           })
       }
     })
@@ -363,8 +363,8 @@ const receiveFlagOptions = async () => {
     once,
     conf,
     noEscape,
-    startLinePatt,
-    endLinePatt
+    startLine,
+    endLine
   }
 }
 
@@ -431,16 +431,16 @@ export default async (input: string, args: CommandArguments) => {
         once,
         conf,
         noEscape,
-        startLinePatt,
-        endLinePatt
+        startLine,
+        endLine
       } = await receiveFlagOptions()
       args.verbose = verbose
       args.debug = debug
       args.overwrite = overwrite
       args.once = once
       args.conf = conf
-      args.startLinePatt = startLinePatt
-      args.endLinePatt = endLinePatt
+      args.startLine = startLine
+      args.endLine = endLine
       args['no-escape'] = noEscape
       console.log()
       codeReplace(args)

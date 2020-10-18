@@ -36,14 +36,14 @@ const flags: meow.AnyFlags = {
     alias: 'o',
     isRequired: (flags, input) => false
   },
-  startLinePatt: {
+  startLine: {
     type: 'string',
-    alias: 'slp',
+    alias: 'sl',
     isRequired: (flags, input) => false
   },
-  endLinePatt: {
+  endLine: {
     type: 'string',
-    alias: 'elp',
+    alias: 'el',
     isRequired: (flags, input) => false
   },
   dst: {

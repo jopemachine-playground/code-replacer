@@ -56,9 +56,9 @@ export default {
             --once, -o                    even if there are multiple substitution values in a line,
                                           they are replaced only once.
 
-            --startLinePatt, -slp         apply replace from that line.
+            --startLine, -sl              apply replace from that line.
 
-            --endLinePatt, -elp           specify end line pattern.
+            --endLine, -el                specify end line pattern.
 
             --conf, -c                    check the string values that you want to replace on each line.
 
