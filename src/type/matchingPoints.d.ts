@@ -5,4 +5,5 @@ export interface MatchingPoints {
   length: number;
   replacingKey?: string;
   [x: number]: MatchingPoint;
+  [Symbol.iterator](): IterableIterator<MatchingPoint>;
 }

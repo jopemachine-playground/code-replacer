@@ -92,8 +92,8 @@ const applyCSVTable = ({
   if (csvTbl.length > 0 && templateLValue) {
     const csvColumnNames: string[] = Object.keys(csvTbl[0]);
     for (const csvRecord of csvTbl) {
-      let key = templateLValue;
-      let value = templateRValue;
+      let key: string = templateLValue;
+      let value: string = templateRValue!;
 
       for (const columnName of csvColumnNames) {
         const trimmedColumnName: string = columnName.trim();
@@ -116,78 +116,74 @@ const applyCSVTable = ({
     }
   }
 
-  if (csvTbl.length < 1 && templateLValue) {
-    // assume to replace using group regular expressions only
-    replaceObj[templateLValue] = templateRValue;
-  }
-
   return replaceObj;
 };
 
-const getMatchingPoints = ({
+const addMatchingPoint = ({
   srcLine,
-  replacingKeys,
+  replacingKey,
+  matchingPoints,
 }: {
   srcLine: string;
-  replacingKeys: string[];
+  replacingKey: string;
+  matchingPoints: MatchingPoints;
 }) => {
-  let matchingPoints: MatchingPoints = [];
-  let matchingPtCnt: number = 0;
+  // reg of replacingKey is already processed
+  const { escaped, str: escapedKey } = handleTemplateLValuesSpecialCharEscape(
+    replacingKey
+  );
+  const regKey: string = handleTemplateLValuesLRefKey({
+    escaped,
+    templateLValue: escapedKey,
+  });
+  const replacingKeyReg: RegExp = new RegExp(regKey);
+  const replacingKeyMatchingPts: Generator<
+    RegExpExecArray,
+    void,
+    unknown
+  > = matchAll(srcLine, replacingKeyReg);
 
-  for (const replacingKey of replacingKeys) {
-    // reg of replacingKey is already processed
-    const { escaped, str: escapedKey } = handleTemplateLValuesSpecialCharEscape(
-      replacingKey
-    );
-    const regKey: string = handleTemplateLValuesLRefKey({
-      escaped,
-      templateLValue: escapedKey,
-    });
-    const replacingKeyReg: RegExp = new RegExp(regKey);
-    const replacingKeyMatchingPts: Generator<
-      RegExpExecArray,
-      void,
-      unknown
-    > = matchAll(srcLine, replacingKeyReg);
+  for (const replacingKeyMatchingPt of replacingKeyMatchingPts) {
+    let existingMatchingPtIdx: number = -1;
 
-    for (const replacingKeyMatchingPt of replacingKeyMatchingPts) {
-      let existingMatchingPtIdx: number = -1;
+    for (
+      let matchingPtIdx: number = 0;
+      matchingPtIdx < matchingPoints.length;
+      matchingPtIdx++
+    ) {
+      const cands: MatchingPoint = matchingPoints[matchingPtIdx];
+      const replacingKeyMatchingStr: string = replacingKeyMatchingPt[0];
+      const longestStrInMatchingPt: string = cands[0][0];
 
-      for (
-        let matchingPtIdx: number = 0;
-        matchingPtIdx < matchingPoints.length;
-        matchingPtIdx++
+      if (
+        replacingKeyMatchingStr === longestStrInMatchingPt ||
+        !longestStrInMatchingPt.includes(replacingKeyMatchingStr)
       ) {
-        const cands: MatchingPoint = matchingPoints[matchingPtIdx];
-        const replacingKeyMatchingStr: string = replacingKeyMatchingPt[0];
-        const longestStrInMatchingPt: string = cands[0][0];
-
-        if (
-          replacingKeyMatchingStr === longestStrInMatchingPt ||
-          !longestStrInMatchingPt.includes(replacingKeyMatchingStr)
-        ) {
-          continue;
-        }
-
-        // Should be same matching point.
-        if (
-          longestStrInMatchingPt.length >
-          replacingKeyMatchingPt.index - cands[0].index
-        ) {
-          existingMatchingPtIdx = matchingPtIdx;
-          break;
-        }
+        continue;
       }
 
-      matchingPoints.replacingKey = replacingKey;
-      if (existingMatchingPtIdx === -1) {
-        matchingPoints[matchingPtCnt++] = [replacingKeyMatchingPt];
-      } else {
-        matchingPoints[existingMatchingPtIdx].push(replacingKeyMatchingPt);
+      // Should be same matching point.
+      if (
+        longestStrInMatchingPt.length >
+        replacingKeyMatchingPt.index - cands[0].index
+      ) {
+        existingMatchingPtIdx = matchingPtIdx;
+        break;
       }
+    }
+
+    matchingPoints.replacingKey = replacingKey;
+    if (existingMatchingPtIdx === -1) {
+      matchingPoints[matchingPoints.length] = [replacingKeyMatchingPt];
+    } else {
+      matchingPoints[existingMatchingPtIdx].push(replacingKeyMatchingPt);
     }
   }
 
+  return matchingPoints;
+};
+
+const sortMatchingPoints = ({ matchingPoints }) => {
   for (
     let matchingPtIdx: number = 0;
     matchingPtIdx < matchingPoints.length;
@@ -203,16 +199,48 @@ const getMatchingPoints = ({
     }
   }
 
-
   // Sort matching points to match in asc order
   matchingPoints.sort((lPt, rPt) => {
     return lPt.leastIdx - rPt.leastIdx;
   });
 
-  return {
+  return matchingPoints;
+}
+
+const getMatchingPoints = ({
+  srcLine,
+  replacingKeys,
+}: {
+  srcLine: string;
+  replacingKeys: string[];
+}) => {
+  let matchingPoints: MatchingPoints = [];
+
+  for (const replacingKey of replacingKeys) {
+    matchingPoints = addMatchingPoint({ srcLine, replacingKey, matchingPoints })
+  }
+  matchingPoints = sortMatchingPoints({ matchingPoints });
+
+  return matchingPoints;
+};
+
+const getMatchingPointsWithOnlyTemplate = ({
+  srcLine,
+  templateLValue
+}: {
+  srcLine: string;
+  templateLValue: string;
+}) => {
+  let matchingPoints: MatchingPoints = [];
+
+  addMatchingPoint({
+    srcLine,
+    replacingKey: templateLValue,
     matchingPoints,
-    matchingPtCnt,
-  };
+  });
+  matchingPoints = sortMatchingPoints({ matchingPoints });
+
+  return matchingPoints;
 };
 
 const getReplacedString = ({
@@ -222,7 +250,7 @@ const getReplacedString = ({
   replaceObj: any;
   matchingStr: string;
 }) => {
-  const noEscapeOpt = optionManager.getInstance()["no-escape"];
+  const noEscapeOpt: boolean = optionManager.getInstance()["no-escape"];
 
   // exactly match :: use regexp and insert new item
   // not exactly match, but match in regexp :: use regexp and dont insert one
@@ -237,6 +265,73 @@ const getReplacedString = ({
   return replaceObj[matchingStr];
 };
 
+const handleLRefKey = ({
+  srcLine,
+  lRefKey,
+  regKey,
+  replaceObj,
+  matchingStr,
+  rvalue,
+}) => {
+  const { escaped, str: escapedKey } = handleTemplateLValuesSpecialCharEscape(
+    regKey
+  );
+  regKey = handleTemplateLValuesLRefKey({
+    escaped,
+    templateLValue: escapedKey,
+  });
+
+  const findMatchingStringReg: RegExp = new RegExp(regKey);
+
+  const groupKeyMatching: RegExpMatchArray | null = srcLine.match(
+    findMatchingStringReg
+  );
+
+  // continue to next case
+  if (!groupKeyMatching || !groupKeyMatching.groups) return {
+    matchingStr,
+    replaceObj,
+  };
+
+  const groupKeyMatchingStr: string | undefined = groupKeyMatching.groups![
+    lRefKey
+  ];
+
+  if (!groupKeyMatchingStr) {
+    throw new InvalidRightReferenceError(ERROR_CONSTANT.NON_EXISTENT_GROUPKEY);
+  }
+
+  // 1. handle replacingKey's $[key] (transformed into group key)
+  matchingStr = utils.replaceAll(
+    matchingStr,
+    `(?<${lRefKey}>)`,
+    groupKeyMatchingStr
+  );
+
+  // 2. handle replacingObject's $[key]
+
+  if (replaceObj[matchingStr]) {
+    replaceObj[matchingStr] = utils.replaceAll(
+      replaceObj[matchingStr],
+      `$[${lRefKey}]`,
+      groupKeyMatching.groups![lRefKey]
+    );
+  } else {
+    // TODO: Need to remote old key here!!!!
+
+    replaceObj[matchingStr] = utils.replaceAll(
+      rvalue,
+      `$[${lRefKey}]`,
+      groupKeyMatching.groups![lRefKey]
+    );
+  }
+
+  return {
+    matchingStr,
+    replaceObj,
+  };
+};
+
 const replace = ({
   srcFileName,
   srcFileLines,
@@ -248,7 +343,7 @@ const replace = ({
   endLinePatt
 }: ReplacerArgument) => {
   const resultLines: string[] = []
-  const replaceObj = applyCSVTable({
+  let replaceObj = applyCSVTable({
     csvTbl,
     templateLValue,
     templateRValue
@@ -302,14 +397,20 @@ const replace = ({
     )
 
     if (!blockingReplaceFlag) {
-      const { matchingPoints, matchingPtCnt } = getMatchingPoints({
-        srcLine,
-        replacingKeys
-      })
+      const hasOneToManyMatching = csvTbl.length < 1 && templateLValue;
+      const matchingPoints: MatchingPoints = hasOneToManyMatching
+        ? getMatchingPointsWithOnlyTemplate({
+            srcLine,
+            templateLValue: templateLValue as string,
+          })
+        : getMatchingPoints({
+            srcLine,
+            replacingKeys,
+          });
 
       for (
         let matchingPtIdx: number = 0;
-        matchingPtIdx < matchingPtCnt;
+        matchingPtIdx < matchingPoints.length;
         matchingPtIdx++
       ) {
         // Match the longest string first
@@ -332,40 +433,26 @@ const replace = ({
               void,
               unknown
             > = matchAll(templateRValue, findLRefKey);
-            const rvalue: string = replaceObj[matchingPoints.replacingKey!];
+            const rvalue: string = hasOneToManyMatching ? templateRValue : replaceObj[matchingPoints.replacingKey!];
 
             for (const lRefKeyInfo of lRefKeys) {
               const lRefKey: string = lRefKeyInfo[1]
-              for (let regKey of Object.keys(replaceObj)) {
-                const { escaped, str: escapedKey } = handleTemplateLValuesSpecialCharEscape(regKey)
-                regKey = handleTemplateLValuesLRefKey({ escaped, templateLValue: escapedKey })
+              if (hasOneToManyMatching) {
+                const result = handleLRefKey({ srcLine, lRefKey, regKey: templateLValue, replaceObj, matchingStr, rvalue });
+                matchingStr = result?.matchingStr
+                replaceObj = result?.replaceObj
+                continue;
+              }
 
-                const findMatchingStringReg: RegExp = new RegExp(regKey)
-                const groupKeyMatching: RegExpMatchArray | null = srcLine.match(findMatchingStringReg)
-                if (!groupKeyMatching) continue
-                const groupKeyMatchingStr: string | undefined = groupKeyMatching.groups![lRefKey]
+              const regKeys = Object.keys(replaceObj);
 
-                if (!groupKeyMatchingStr) {
-                  throw new InvalidRightReferenceError(ERROR_CONSTANT.NON_EXISTENT_GROUPKEY)
+              for (let regKey of regKeys) {
+                const result = handleLRefKey({ srcLine, lRefKey, regKey, replaceObj, matchingStr, rvalue });
+                if (replaceObj !== result?.replaceObj) {
+                  matchingStr = result?.matchingStr
+                  replaceObj = result?.replaceObj
+                  break
                 }
-
-                // 1. handle replacingKey's $[key] (transformed into group key)
-                matchingStr = utils.replaceAll(
-                  matchingStr,
-                  `(?<${lRefKey}>)`,
-                  groupKeyMatchingStr
-                )
-
-                // 2. handle replacingObject's $[key]
-
-                // TODO: make me handleTemplateRValuesLRefKey
-                replaceObj[matchingStr] = utils.replaceAll(
-                  replaceObj[matchingStr] ? replaceObj[matchingStr] : rvalue,
-                  `$[${lRefKey}]`,
-                  groupKeyMatching.groups![lRefKey]
-                )
-
-                break
               }
             }
           }
@@ -401,7 +488,7 @@ const replace = ({
             // push the index value of the other matching points.
             for (
               let otherPtsCandidateIdx = matchingPtIdx + 1;
-              otherPtsCandidateIdx < matchingPtCnt;
+              otherPtsCandidateIdx < matchingPoints.length;
               otherPtsCandidateIdx++
             ) {
               const otherPts: MatchingPoint = matchingPoints[otherPtsCandidateIdx]
