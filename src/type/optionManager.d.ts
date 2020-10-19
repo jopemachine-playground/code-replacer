@@ -4,4 +4,5 @@ export interface OptionManager {
   overwriteOpt?: boolean;
   onceOpt?: boolean;
   confOpt?: boolean;
+  'no-escape'?: boolean;
 }

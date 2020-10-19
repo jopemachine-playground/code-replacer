@@ -32,6 +32,10 @@ export default {
     return str
   },
 
+  restoreTemplateSpliter (string: string, spliter: string) {
+    return this.replaceAll(string, '\\' + spliter, spliter);
+  },
+
   handleCSVColKey ({ csvRecord, columnName, templateLValue, templateRValue }) {
     templateLValue = this.replaceAll(
       templateLValue,

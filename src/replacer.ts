@@ -20,6 +20,8 @@ import { MatchingPoints } from './type/matchingPoints'
 import { ReplacerArgument } from './type/replacerArgument'
 import util from './util'
 import { MatchingPoint } from './type/matchingPoint'
+import constant from './constant'
+import { template } from 'lodash'
 
 const displayConsoleMsg = ({
   lineIdx,
@@ -246,11 +248,13 @@ const getMatchingPointsWithOnlyTemplate = ({
 const getReplacedString = ({
   replaceObj,
   matchingStr,
+  templateRValue
 }: {
   replaceObj: any;
   matchingStr: string;
+  templateRValue: string;
 }) => {
-  const noEscapeOpt: boolean = optionManager.getInstance()["no-escape"];
+  const noEscapeOpt: boolean | undefined = optionManager.getInstance()["no-escape"];
 
   // exactly match :: use regexp and insert new item
   // not exactly match, but match in regexp :: use regexp and dont insert one
@@ -261,7 +265,7 @@ const getReplacedString = ({
       }
     }
   }
-
+  if (!replaceObj[matchingStr]) return templateRValue;
   return replaceObj[matchingStr];
 };
 
@@ -343,15 +347,23 @@ const replace = ({
   endLine
 }: ReplacerArgument) => {
   const resultLines: string[] = []
+
+  if (templateLValue === "") {
+    throw new InvalidLeftTemplateError(ERROR_CONSTANT.LEFT_TEMPLATE_EMPTY);
+  }
+
+  templateLValue = utils.restoreTemplateSpliter(
+    templateLValue as string,
+    constant.TEMPLATE_SPLITER
+  );
+  
+  
   let replaceObj = applyCSVTable({
     csvTbl,
     templateLValue,
     templateRValue
   })
 
-  if (templateLValue === "") {
-    throw new InvalidLeftTemplateError(ERROR_CONSTANT.LEFT_TEMPLATE_EMPTY);
-  }
   const replacingKeys: string[] = Object.keys(replaceObj)
 
   // sort by length -> prioritize and map keys with long values first.
@@ -483,7 +495,7 @@ const replace = ({
             return -1
           } else {
             // replace string
-            const replacedString: string = getReplacedString({ replaceObj, matchingStr })
+            const replacedString: string = getReplacedString({ replaceObj, matchingStr, templateRValue: templateRValue as string })
 
             // push the index value of the other matching points.
             for (

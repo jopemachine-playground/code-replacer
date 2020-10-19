@@ -66,7 +66,6 @@ abcdef`
   <meta charset="utf-8">
   <meta name="description" content="Chatting web program Login page">
   <meta name="keywords" content="Web Programming Term Project, Chatting">
-  <meta name="author" content="Gyu Bong Lee">
   <!-- login -->
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no" />
 

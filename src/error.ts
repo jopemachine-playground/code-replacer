@@ -36,6 +36,14 @@ class CSVParsingError extends Error {
   }
 }
 
+// Occurs when there is no key in the left term of the template and csv is not an empty array
+class TemplateHasNoKeyError extends Error {
+  constructor (message: string) {
+    super(message)
+    this.name = this.constructor.name
+  }
+}
+
 const ERROR_CONSTANT = {
   DUPLICATE_KEY: (key: string, value: string) => `
 Duplicate key exists in replaceObj.
@@ -72,5 +80,6 @@ export {
   InvalidRightReferenceError,
   InvalidLeftTemplateError,
   CSVParsingError,
+  TemplateHasNoKeyError,
   ERROR_CONSTANT
 }
