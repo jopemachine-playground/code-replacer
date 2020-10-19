@@ -19,24 +19,21 @@ export default async function ({
   template,
   excludeReg: excludeRegValue
 }: CommandArguments) {
-  let templateLValue: string | undefined, templateRValue: string | undefined;
-  let hasTemplate: boolean = false;
-
-  if (template) {
-    const templateVals: string[] = utils.splitWithEscape(template, constant.TEMPLATE_SPLITER)
-    templateLValue = templateVals[0]
-    templateRValue = templateVals[1]
-    hasTemplate = true
-  }
-
+  let templateLValue: string, templateRValue: string;
+  
+  const templateVals: string[] = utils.splitWithEscape(
+    template,
+    constant.TEMPLATE_SPLITER
+  );
+  templateLValue = templateVals[0];
+  templateRValue = templateVals[1];
   const { srcFileLines, srcFileName, srcFilePath } = parseSourceFile({
-    srcFile
-  })
+    srcFile,
+  });
 
   const csvTbl = await parseCSV({
     replaceListFile: replaceListFile as string,
-    srcFileName,
-    hasTemplate
+    srcFileName
   })
 
   if (csvTbl === -1) return

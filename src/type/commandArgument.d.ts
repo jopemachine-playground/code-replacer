@@ -1,4 +1,6 @@
 export interface CommandArguments {
+  src: string;
+  template: string;
   verbose?: boolean;
   debug?: boolean;
   overwrite?: boolean;
@@ -6,9 +8,7 @@ export interface CommandArguments {
   conf?: boolean;
   startLine?: string;
   endLine?: string;
-  template?: string;
   excludeReg?: string;
-  src: string;
   dir?: string;
   csv?: string;
   ext?: string;

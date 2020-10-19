@@ -32,7 +32,7 @@ export default (commandArguments: CommandArguments) => {
 
     if (Object.keys(usageLog).length > constant.MAX_LOG_CNT) {
       const oldest: number | undefined = _.min(Object.keys(usageLog).map(Number))
-      delete usageLog[oldest!]
+      oldest && delete usageLog[oldest]
     }
 
     fs.writeFileSync(

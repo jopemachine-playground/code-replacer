@@ -27,32 +27,32 @@ const changeLRefKeyToGroupKeys = (string: string, hasEscaped: boolean) => {
 }
 
 // Not used
-const handleTemplateRValuesCSVColKey = ({ csvTbl, csvLineIdx, templateRValue }) => {
-  let value: string = templateRValue;
-  const findCSVColumnVariableReg: RegExp = new RegExp(
-    /\$\{(?<columnName>[\d\w]*)\}/
-  );
-  const csvColumnVars: Generator<RegExpExecArray, void, unknown> = matchAll(
-    templateRValue,
-    findCSVColumnVariableReg
-  );
-  for (const csvColumnVar of csvColumnVars) {
-    const columnName: string = csvColumnVar.groups!.columnName;
-    if (!csvTbl[0][columnName]) {
-      throw new InvalidRightReferenceError(
-        ERROR_CONSTANT.WRONG_COLUMN_R_Template
-      );
-    }
+// const handleTemplateRValuesCSVColKey = ({ csvTbl, csvLineIdx, templateRValue }) => {
+//   let value: string = templateRValue;
+//   const findCSVColumnVariableReg: RegExp = new RegExp(
+//     /\$\{(?<columnName>[\d\w]*)\}/
+//   );
+//   const csvColumnVars: Generator<RegExpExecArray, void, unknown> = matchAll(
+//     templateRValue,
+//     findCSVColumnVariableReg
+//   );
+//   for (const csvColumnVar of csvColumnVars) {
+//     const columnName: string = csvColumnVar.groups!.columnName;
+//     if (!csvTbl[0][columnName]) {
+//       throw new InvalidRightReferenceError(
+//         ERROR_CONSTANT.WRONG_COLUMN_R_Template
+//       );
+//     }
 
-    value = utils.replaceAll(
-      value,
-      `\${${columnName}}`,
-      csvTbl[csvLineIdx][columnName]
-    );
-  }
+//     value = utils.replaceAll(
+//       value,
+//       `\${${columnName}}`,
+//       csvTbl[csvLineIdx][columnName]
+//     );
+//   }
 
-  return value;
-}
+//   return value;
+// }
 
 const handleTemplateLValuesLRefKey = ({
   templateLValue,
@@ -81,5 +81,4 @@ const handleTemplateLValuesSpecialCharEscape = (templateLValue: string) => {
 export {
   handleTemplateLValuesLRefKey,
   handleTemplateLValuesSpecialCharEscape,
-  handleTemplateRValuesCSVColKey
 }

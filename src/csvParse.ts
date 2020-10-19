@@ -8,11 +8,9 @@ import optionManager from './optionManager'
 const csvParse = async ({
   replaceListFile,
   srcFileName,
-  hasTemplate
 }: {
   replaceListFile: string | number;
   srcFileName: string | number;
-  hasTemplate: boolean;
 }) => {
   if (!replaceListFile) {
     replaceListFile = utils.findReplaceListFile(`.${path.sep}rlist.csv`, srcFileName as string)
@@ -36,13 +34,6 @@ const csvParse = async ({
 
   if (replaceListFile !== -1) {
     return await utils.readCsv(replaceListFile as string)
-  } else if (replaceListFile === -1 && !hasTemplate) {
-    console.log(
-      chalk.red(
-        "You should specify the valid 'template' value or the rlist file. \nPlease refer to README.md\nExit.."
-      )
-    )
-    return -1
   }
 
   return -1
