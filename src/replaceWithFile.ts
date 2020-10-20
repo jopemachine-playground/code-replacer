@@ -20,7 +20,7 @@ export default async function ({
   excludeReg: excludeRegValue
 }: CommandArguments) {
   let templateLValue: string, templateRValue: string;
-  
+
   const templateVals: string[] = utils.splitWithEscape(
     template,
     constant.TEMPLATE_SPLITER
@@ -34,18 +34,18 @@ export default async function ({
   const csvTbl = await parseCSV({
     replaceListFile: replaceListFile as string,
     srcFileName
-  })
+  });
 
-  if (csvTbl === -1) return
+  if (csvTbl === -1) return;
 
   utils.funcExecByFlag(optionManager.getInstance().debugOpt!, () =>
     debuggingInfoArr.getInstance().append(`startLine: ${startLine}`)
-  )
+  );
   utils.funcExecByFlag(optionManager.getInstance().debugOpt!, () =>
     debuggingInfoArr.getInstance().append(`endLine: ${endLine}`)
-  )
+  );
 
-  let resultLines: string[] | number = []
+  let resultLines: string[] | number = [];
   try {
     resultLines = replace({
       srcFileName,
@@ -56,7 +56,7 @@ export default async function ({
       excludeRegValue,
       startLine,
       endLine
-    })
+    });
   } catch (err) {
     console.log(chalk.red(err.message));
     console.log("details:");
@@ -65,7 +65,7 @@ export default async function ({
     throw err;
   }
 
-  if (resultLines === -1) return
+  if (resultLines === -1) return;
 
   const dstFilePath: string = optionManager.getInstance().overwriteOpt
     ? srcFile
@@ -77,17 +77,17 @@ export default async function ({
 
   fs.writeFileSync(dstFilePath, '\ufeff' + (resultLines as string[]).join('\n'), {
     encoding: 'utf8'
-  })
+  });
 
   const debugInfoStr: string = debuggingInfoArr.getInstance().toString();
 
-  utils.logByFlag(optionManager.getInstance().verboseOpt!, debugInfoStr)
+  utils.logByFlag(optionManager.getInstance().verboseOpt!, debugInfoStr);
 
   utils.funcExecByFlag(optionManager.getInstance().debugOpt!, () =>
     fs.appendFileSync('DEBUG_INFO', '\ufeff' + debugInfoStr, {
       encoding: 'utf8'
     })
-  )
+  );
 
-  console.log(chalk.italic(chalk.white(`\nGenerated '${dstFilePath}'\n`)))
+  console.log(chalk.italic(chalk.white(`\nGenerated '${dstFilePath}'\n`)));
 }

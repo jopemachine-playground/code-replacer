@@ -1,12 +1,12 @@
-import matchAll from './matchAll'
-import utils from './util'
-import optionManager from './optionManager'
+import matchAll from './matchAll';
+import utils from './util';
+import optionManager from './optionManager';
 
 const changeLRefKeyToGroupKeys = (str: string, hasEscaped: boolean) => {
   const findLRefKeyReg: RegExp = hasEscaped
     ? /\\\$\\\[(?<lRefKey>[\d\w]*)\\\]/
-    : /\$\[(?<lRefKey>[\d\w]*)\]/
-  const findLRefKeyRegExp: RegExp = new RegExp(findLRefKeyReg)
+    : /\$\[(?<lRefKey>[\d\w]*)\]/;
+  const findLRefKeyRegExp: RegExp = new RegExp(findLRefKeyReg);
   const LReftKeysInLValue: Generator<RegExpExecArray, void, unknown> = matchAll(
     str,
     findLRefKeyRegExp
@@ -15,7 +15,7 @@ const changeLRefKeyToGroupKeys = (str: string, hasEscaped: boolean) => {
   const cntFrequency: Map<string, number> = new Map;
 
   for (const LRefKeyInfo of LReftKeysInLValue) {
-    const lRefKey: string = LRefKeyInfo[1]
+    const lRefKey: string = LRefKeyInfo[1];
 
     if (cntFrequency.has(lRefKey)) {
       cntFrequency.set(lRefKey, cntFrequency.get(lRefKey)! + 1);
@@ -23,7 +23,7 @@ const changeLRefKeyToGroupKeys = (str: string, hasEscaped: boolean) => {
       cntFrequency.set(lRefKey, 1);
     }
 
-    const lRefKeyReg: string = hasEscaped ? `\\$\\[${lRefKey}\\]` : `$[${lRefKey}]`
+    const lRefKeyReg: string = hasEscaped ? `\\$\\[${lRefKey}\\]` : `$[${lRefKey}]`;
 
     str = str.replace(
       lRefKeyReg,
@@ -31,8 +31,8 @@ const changeLRefKeyToGroupKeys = (str: string, hasEscaped: boolean) => {
     );
   }
 
-  return str
-}
+  return str;
+};
 
 const handleLRefKeyInTemplateLValue = ({
   templateLValue,
@@ -49,14 +49,14 @@ const handleSpecialCharEscapeInTemplateLValue = (templateLValue: string) => {
     return {
       escaped: false,
       str: templateLValue
-    }
+    };
   } else {
     return {
       escaped: true,
       str: utils.handleSpecialCharacter(templateLValue)
-    }
+    };
   }
-}
+};
 
 const handleGroupKeysInTeamplateLValue = ({
   lRefKey,
@@ -109,7 +109,7 @@ export {
   handleLRefKeyInTemplateRValue,
   handleSpecialCharEscapeInTemplateLValue,
   handleGroupKeysInTeamplateLValue,
-}
+};
 
 // Not used
 // const handleTemplateRValuesCSVColKey = ({ csvTbl, csvLineIdx, templateRValue }) => {

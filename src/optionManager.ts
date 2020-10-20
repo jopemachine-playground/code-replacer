@@ -2,17 +2,17 @@ import { OptionManager } from './type/optionManager';
 
 export default (function () {
   let instance: OptionManager;
-  const options = {}
+  const options = {};
   function initiate () {
-    return options
+    return options;
   }
 
   return {
-    getInstance: function () {
+    getInstance () {
       if (!instance) {
-        instance = initiate()
+        instance = initiate();
       }
-      return instance
+      return instance;
     }
-  }
-})()
+  };
+})();

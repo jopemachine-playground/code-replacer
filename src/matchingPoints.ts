@@ -1,5 +1,5 @@
-import { MatchingPoint } from './type/matchingPoint'
-import { handleLRefKeyInTemplateLValue, handleSpecialCharEscapeInTemplateLValue } from './template'
+import { MatchingPoint } from './type/matchingPoint';
+import { handleLRefKeyInTemplateLValue, handleSpecialCharEscapeInTemplateLValue } from './template';
 import matchAll from './matchAll';
 
 export class MatchingPoints extends Array {
@@ -26,12 +26,12 @@ export class MatchingPoints extends Array {
       otherPtsCandidateIdx++
     ) {
       const otherPts: MatchingPoint = this[otherPtsCandidateIdx];
-  
+
       for (const candItem of otherPts) {
         candItem.index += replacedString.length - matchingStr.length;
       }
     }
-  };
+  }
 
   public sortMatchingPoints () {
     for (
@@ -41,19 +41,19 @@ export class MatchingPoints extends Array {
     ) {
       const cands: MatchingPoint = this[matchingPtIdx];
       cands.leastIdx = Number.MAX_SAFE_INTEGER;
-  
+
       for (let candIdx = 0; candIdx < cands.length; candIdx++) {
         if (cands.leastIdx > cands[candIdx].index) {
           cands.leastIdx = cands[candIdx].index;
         }
       }
     }
-  
+
     // Sort matching points to match in asc order
     this.sort((lPt, rPt) => {
       return lPt.leastIdx - rPt.leastIdx;
     });
-  };
+  }
 
   public addMatchingPoint ({
     srcLine,
@@ -76,10 +76,10 @@ export class MatchingPoints extends Array {
       void,
       unknown
     > = matchAll(srcLine, replacingKeyReg);
-  
+
     for (const replacingKeyMatchingPt of replacingKeyMatchingPts) {
       let existingMatchingPtIdx: number = -1;
-  
+
       for (
         let matchingPtIdx: number = 0;
         matchingPtIdx < this.length;
@@ -88,14 +88,14 @@ export class MatchingPoints extends Array {
         const cands: MatchingPoint = this[matchingPtIdx];
         const replacingKeyMatchingStr: string = replacingKeyMatchingPt[0];
         const longestStrInMatchingPt: string = cands[0][0];
-  
+
         if (
           replacingKeyMatchingStr === longestStrInMatchingPt ||
           !longestStrInMatchingPt.includes(replacingKeyMatchingStr)
         ) {
           continue;
         }
-  
+
         // Should be same matching point.
         if (
           longestStrInMatchingPt.length >
@@ -105,7 +105,7 @@ export class MatchingPoints extends Array {
           break;
         }
       }
-  
+
       this.replacingKey = replacingKey;
       if (existingMatchingPtIdx === -1) {
         this[this.length] = [replacingKeyMatchingPt];
@@ -113,5 +113,5 @@ export class MatchingPoints extends Array {
         this[existingMatchingPtIdx].push(replacingKeyMatchingPt);
       }
     }
-  };
+  }
 }

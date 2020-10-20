@@ -1,18 +1,18 @@
-import StringBuffer from './stringBuffer'
+import StringBuffer from './stringBuffer';
 
 export default (function () {
-  let instance: StringBuffer
-  const stringBuf = new StringBuffer()
+  let instance: StringBuffer;
+  const stringBuf = new StringBuffer();
   function initiate () {
-    return stringBuf
+    return stringBuf;
   }
 
   return {
-    getInstance: function () {
+    getInstance () {
       if (!instance) {
-        instance = initiate()
+        instance = initiate();
       }
-      return instance
+      return instance;
     }
-  }
-})()
+  };
+})();

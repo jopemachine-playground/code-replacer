@@ -1,36 +1,36 @@
-import utils from './util'
-import codeReplace from './codeReplace'
-import path from 'path'
-import chalk from 'chalk'
-import inquirer from 'inquirer'
-import inquirerFileTreeSelection from 'inquirer-file-tree-selection-prompt'
-import constant from './constant'
-import fs from 'fs'
-import { CommandArguments } from './type/commandArgument'
+import utils from './util';
+import codeReplace from './codeReplace';
+import path from 'path';
+import chalk from 'chalk';
+import inquirer from 'inquirer';
+import inquirerFileTreeSelection from 'inquirer-file-tree-selection-prompt';
+import constant from './constant';
+import fs from 'fs';
+import { CommandArguments } from './type/commandArgument';
 
-inquirer.registerPrompt('file-tree-selection', inquirerFileTreeSelection)
+inquirer.registerPrompt('file-tree-selection', inquirerFileTreeSelection);
 
 const fetchLog = ({ keyName }: { keyName: string }) => {
-  const logs: string[] = []
-  const usageLogJson: JSON = require('../usageLog.json')
+  const logs: string[] = [];
+  const usageLogJson: JSON = require('../usageLog.json');
 
-  let displayCnt: number = 0
-  const maxDisplayCnt: number = constant.CLI_SELCTOR_MAX_DISPLAYING_LOG
-  const keys: string[] = Object.keys(usageLogJson).reverse()
+  let displayCnt: number = 0;
+  const maxDisplayCnt: number = constant.CLI_SELCTOR_MAX_DISPLAYING_LOG;
+  const keys: string[] = Object.keys(usageLogJson).reverse();
 
   for (const usageLogKey of keys) {
     if (usageLogJson[usageLogKey][keyName] && !logs.includes(usageLogJson[usageLogKey][keyName]) && (displayCnt < maxDisplayCnt)) {
-      logs.push(usageLogJson[usageLogKey][keyName])
-      displayCnt++
+      logs.push(usageLogJson[usageLogKey][keyName]);
+      displayCnt++;
     }
   }
 
-  return logs
-}
+  return logs;
+};
 
 const receiveCSVOption = async () => {
-  const csvUsageLogs = fetchLog({ keyName: 'csv' })
-  let csvFilePath = -1
+  const csvUsageLogs = fetchLog({ keyName: 'csv' });
+  let csvFilePath = -1;
   await inquirer
     .prompt([
       {
@@ -40,7 +40,7 @@ const receiveCSVOption = async () => {
       }
     ])
     .then(async (ynOutput) => {
-      if (!ynOutput.csvOpt) return
+      if (!ynOutput.csvOpt) return;
       await inquirer
         .prompt([
           {
@@ -62,20 +62,20 @@ const receiveCSVOption = async () => {
                   name: 'file',
                   message: chalk.dim('Choose csv file from file directory'),
                   transformer: (input) => {
-                    const name = input.split(path.sep).pop()
+                    const name = input.split(path.sep).pop();
                     if (name[0] === '.') {
-                      return chalk.grey(name)
+                      return chalk.grey(name);
                     }
-                    return name
+                    return name;
                   },
                   validate: (input) => {
-                    return fs.lstatSync(input).isFile()
+                    return fs.lstatSync(input).isFile();
                   }
                 }
               ])
               .then((fileSelectionOutput) => {
-                csvFilePath = fileSelectionOutput.file
-              })
+                csvFilePath = fileSelectionOutput.file;
+              });
           } else if (listSelect.csvOpt === constant.cliSelectorString.TYPE_INPUT) {
             await inquirer
               .prompt([
@@ -86,21 +86,21 @@ const receiveCSVOption = async () => {
                 }
               ])
               .then((fileSelectionOutput) => {
-                csvFilePath = fileSelectionOutput.csvFilePathInput
-              })
+                csvFilePath = fileSelectionOutput.csvFilePathInput;
+              });
           } else {
-            csvFilePath = listSelect.csvOpt
+            csvFilePath = listSelect.csvOpt;
           }
-        })
-    })
-  return csvFilePath
-}
+        });
+    });
+  return csvFilePath;
+};
 
 const receiveSrcOption = async () => {
-  const srcUsageLogs = fetchLog({ keyName: 'src' })
-  let srcFilePath: number | string = -1
-  let dir: number | string = -1
-  let ext: number | string = -1
+  const srcUsageLogs = fetchLog({ keyName: 'src' });
+  let srcFilePath: number | string = -1;
+  let dir: number | string = -1;
+  let ext: number | string = -1;
 
   await inquirer
     .prompt([
@@ -134,19 +134,19 @@ const receiveSrcOption = async () => {
                     name: 'file',
                     message: chalk.dim('Choose src file'),
                     transformer: (input) => {
-                      const name = input.split(path.sep).pop()
+                      const name = input.split(path.sep).pop();
                       if (name[0] === '.') {
-                        return chalk.grey(name)
+                        return chalk.grey(name);
                       }
-                      return name
+                      return name;
                     },
                     validate: (input) => {
-                      return fs.lstatSync(input).isFile()
+                      return fs.lstatSync(input).isFile();
                     }
                   }
                 ]).then((fileSelectionOutput) => {
-                  srcFilePath = fileSelectionOutput.file
-                })
+                  srcFilePath = fileSelectionOutput.file;
+                });
             } else if (srcOpt.src === constant.cliSelectorString.TYPE_INPUT) {
               await inquirer
                 .prompt([
@@ -155,16 +155,16 @@ const receiveSrcOption = async () => {
                     name: 'srcManual',
                     message: chalk.dim("Enter src file's path"),
                     validate: (input) => {
-                      return fs.lstatSync(input).isFile()
+                      return fs.lstatSync(input).isFile();
                     }
                   }
                 ]).then(async (srcManualOutput) => {
-                  srcFilePath = srcManualOutput.srcManual
-                })
+                  srcFilePath = srcManualOutput.srcManual;
+                });
             } else {
-              srcFilePath = srcOpt.src
+              srcFilePath = srcOpt.src;
             }
-          })
+          });
       } else if (isSrcOrDirOpt.srcOpt === constant.cliSelectorString.SELECT_DIR) {
         await inquirer
           .prompt([
@@ -173,18 +173,18 @@ const receiveSrcOption = async () => {
               name: 'dir',
               message: chalk.dim('Choose a directory you want to target'),
               transformer: (input) => {
-                const name = input.split(path.sep).pop()
+                const name = input.split(path.sep).pop();
                 if (name[0] === '.') {
-                  return chalk.grey(name)
+                  return chalk.grey(name);
                 }
-                return name
+                return name;
               },
               validate: (input) => {
-                return fs.lstatSync(input).isDirectory()
+                return fs.lstatSync(input).isDirectory();
               }
             }
           ]).then(async (dirOpt) => {
-            dir = dirOpt.dir
+            dir = dirOpt.dir;
             await inquirer
               .prompt([
                 {
@@ -204,12 +204,12 @@ const receiveSrcOption = async () => {
                         name: 'ext',
                         message: chalk.dim("Enter src file's path"),
                         validate: (input) => {
-                          return fs.lstatSync(input).isFile()
+                          return fs.lstatSync(input).isFile();
                         }
                       }
                     ]).then(async (select) => {
-                      ext = select.ext
-                    })
+                      ext = select.ext;
+                    });
                 } else if (opt.methodToTarget === constant.cliSelectorString.SELECT_BY_FILENAME) {
                   await inquirer
                     .prompt([
@@ -219,19 +219,19 @@ const receiveSrcOption = async () => {
                         message: chalk.dim("Enter file name's regexp")
                       }
                     ]).then(async (select) => {
-                      srcFilePath = select.fileName
-                    })
+                      srcFilePath = select.fileName;
+                    });
                 }
-              })
-          })
+              });
+          });
       }
-    })
+    });
   return {
     srcFilePath,
     dir,
     ext
-  }
-}
+  };
+};
 
 const receiveTemplateOption = async () => {
   let template: number | string = -1;
@@ -282,7 +282,7 @@ const receiveFlagOptions = async () => {
     conf,
     noEscape,
     startLine,
-    endLine
+    endLine;
 
   await inquirer
     .prompt([
@@ -316,17 +316,17 @@ const receiveFlagOptions = async () => {
             name: 'endLine'
           }
         ],
-        validate: function (answer) {
-          return true
+        validate (answer) {
+          return true;
         }
       }
     ]).then(async answer => {
-      debug = answer.flags.includes('debug')
-      verbose = answer.flags.includes('verbose')
-      overwrite = answer.flags.includes('overwrite')
-      once = answer.flags.includes('once')
-      conf = answer.flags.includes('conf')
-      noEscape = answer.flags.includes('no-escape')
+      debug = answer.flags.includes('debug');
+      verbose = answer.flags.includes('verbose');
+      overwrite = answer.flags.includes('overwrite');
+      once = answer.flags.includes('once');
+      conf = answer.flags.includes('conf');
+      noEscape = answer.flags.includes('no-escape');
 
       if (answer.flags.includes('startLine')) {
         await inquirer
@@ -338,8 +338,8 @@ const receiveFlagOptions = async () => {
             }
           ])
           .then((startLineOutput) => {
-            startLine = startLineOutput.startLine
-          })
+            startLine = startLineOutput.startLine;
+          });
       }
       if (answer.flags.includes('endLine')) {
         await inquirer
@@ -351,10 +351,10 @@ const receiveFlagOptions = async () => {
             }
           ])
           .then((endLineOutput) => {
-            endLine = endLineOutput.endLine
-          })
+            endLine = endLineOutput.endLine;
+          });
       }
-    })
+    });
 
   return {
     verbose,
@@ -365,12 +365,12 @@ const receiveFlagOptions = async () => {
     noEscape,
     startLine,
     endLine
-  }
-}
+  };
+};
 
 const receiveExcludeRegOption = async () => {
-  let excludeReg: number | string = -1
-  const excludeRegUsageLogs = fetchLog({ keyName: 'excludeReg' })
+  let excludeReg: number | string = -1;
+  const excludeRegUsageLogs = fetchLog({ keyName: 'excludeReg' });
 
   await inquirer
     .prompt([
@@ -379,7 +379,7 @@ const receiveExcludeRegOption = async () => {
         name: 'excludeRegYn',
         message: chalk.dim('Would you like to use excludeReg?')
       }]).then(async (yn) => {
-      if (!yn.excludeRegYn) return
+      if (!yn.excludeRegYn) return;
       await inquirer
         .prompt([
           {
@@ -393,7 +393,7 @@ const receiveExcludeRegOption = async () => {
           }
         ])
         .then(async (ynOutput) => {
-          if (!ynOutput.excludeRegOpt) return
+          if (!ynOutput.excludeRegOpt) return;
           await inquirer
             .prompt([
               {
@@ -403,27 +403,27 @@ const receiveExcludeRegOption = async () => {
               }
             ])
             .then((excludeOutput) => {
-              excludeReg = excludeOutput.excludeReg
-            })
-        })
-    })
-  return excludeReg
-}
+              excludeReg = excludeOutput.excludeReg;
+            });
+        });
+    });
+  return excludeReg;
+};
 
 export default async (input: string, args: CommandArguments) => {
   switch (input) {
     case 'sel':
     case 'select': {
-      const { srcFilePath: src, ext, dir } = await receiveSrcOption()
-      const csv = await receiveCSVOption()
-      const template = await receiveTemplateOption()
-      const excludeReg = await receiveExcludeRegOption()
-      src !== -1 && (args.src = src as unknown as string)
-      ext !== -1 && (args.ext = ext as unknown as string)
-      dir !== -1 && (args.dir = dir as unknown as string)
-      csv !== -1 && (args.csv = csv as unknown as string)
-      template !== -1 && (args.template = template as unknown as string)
-      excludeReg !== -1 && (args.excludeReg = excludeReg as unknown as string)
+      const { srcFilePath: src, ext, dir } = await receiveSrcOption();
+      const csv = await receiveCSVOption();
+      const template = await receiveTemplateOption();
+      const excludeReg = await receiveExcludeRegOption();
+      src !== -1 && (args.src = src as unknown as string);
+      ext !== -1 && (args.ext = ext as unknown as string);
+      dir !== -1 && (args.dir = dir as unknown as string);
+      csv !== -1 && (args.csv = csv as unknown as string);
+      template !== -1 && (args.template = template as unknown as string);
+      excludeReg !== -1 && (args.excludeReg = excludeReg as unknown as string);
       const {
         verbose,
         debug,
@@ -433,28 +433,28 @@ export default async (input: string, args: CommandArguments) => {
         noEscape,
         startLine,
         endLine
-      } = await receiveFlagOptions()
-      args.verbose = verbose
-      args.debug = debug
-      args.overwrite = overwrite
-      args.once = once
-      args.conf = conf
-      args.startLine = startLine
-      args.endLine = endLine
-      args['no-escape'] = noEscape
-      console.log()
-      codeReplace(args)
-      break
+      } = await receiveFlagOptions();
+      args.verbose = verbose;
+      args.debug = debug;
+      args.overwrite = overwrite;
+      args.once = once;
+      args.conf = conf;
+      args.startLine = startLine;
+      args.endLine = endLine;
+      args['no-escape'] = noEscape;
+      console.log();
+      codeReplace(args);
+      break;
     }
     case 'set':
-      utils.setOptions(args)
-      break
+      utils.setOptions(args);
+      break;
     case 'd':
     case 'default':
-      utils.showDefaultOptions()
-      break
+      utils.showDefaultOptions();
+      break;
     default:
-      codeReplace(args)
-      break
+      codeReplace(args);
+      break;
   }
-}
+};

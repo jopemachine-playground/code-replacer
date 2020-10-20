@@ -1,4 +1,4 @@
-import chalk from 'chalk'
+import chalk from 'chalk';
 
 export default {
   REPLACED_PREPOSITION: '__replaced__.',
@@ -29,12 +29,12 @@ export default {
 
         <required argument>
 
-            --src, -s                     specify target file. 
-                                          when target and dir are given, 
+            --src, -s                     specify target file.
+                                          when target and dir are given,
                                           target the files corresponding to the name in the target directory.
                                           (no need to ext)
 
-            --csv, -c                     specify replace properties file, 
+            --csv, -c                     specify replace properties file,
                                           default value is './rlist.csv'
                                           name './rlist_{fileName}.csv',
                                           if you want to apply different rlist files per file
@@ -50,7 +50,7 @@ export default {
             --ext, -e                     specify target file's extension.
                                           (Use this with dir to target multiple files)
 
-            --dst, -dst                   specify the name of the output file. 
+            --dst, -dst                   specify the name of the output file.
                                           default value is '__replaced__.{originalFileName}'.
 
             --verbose, -v                 print all information about the text replaced in console.
@@ -83,4 +83,4 @@ export default {
 
     See README.md for more details.
 `
-}
+};

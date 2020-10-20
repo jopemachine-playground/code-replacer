@@ -1,11 +1,11 @@
-import meow from 'meow'
-import path from 'path'
-import _ from 'lodash'
-import cliSelector from './cliSelector'
-import constant from './constant'
-import { CommandArguments } from './type/commandArgument'
+import meow from 'meow';
+import path from 'path';
+import _ from 'lodash';
+import cliSelector from './cliSelector';
+import constant from './constant';
+import { CommandArguments } from './type/commandArgument';
 import chalk from 'chalk';
-require('dotenv').config({ path: `${__dirname}${path.sep}.env` })
+require('dotenv').config({ path: `${__dirname}${path.sep}.env` });
 
 const flags: meow.AnyFlags = {
   dir: {
@@ -81,17 +81,17 @@ const flags: meow.AnyFlags = {
     alias: 'n',
     isRequired: (flags, input) => false
   }
-}
+};
 
 _.map(Object.keys(flags), (flagKey: string) => {
   if (process.env[flagKey]) {
     if (process.env[flagKey] === 'true' || process.env[flagKey] === 'false') {
       console.log(chalk.blue(`Use ${flagKey} as the stored default value, ${process.env[flagKey]}.`));
-      (flags[flagKey] as any)['default'] = Boolean(process.env[flagKey])
-    } else (flags[flagKey] as any)['default'] = process.env[flagKey]
+      (flags[flagKey] as any).default = Boolean(process.env[flagKey]);
+    } else (flags[flagKey] as any).default = process.env[flagKey];
   }
-})
+});
 
-const meowCli: meow.Result<meow.AnyFlags> = meow(constant.HELP_STRING, { flags })
+const meowCli: meow.Result<meow.AnyFlags> = meow(constant.HELP_STRING, { flags });
 
-cliSelector(meowCli.input[0], meowCli.flags as unknown as CommandArguments)
+cliSelector(meowCli.input[0], meowCli.flags as unknown as CommandArguments);

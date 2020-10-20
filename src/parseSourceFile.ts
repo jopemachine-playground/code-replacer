@@ -1,9 +1,9 @@
-import fs from 'fs'
-import path from 'path'
-import chalk from 'chalk'
-import utils from './util'
-import debuggingInfoArr from './debuggingInfo'
-import optionManager from './optionManager'
+import fs from 'fs';
+import path from 'path';
+import chalk from 'chalk';
+import utils from './util';
+import debuggingInfoArr from './debuggingInfo';
+import optionManager from './optionManager';
 
 export default ({ srcFile }: { srcFile: string }) => {
   const absPath: string = path.resolve(srcFile);

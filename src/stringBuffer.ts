@@ -1,8 +1,8 @@
 class StringBuffer {
-  buffer: string[]
+  buffer: string[];
 
   constructor () {
-    this.buffer = new Array()
+    this.buffer = new Array();
   }
 
   append (obj: string) {
@@ -10,8 +10,8 @@ class StringBuffer {
   }
 
   toString () {
-    return this.buffer.join('\n')
+    return this.buffer.join('\n');
   }
 }
 
-export default StringBuffer
+export default StringBuffer;

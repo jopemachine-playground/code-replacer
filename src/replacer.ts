@@ -497,7 +497,7 @@ const replace = ({
         srcLine,
         templateLValue,
         templateRValue,
-      }) as string
+      }) as string;
     }
     if (resultLine as unknown as number === -1) return -1;
     resultLines.push(resultLine as string);
