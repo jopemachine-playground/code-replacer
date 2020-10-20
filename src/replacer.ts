@@ -5,8 +5,10 @@ import readlineSync from "readline-sync";
 import debuggingInfoArr from "./debuggingInfo";
 import optionManager from "./optionManager";
 import {
-  handleTemplateLValuesLRefKey,
-  handleTemplateLValuesSpecialCharEscape,
+  handleLRefKeyInTemplateLValue,
+  handleSpecialCharEscapeInTemplateLValue,
+  handleGroupKeysInTeamplateLValue,
+  handleLRefKeyInTemplateRValue
 } from "./template";
 import {
   CreatingReplacingObjError,
@@ -199,10 +201,10 @@ const handleLRefKey = ({
   matchingStr: string;
   rvalue: string;
 }) => {
-  const { escaped, str: escapedKey } = handleTemplateLValuesSpecialCharEscape(
+  const { escaped, str: escapedKey } = handleSpecialCharEscapeInTemplateLValue(
     regKey
   );
-  regKey = handleTemplateLValuesLRefKey({
+  regKey = handleLRefKeyInTemplateLValue({
     escaped,
     templateLValue: escapedKey,
   });
@@ -235,7 +237,7 @@ const handleLRefKey = ({
     groupKeyMatchingStr,
   });
 
-  replaceObj[matchingStr] = handleLRefKeyInTeamplateRValue({
+  replaceObj[matchingStr] = handleLRefKeyInTemplateRValue({
     replaceObj,
     matchingStr,
     lRefKey,
@@ -247,48 +249,6 @@ const handleLRefKey = ({
     matchingStr,
     replaceObj,
   };
-};
-
-const handleGroupKeysInTeamplateLValue = ({
-  lRefKey,
-  matchingStr,
-  groupKeyMatchingStr,
-}: {
-  lRefKey: string
-  matchingStr: string
-  groupKeyMatchingStr: string
-}) => {
-  return utils.replaceAll(matchingStr, `(?<${lRefKey}>)`, groupKeyMatchingStr);
-};
-
-const handleLRefKeyInTeamplateRValue = ({
-  replaceObj,
-  matchingStr,
-  lRefKey,
-  groupKeyMatching,
-  rvalue
-}: {
-  replaceObj: Object;
-  matchingStr: string;
-  lRefKey: string;
-  groupKeyMatching: RegExpMatchArray
-  rvalue: string;
-}) => {
-  if (replaceObj[matchingStr]) {
-    return utils.replaceAll(
-      replaceObj[matchingStr],
-      `$[${lRefKey}]`,
-      groupKeyMatching.groups![lRefKey]
-    );
-  } else {
-    // TODO: Need to remote old key here!!!!
-
-    return utils.replaceAll(
-      rvalue,
-      `$[${lRefKey}]`,
-      groupKeyMatching.groups![lRefKey]
-    );
-  }
 };
 
 const replaceOneline = ({

@@ -1,14 +1,14 @@
-const { handleTemplateLValuesLRefKey, handleTemplateLValuesSpecialCharEscape } = require('../../src/template')
+const { handleLRefKeyInTemplateLValue, handleSpecialCharEscapeInTemplateLValue } = require('../../src/template')
 const optionManager = require('../../src/optionManager').default
 
-describe('handleTemplateLValuesLRefKey', () => {
+describe('handleLRefKeyInTemplateLValue', () => {
   beforeAll(() => {
     optionManager.getInstance()['no-escape'] = false
   })
 
   test('With escape', () => {
-    const { escaped, str } = handleTemplateLValuesSpecialCharEscape('$[key1] ${source}${index} $[key2]')
-    const result = handleTemplateLValuesLRefKey({ templateLValue: str, escaped })
+    const { escaped, str } = handleSpecialCharEscapeInTemplateLValue('$[key1] ${source}${index} $[key2]')
+    const result = handleLRefKeyInTemplateLValue({ templateLValue: str, escaped })
     expect(result).toBe('(?<key1>[\\d\\w]*) \\$\\{source\\}\\$\\{index\\} (?<key2>[\\d\\w]*)')
   })
 })
@@ -20,7 +20,7 @@ describe('Handle template', () => {
 
   test('With no-escape', () => {
     const templateLValue = '$[key1] ${source}${index} $[key2]'
-    const result = handleTemplateLValuesLRefKey({ templateLValue: templateLValue, escaped: false })
+    const result = handleLRefKeyInTemplateLValue({ templateLValue: templateLValue, escaped: false })
     expect(result).toBe('(?<key1>[\\\d\\\w]*) ${source}${index} (?<key2>[\\\d\\\w]*)')
   })
 })

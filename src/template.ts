@@ -1,7 +1,6 @@
 import matchAll from './matchAll'
 import utils from './util'
 import optionManager from './optionManager'
-import { InvalidRightReferenceError, ERROR_CONSTANT } from './error'
 
 const changeLRefKeyToGroupKeys = (string: string, hasEscaped: boolean) => {
   const findLRefKeyReg: RegExp = hasEscaped
@@ -24,6 +23,79 @@ const changeLRefKeyToGroupKeys = (string: string, hasEscaped: boolean) => {
   }
 
   return string
+}
+
+const handleLRefKeyInTemplateLValue = ({
+  templateLValue,
+  escaped,
+}: {
+  templateLValue: string;
+  escaped: boolean;
+}) => {
+  return changeLRefKeyToGroupKeys(templateLValue, escaped);
+};
+
+const handleSpecialCharEscapeInTemplateLValue = (templateLValue: string) => {
+  if (optionManager.getInstance()['no-escape']) {
+    return {
+      escaped: false,
+      str: templateLValue
+    }
+  } else {
+    return {
+      escaped: true,
+      str: utils.handleSpecialCharacter(templateLValue)
+    }
+  }
+}
+
+const handleGroupKeysInTeamplateLValue = ({
+  lRefKey,
+  matchingStr,
+  groupKeyMatchingStr,
+}: {
+  lRefKey: string
+  matchingStr: string
+  groupKeyMatchingStr: string
+}) => {
+  return utils.replaceAll(matchingStr, `(?<${lRefKey}>)`, groupKeyMatchingStr);
+};
+
+const handleLRefKeyInTemplateRValue = ({
+  replaceObj,
+  matchingStr,
+  lRefKey,
+  groupKeyMatching,
+  rvalue
+}: {
+  replaceObj: Object;
+  matchingStr: string;
+  lRefKey: string;
+  groupKeyMatching: RegExpMatchArray
+  rvalue: string;
+}) => {
+  if (replaceObj[matchingStr]) {
+    return utils.replaceAll(
+      replaceObj[matchingStr],
+      `$[${lRefKey}]`,
+      groupKeyMatching.groups![lRefKey]
+    );
+  } else {
+    // TODO: Need to remote old key here!!!!
+
+    return utils.replaceAll(
+      rvalue,
+      `$[${lRefKey}]`,
+      groupKeyMatching.groups![lRefKey]
+    );
+  }
+};
+
+export {
+  handleLRefKeyInTemplateLValue,
+  handleLRefKeyInTemplateRValue,
+  handleSpecialCharEscapeInTemplateLValue,
+  handleGroupKeysInTeamplateLValue,
 }
 
 // Not used
@@ -53,32 +125,3 @@ const changeLRefKeyToGroupKeys = (string: string, hasEscaped: boolean) => {
 
 //   return value;
 // }
-
-const handleTemplateLValuesLRefKey = ({
-  templateLValue,
-  escaped,
-}: {
-  templateLValue: string;
-  escaped: boolean;
-}) => {
-  return changeLRefKeyToGroupKeys(templateLValue, escaped);
-};
-
-const handleTemplateLValuesSpecialCharEscape = (templateLValue: string) => {
-  if (optionManager.getInstance()['no-escape']) {
-    return {
-      escaped: false,
-      str: templateLValue
-    }
-  } else {
-    return {
-      escaped: true,
-      str: utils.handleSpecialCharacter(templateLValue)
-    }
-  }
-}
-
-export {
-  handleTemplateLValuesLRefKey,
-  handleTemplateLValuesSpecialCharEscape,
-}
