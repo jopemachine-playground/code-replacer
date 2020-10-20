@@ -32,8 +32,8 @@ export default {
     return str;
   },
 
-  restoreTemplateSpliter (string: string, spliter: string) {
-    return this.replaceAll(string, '\\' + spliter, spliter);
+  restoreTemplateSpliter (str: string, spliter: string) {
+    return this.replaceAll(str, '\\' + spliter, spliter);
   },
 
   handleCSVColKey ({ csvRecord, columnName, templateLValue, templateRValue }) {
@@ -56,7 +56,7 @@ export default {
   },
 
   async readCsv (csvFilePath: string) {
-    const csvResult: Object[] = [];
+    const csvResult: object[] = [];
     return new Promise((resolve, reject) => {
       try {
         fs.createReadStream(csvFilePath)
@@ -116,10 +116,10 @@ export default {
     ).trim();
   },
 
-  getProperties (object: Object) {
+  getProperties (obj: object) {
     let result = '';
-    for (const key of Object.keys(object)) {
-      result += `${key}=${object[key]}
+    for (const key of Object.keys(obj)) {
+      result += `${key}=${obj[key]}
 `;
     }
     return result;
@@ -175,7 +175,7 @@ ${postLine}
     }
   },
 
-  splitWithEscape (string: string, spliter: string) {
+  splitWithEscape (str: string, spliter: string) {
     let prevChar = '';
     let matching = false;
 
@@ -184,8 +184,8 @@ ${postLine}
 
     let spliterBuf = '';
 
-    for (let i = 0; i < string.length; i++) {
-      const char = string.charAt(i);
+    for (let i = 0; i < str.length; i++) {
+      const char = str.charAt(i);
 
       // handle escape
       if (!matching && prevChar === '\\') {
@@ -198,11 +198,11 @@ ${postLine}
         spliterBuf = char;
         for (
           let spliterIdx = i + 1;
-          spliterIdx < i + spliter.length && spliterIdx < string.length;
+          spliterIdx < i + spliter.length && spliterIdx < str.length;
           spliterIdx++
         ) {
-          if (spliter.charAt(spliterBuf.length) === string.charAt(spliterIdx)) {
-            spliterBuf += string.charAt(spliterIdx);
+          if (spliter.charAt(spliterBuf.length) === str.charAt(spliterIdx)) {
+            spliterBuf += str.charAt(spliterIdx);
           } else {
             break;
           }
@@ -222,7 +222,7 @@ ${postLine}
     return [frontStrBuf, backStrBuf];
   },
 
-  setOptions (flags: Object) {
+  setOptions (flags: object) {
     fs.writeFileSync('.env', '\ufeff' + module.exports.getProperties(flags), {
       encoding: 'utf8'
     });

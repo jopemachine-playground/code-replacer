@@ -275,14 +275,14 @@ const receiveTemplateOption = async () => {
 };
 
 const receiveFlagOptions = async () => {
-  let verbose,
-    debug,
-    overwrite,
-    once,
-    conf,
-    noEscape,
-    startLine,
-    endLine;
+  let verbose: boolean | undefined;
+  let debug: boolean | undefined;
+  let overwrite: boolean | undefined;
+  let once: boolean | undefined;
+  let conf: boolean | undefined;
+  let noEscape: boolean | undefined;
+  let startLine: string | undefined;
+  let endLine: string | undefined;
 
   await inquirer
     .prompt([

@@ -12,7 +12,7 @@ const changeLRefKeyToGroupKeys = (str: string, hasEscaped: boolean) => {
     findLRefKeyRegExp
   );
 
-  const cntFrequency: Map<string, number> = new Map;
+  const cntFrequency: Map<string, number> = new Map();
 
   for (const LRefKeyInfo of LReftKeysInLValue) {
     const lRefKey: string = LRefKeyInfo[1];

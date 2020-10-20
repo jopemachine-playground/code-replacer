@@ -19,7 +19,8 @@ export default async function ({
   template,
   excludeReg: excludeRegValue
 }: CommandArguments) {
-  let templateLValue: string, templateRValue: string;
+  let templateLValue: string;
+  let templateRValue: string;
 
   const templateVals: string[] = utils.splitWithEscape(
     template,

@@ -11,75 +11,75 @@ const flags: meow.AnyFlags = {
   dir: {
     type: 'string',
     alias: 'd',
-    isRequired: (flags, input) => false
+    isRequired: (_flags, input) => false
   },
   ext: {
     type: 'string',
     alias: 'e',
-    isRequired: (flags, input) => false
+    isRequired: (_flags, input) => false
   },
   src: {
     type: 'string',
     alias: 's',
-    isRequired: (flags, input) => false
+    isRequired: (_flags, input) => false
   },
   csv: {
     type: 'string',
-    isRequired: (flags, input) => false
+    isRequired: (_flags, input) => false
   },
   verbose: {
     type: 'boolean',
     alias: 'v',
-    isRequired: (flags, input) => false
+    isRequired: (_flags, input) => false
   },
   once: {
     type: 'boolean',
     alias: 'o',
-    isRequired: (flags, input) => false
+    isRequired: (_flags, input) => false
   },
   startLine: {
     type: 'string',
     alias: 'sl',
-    isRequired: (flags, input) => false
+    isRequired: (_flags, input) => false
   },
   endLine: {
     type: 'string',
     alias: 'el',
-    isRequired: (flags, input) => false
+    isRequired: (_flags, input) => false
   },
   dst: {
     type: 'string',
     alias: 'ds',
-    isRequired: (flags, input) => false
+    isRequired: (_flags, input) => false
   },
   conf: {
     type: 'boolean',
     alias: 'c',
-    isRequired: (flags, input) => false
+    isRequired: (_flags, input) => false
   },
   template: {
     type: 'string',
     alias: 'tem',
-    isRequired: (flags, input) => false
+    isRequired: (_flags, input) => false
   },
   debug: {
     type: 'boolean',
-    isRequired: (flags, input) => false
+    isRequired: (_flags, input) => false
   },
   overwrite: {
     type: 'boolean',
     alias: 'w',
-    isRequired: (flags, input) => false
+    isRequired: (_flags, input) => false
   },
   excludeReg: {
     type: 'string',
     alias: 'x',
-    isRequired: (flags, input) => false
+    isRequired: (_flags, input) => false
   },
   'no-escape': {
     type: 'boolean',
     alias: 'n',
-    isRequired: (flags, input) => false
+    isRequired: (_flags, input) => false
   }
 };
 

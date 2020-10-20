@@ -1,6 +1,6 @@
 import StringBuffer from './stringBuffer';
 
-export default (function () {
+export default (() => {
   let instance: StringBuffer;
   const stringBuf = new StringBuffer();
   function initiate () {

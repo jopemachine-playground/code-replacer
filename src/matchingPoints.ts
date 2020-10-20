@@ -50,7 +50,7 @@ export class MatchingPoints extends Array {
     }
 
     // Sort matching points to match in asc order
-    this.sort((lPt, rPt) => {
+    this.sort((lPt: MatchingPoint, rPt: MatchingPoint) => {
       return lPt.leastIdx - rPt.leastIdx;
     });
   }
@@ -108,7 +108,7 @@ export class MatchingPoints extends Array {
 
       this.replacingKey = replacingKey;
       if (existingMatchingPtIdx === -1) {
-        this[this.length] = [replacingKeyMatchingPt];
+        this.push([replacingKeyMatchingPt]);
       } else {
         this[existingMatchingPtIdx].push(replacingKeyMatchingPt);
       }

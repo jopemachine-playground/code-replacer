@@ -128,7 +128,7 @@ const getMatchingPoints = ({
   srcLine: string;
   replacingKeys: string[];
 }) => {
-  const matchingPoints: MatchingPoints = new MatchingPoints;
+  const matchingPoints: MatchingPoints = new MatchingPoints();
 
   for (const replacingKey of replacingKeys) {
     matchingPoints.addMatchingPoint({

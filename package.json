@@ -24,6 +24,7 @@
     "dotenv": "^8.2.0",
     "inquirer": "^7.3.3",
     "inquirer-file-tree-selection-prompt": "^1.0.6",
+    "lodash": "^4.17.20",
     "meow": "^7.1.1",
     "readline-sync": "^1.4.10",
     "recursive-readdir": "^2.2.2",
