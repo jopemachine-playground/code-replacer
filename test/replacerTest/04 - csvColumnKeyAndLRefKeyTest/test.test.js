@@ -5,7 +5,7 @@ const optionManager = require('../../../src/optionManager').default
 const ReplacerTest = require('../../util')
 
 describe('Example 4, csv column key and left reference key test', () => {
-  test('Example 4-1 replacer test.', async () => {
+  test('Example 4-1 csv column key and left reference key test.', async () => {
     const args = {
       csvTbl: await readCsv(`${__dirname}${path.sep}rlist.csv`),
       srcFileLines: (parseSourceFile({ srcFile: `${__dirname}${path.sep}index.js` })).srcFileLines,
@@ -24,7 +24,7 @@ ghth 3example ffegg`
     expect(testPassedOrErrorLine).toBe(true)
   })
 
-  test('Example 4-2 replacer test.', async () => {
+  test('Example 4-2 csv column key and group keys test', async () => {
     optionManager.getInstance()['no-escape'] = true
 
     const args = {

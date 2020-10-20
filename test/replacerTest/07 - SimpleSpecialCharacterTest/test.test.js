@@ -3,7 +3,7 @@ const parseSourceFile = require('../../../src/parseSourceFile').default
 const { readCsv } = require('../../../src/util').default
 const ReplacerTest = require('../../util')
 
-describe('Example 7 test, special character escaping test', () => {
+describe('Example 7 test, simple special character escaping test', () => {
   test('Example 7-1 replacer test.', async () => {
     const args = {
       csvTbl: await readCsv(`${__dirname}${path.sep}rlist.csv`),

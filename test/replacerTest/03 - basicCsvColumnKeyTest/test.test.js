@@ -4,7 +4,7 @@ const { readCsv } = require('../../../src/util').default
 const ReplacerTest = require('../../util')
 
 describe('Example 3, basic csv column key test', () => {
-  test('Example 3 replacer test.', async () => {
+  test('Example 3 replacer test with multi basic csv column key', async () => {
     const args = {
       csvTbl: await readCsv(`${__dirname}${path.sep}rlist.csv`),
       srcFileLines: (parseSourceFile({ srcFile: `${__dirname}${path.sep}index.js` })).srcFileLines,

@@ -3,7 +3,7 @@ const parseSourceFile = require('../../../src/parseSourceFile').default
 const ReplacerTest = require('../../util')
 
 describe('Example 2 basic left reference key test', () => {
-  test('Example 2-1 replacer test.', async () => {
+  test('Example 2-1 basic left reference key test', async () => {
     const args = {
       csvTbl: [],
       srcFileLines: (parseSourceFile({ srcFile: `${__dirname}${path.sep}index.js` })).srcFileLines,
@@ -22,7 +22,7 @@ import ghi from "ghi";`
     expect(testPassedOrErrorLine).toBe(true)
   })
 
-  test('Example 2-2 replacer test.', async () => {
+  test('Example 2-2 basic left reference key test with multi key in templateLValue', async () => {
     const args = {
       csvTbl: [],
       srcFileLines: (parseSourceFile({ srcFile: `${__dirname}${path.sep}index2.js` })).srcFileLines,

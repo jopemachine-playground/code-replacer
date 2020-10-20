@@ -8,7 +8,7 @@ describe('Example 6, Left reference key and regexp test', () => {
     optionManager.getInstance()['no-escape'] = true
   })
 
-  test('Example 6 replacer test.', async () => {
+  test('Example 6 replacer test with regex and group key', async () => {
     const args = {
       csvTbl: [],
       srcFileLines: (parseSourceFile({ srcFile: `${__dirname}${path.sep}index.html` })).srcFileLines,

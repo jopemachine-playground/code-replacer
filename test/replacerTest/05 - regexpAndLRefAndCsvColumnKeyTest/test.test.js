@@ -9,7 +9,7 @@ describe('Example 5, regexp and left reference key, csv column key test', () => 
     optionManager.getInstance()['no-escape'] = true
   })
 
-  test('Example 5-1 replacer test.', async () => {
+  test('Example 5-1 replacer test with regex and csv column key', async () => {
     const args = {
       csvTbl: await readCsv(`${__dirname}${path.sep}rlist.csv`),
       srcFileLines: (parseSourceFile({ srcFile: `${__dirname}${path.sep}index.html` })).srcFileLines,
@@ -29,7 +29,7 @@ describe('Example 5, regexp and left reference key, csv column key test', () => 
     expect(testPassedOrErrorLine).toBe(true)
   })
 
-  test('Example 5-2 replacer test.', async () => {
+  test('Example 5-2 replacer test with regex and csv column key', async () => {
     const args = {
       csvTbl: await readCsv(`${__dirname}${path.sep}rlist.csv`),
       srcFileLines: (parseSourceFile({ srcFile: `${__dirname}${path.sep}index.html` })).srcFileLines,
