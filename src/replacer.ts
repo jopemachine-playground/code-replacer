@@ -256,9 +256,7 @@ const handleLRefKey = ({
 };
 
 const replaceOneline = ({
-  blockingReplaceFlag,
   csvTbl,
-  endLine,
   excludeRegValue,
   lineIdx,
   replaceObj,
@@ -267,13 +265,10 @@ const replaceOneline = ({
   srcFileLines,
   srcFileName,
   srcLine,
-  startLine,
   templateLValue,
   templateRValue,
 }: {
-  blockingReplaceFlag: boolean;
   csvTbl: any;
-  endLine: string | undefined;
   excludeRegValue: string | undefined;
   lineIdx: number;
   replaceObj: Object;
@@ -282,175 +277,148 @@ const replaceOneline = ({
   srcFileLines: string[];
   srcFileName: string;
   srcLine: string;
-  startLine: string | undefined;
   templateLValue: string;
   templateRValue: string;
 }) => {
+
   if (excludeRegValue && srcLine.match(new RegExp(excludeRegValue))) {
     lineIdx++;
     return srcLine;
   }
 
-  // handle blocking replace
-  utils.funcExecByFlag(
-    blockingReplaceFlag && !!startLine && srcLine.trim() === startLine.trim(),
-    () => {
-      utils.funcExecByFlag(optionManager.getInstance().debugOpt!, () =>
-        debuggingInfoArr
-          .getInstance()
-          .append(`Encountered startLine on line ${lineIdx}`)
-      );
-      blockingReplaceFlag = false;
-    }
-  );
+  const hasOneToManyMatching = csvTbl.length < 1;
+  const matchingPoints: MatchingPoints = hasOneToManyMatching
+    ? getMatchingPointsWithOnlyTemplate({
+        srcLine,
+        templateLValue: templateLValue,
+      })
+    : getMatchingPoints({
+        srcLine,
+        replacingKeys,
+      });
 
-  utils.funcExecByFlag(
-    !blockingReplaceFlag && !!endLine && srcLine.trim() === endLine.trim(),
-    () => {
-      utils.funcExecByFlag(optionManager.getInstance().debugOpt!, () =>
-        debuggingInfoArr
-          .getInstance()
-          .append(`Encountered endLine on line ${lineIdx}`)
-      );
-      blockingReplaceFlag = true;
-    }
-  );
-
-  if (!blockingReplaceFlag) {
-    const hasOneToManyMatching = csvTbl.length < 1;
-    const matchingPoints: MatchingPoints = hasOneToManyMatching
-      ? getMatchingPointsWithOnlyTemplate({
-          srcLine,
-          templateLValue: templateLValue,
-        })
-      : getMatchingPoints({
-          srcLine,
-          replacingKeys,
-        });
+  for (
+    let matchingPtIdx: number = 0;
+    matchingPtIdx < matchingPoints.length;
+    matchingPtIdx++
+  ) {
+    // Match the longest string first
+    const matchingCandidates: MatchingPoint = matchingPoints[matchingPtIdx];
 
     for (
-      let matchingPtIdx: number = 0;
-      matchingPtIdx < matchingPoints.length;
-      matchingPtIdx++
+      let candidateIdx: number = 0;
+      candidateIdx < matchingCandidates.length;
+      candidateIdx++
     ) {
-      // Match the longest string first
-      const matchingCandidates: MatchingPoint = matchingPoints[matchingPtIdx];
+      const matchingInfo: RegExpExecArray = matchingCandidates[candidateIdx];
+      let matchingStr: string = matchingInfo[0];
 
-      for (
-        let candidateIdx: number = 0;
-        candidateIdx < matchingCandidates.length;
-        candidateIdx++
-      ) {
-        const matchingInfo: RegExpExecArray = matchingCandidates[candidateIdx];
-        let matchingStr: string = matchingInfo[0];
+      // handle grouping value
+      const findLRefKey: RegExp = new RegExp(/\$\[(?<lRefKey>[\d\w]*)\]/);
+      const lRefKeys: Generator<RegExpExecArray, void, unknown> = matchAll(
+        templateRValue,
+        findLRefKey
+      );
+      const rvalue: string = hasOneToManyMatching
+        ? templateRValue
+        : replaceObj[matchingPoints.replacingKey!];
 
-        // handle grouping value
-        const findLRefKey: RegExp = new RegExp(/\$\[(?<lRefKey>[\d\w]*)\]/);
-        const lRefKeys: Generator<RegExpExecArray, void, unknown> = matchAll(
-          templateRValue,
-          findLRefKey
-        );
-        const rvalue: string = hasOneToManyMatching
-          ? templateRValue
-          : replaceObj[matchingPoints.replacingKey!];
-
-        for (const lRefKeyInfo of lRefKeys) {
-          // always use first matching value
-          const lRefKey: string = lRefKeyInfo[1];
-          if (hasOneToManyMatching) {
-            const result = handleLRefKey({
-              srcLine,
-              lRefKey,
-              regKey: templateLValue,
-              replaceObj,
-              matchingStr,
-              rvalue,
-            });
-            matchingStr = result?.matchingStr;
-            replaceObj = result?.replaceObj;
-            continue;
-          }
-
-          const regKeys = Object.keys(replaceObj);
-
-          for (let regKey of regKeys) {
-            const result = handleLRefKey({
-              srcLine,
-              lRefKey,
-              regKey,
-              replaceObj,
-              matchingStr,
-              rvalue,
-            });
-            if (replaceObj !== result?.replaceObj) {
-              matchingStr = result?.matchingStr;
-              replaceObj = result?.replaceObj;
-              break;
-            }
-          }
-        }
-
-        displayConsoleMsg({
-          srcLine,
-          matchingInfo,
-          replaceObj,
-          srcFileName,
-          lineIdx,
-          srcFileLines,
-          resultLines,
-        });
-
-        let input: string = "y";
-        optionManager.getInstance().confOpt && (input = readlineSync.prompt());
-
-        if (yn(input) === false) {
-          // skip this word. choose other candidate if you have a shorter string to replace.
-          utils.logByFlag(
-            optionManager.getInstance().confOpt! ||
-              optionManager.getInstance().verboseOpt!,
-            chalk.red("\nskip..")
-          );
-        } else if (input.startsWith("s")) {
-          // skip this file.
-          console.log(chalk.red(`\nskip '${srcFileName}'..`));
-          return -1;
-        } else {
-          const replacedString: string = getReplacedString({
+      for (const lRefKeyInfo of lRefKeys) {
+        // always use first matching value
+        const lRefKey: string = lRefKeyInfo[1];
+        if (hasOneToManyMatching) {
+          const result = handleLRefKey({
+            srcLine,
+            lRefKey,
+            regKey: templateLValue,
             replaceObj,
             matchingStr,
-            templateRValue,
+            rvalue,
           });
+          matchingStr = result?.matchingStr;
+          replaceObj = result?.replaceObj;
+          continue;
+        }
 
-          // push the index value of the other matching points.
-          matchingPoints.pushIndex({
-            matchingPtIdx,
+        const regKeys = Object.keys(replaceObj);
+
+        for (let regKey of regKeys) {
+          const result = handleLRefKey({
+            srcLine,
+            lRefKey,
+            regKey,
+            replaceObj,
             matchingStr,
-            replacedString
-          })
-
-          utils.logByFlag(
-            optionManager.getInstance().confOpt! ||
-              optionManager.getInstance().verboseOpt!,
-            chalk.yellow("\nreplace..")
-          );
-
-          srcLine =
-            srcLine.substr(0, matchingInfo.index) +
-            replacedString +
-            srcLine.substr(
-              matchingInfo.index + matchingStr.length,
-              srcLine.length
-            );
-          break;
+            rvalue,
+          });
+          if (replaceObj !== result?.replaceObj) {
+            matchingStr = result?.matchingStr;
+            replaceObj = result?.replaceObj;
+            break;
+          }
         }
       }
 
-      if (optionManager.getInstance().onceOpt) break;
+      displayConsoleMsg({
+        srcLine,
+        matchingInfo,
+        replaceObj,
+        srcFileName,
+        lineIdx,
+        srcFileLines,
+        resultLines,
+      });
+
+      let input: string = "y";
+      optionManager.getInstance().confOpt && (input = readlineSync.prompt());
+
+      if (yn(input) === false) {
+        // skip this word. choose other candidate if you have a shorter string to replace.
+        utils.logByFlag(
+          optionManager.getInstance().confOpt! ||
+            optionManager.getInstance().verboseOpt!,
+          chalk.red("\nskip..")
+        );
+      } else if (input.startsWith("s")) {
+        // skip this file.
+        console.log(chalk.red(`\nskip '${srcFileName}'..`));
+        return -1;
+      } else {
+        const replacedString: string = getReplacedString({
+          replaceObj,
+          matchingStr,
+          templateRValue,
+        });
+
+        // push the index value of the other matching points.
+        matchingPoints.pushIndex({
+          matchingPtIdx,
+          matchingStr,
+          replacedString,
+        });
+
+        utils.logByFlag(
+          optionManager.getInstance().confOpt! ||
+            optionManager.getInstance().verboseOpt!,
+          chalk.yellow("\nreplace..")
+        );
+
+        srcLine =
+          srcLine.substr(0, matchingInfo.index) +
+          replacedString +
+          srcLine.substr(
+            matchingInfo.index + matchingStr.length,
+            srcLine.length
+          );
+        break;
+      }
     }
 
-    lineIdx++;
-    return srcLine;
+    if (optionManager.getInstance().onceOpt) break;
   }
+
+  lineIdx++;
+  return srcLine;
 };
 
 const replace = ({
@@ -490,25 +458,50 @@ const replace = ({
   let lineIdx: number = 1;
   let blockingReplaceFlag: boolean = !!startLine;
 
-  for (let srcLine of srcFileLines) {
-    const replacedLine = replaceOneline({
-      blockingReplaceFlag,
-      csvTbl,
-      endLine,
-      excludeRegValue,
-      lineIdx,
-      replaceObj,
-      replacingKeys,
-      resultLines,
-      srcFileLines,
-      srcFileName,
-      srcLine,
-      startLine,
-      templateLValue,
-      templateRValue,
-    })
-    if (replacedLine === -1) return -1;
-    resultLines.push(replacedLine as string);
+  for (let srcLine of srcFileLines) {  
+    // handle blocking replace
+    utils.funcExecByFlag(
+      blockingReplaceFlag && !!startLine && srcLine.trim() === startLine.trim(),
+      () => {
+        utils.funcExecByFlag(optionManager.getInstance().debugOpt!, () =>
+          debuggingInfoArr
+            .getInstance()
+            .append(`Encountered startLine on line ${lineIdx}`)
+        );
+        blockingReplaceFlag = false;
+      }
+    );
+  
+    utils.funcExecByFlag(
+      !blockingReplaceFlag && !!endLine && srcLine.trim() === endLine.trim(),
+      () => {
+        utils.funcExecByFlag(optionManager.getInstance().debugOpt!, () =>
+          debuggingInfoArr
+            .getInstance()
+            .append(`Encountered endLine on line ${lineIdx}`)
+        );
+        blockingReplaceFlag = true;
+      }
+    );
+
+    let resultLine: string | number = srcLine;
+    if (!blockingReplaceFlag) {
+      resultLine = replaceOneline({
+        csvTbl,
+        lineIdx,
+        excludeRegValue,
+        replaceObj,
+        replacingKeys,
+        resultLines,
+        srcFileLines,
+        srcFileName,
+        srcLine,
+        templateLValue,
+        templateRValue,
+      }) as string
+    }
+    if (resultLine as unknown as number === -1) return -1;
+    resultLines.push(resultLine as string);
   }
 
   return resultLines;
