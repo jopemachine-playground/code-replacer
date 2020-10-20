@@ -7,9 +7,9 @@
   "description": "Replace codes line by line with regex for target files",
   "main": "./dist/index.js",
   "scripts": {
-    "test": "npm run unitTest && npm run replacerTest",
-    "unitTest": "jest ./test/unitTest/**.test.js --ci --coverage && codecov",
-    "replacerTest": "jest ./test/replacerTest/**/**.test.js --ci --coverage && codecov",
+    "test": "jest __test__ --ci --coverage && codecov",
+    "unitTest": "jest ./__test__/unitTest/**.test.js --ci --coverage && codecov",
+    "replacerTest": "jest ./__test__/replacerTest/**/**.test.js --ci --coverage && codecov",
     "build": "tsc",
     "rebuild": "rm -rf dist && npm run build",
     "pub": "npm run build && npm publish --access public",
@@ -75,9 +75,6 @@
         "enableTsDiagnostics": true
       }
     },
-    "verbose": true,
-    "testMatch": [
-      "**.test.js"
-    ]
+    "verbose": true
   }
 }
