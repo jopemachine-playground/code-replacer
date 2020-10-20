@@ -20,7 +20,6 @@ import {
 import utils from "./util";
 import { MatchingPoints } from "./matchingPoints";
 import { ReplacerArgument } from "./type/replacerArgument";
-import util from "./util";
 import { MatchingPoint } from "./type/matchingPoint";
 import constant from "./constant";
 
@@ -89,7 +88,7 @@ const applyCSVTable = ({
   templateLValue: string;
   templateRValue: string;
 }) => {
-  const replaceObj: Object = {};
+  const replaceObj: object = {};
   templateRValue = templateRValue.trim().normalize();
 
   if (csvTbl.length > 0) {
@@ -100,7 +99,7 @@ const applyCSVTable = ({
 
       for (const columnName of csvColumnNames) {
         const trimmedColumnName: string = columnName.trim();
-        const result = util.handleCSVColKey({
+        const result = utils.handleCSVColKey({
           csvRecord,
           columnName: trimmedColumnName,
           templateLValue: key,
@@ -129,7 +128,7 @@ const getMatchingPoints = ({
   srcLine: string;
   replacingKeys: string[];
 }) => {
-  let matchingPoints: MatchingPoints = new MatchingPoints;
+  const matchingPoints: MatchingPoints = new MatchingPoints;
 
   for (const replacingKey of replacingKeys) {
     matchingPoints.addMatchingPoint({
@@ -149,7 +148,7 @@ const getMatchingPointsWithOnlyTemplate = ({
   srcLine: string;
   templateLValue: string;
 }) => {
-  let matchingPoints: MatchingPoints = new MatchingPoints;
+  const matchingPoints: MatchingPoints = new MatchingPoints();
 
   matchingPoints.addMatchingPoint({
     srcLine,
@@ -202,7 +201,7 @@ const handleLRefKey = ({
   srcLine: string;
   lRefKey: string;
   regKey: string;
-  replaceObj: Object;
+  replaceObj: object;
   matchingStr: string;
   rvalue: string;
 }) => {
@@ -271,7 +270,7 @@ const replaceOneline = ({
   csvTbl: any;
   excludeRegValue: string | undefined;
   lineIdx: number;
-  replaceObj: Object;
+  replaceObj: object;
   replacingKeys: string[];
   resultLines: string[];
   srcFileLines: string[];
@@ -290,7 +289,7 @@ const replaceOneline = ({
   const matchingPoints: MatchingPoints = hasOneToManyMatching
     ? getMatchingPointsWithOnlyTemplate({
         srcLine,
-        templateLValue: templateLValue,
+        templateLValue,
       })
     : getMatchingPoints({
         srcLine,
@@ -342,7 +341,7 @@ const replaceOneline = ({
 
         const regKeys = Object.keys(replaceObj);
 
-        for (let regKey of regKeys) {
+        for (const regKey of regKeys) {
           const result = handleLRefKey({
             srcLine,
             lRefKey,
@@ -442,7 +441,7 @@ const replace = ({
     constant.TEMPLATE_SPLITER
   );
 
-  let replaceObj = applyCSVTable({
+  const replaceObj = applyCSVTable({
     csvTbl,
     templateLValue,
     templateRValue,
@@ -451,14 +450,14 @@ const replace = ({
   const replacingKeys: string[] = Object.keys(replaceObj);
 
   // sort by length -> prioritize and map keys with long values first.
-  replacingKeys.sort(function (a, b) {
+  replacingKeys.sort((a, b) => {
     return b.length - a.length || b.localeCompare(a);
   });
 
   let lineIdx: number = 1;
   let blockingReplaceFlag: boolean = !!startLine;
 
-  for (let srcLine of srcFileLines) {  
+  for (const srcLine of srcFileLines) {
     // handle blocking replace
     utils.funcExecByFlag(
       blockingReplaceFlag && !!startLine && srcLine.trim() === startLine.trim(),
@@ -471,7 +470,7 @@ const replace = ({
         blockingReplaceFlag = false;
       }
     );
-  
+
     utils.funcExecByFlag(
       !blockingReplaceFlag && !!endLine && srcLine.trim() === endLine.trim(),
       () => {
@@ -502,6 +501,7 @@ const replace = ({
     }
     if (resultLine as unknown as number === -1) return -1;
     resultLines.push(resultLine as string);
+    lineIdx++;
   }
 
   return resultLines;

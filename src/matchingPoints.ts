@@ -4,7 +4,7 @@ import matchAll from './matchAll';
 
 export class MatchingPoints extends Array {
   constructor () {
-    super()
+    super();
   }
 
   [x: number]: MatchingPoint;

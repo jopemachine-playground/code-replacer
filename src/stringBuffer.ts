@@ -6,7 +6,7 @@ class StringBuffer {
   }
 
   append (obj: string) {
-    this.buffer.push(obj)
+    this.buffer.push(obj);
   }
 
   toString () {

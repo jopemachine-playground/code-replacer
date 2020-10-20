@@ -2,13 +2,13 @@ import matchAll from './matchAll'
 import utils from './util'
 import optionManager from './optionManager'
 
-const changeLRefKeyToGroupKeys = (string: string, hasEscaped: boolean) => {
+const changeLRefKeyToGroupKeys = (str: string, hasEscaped: boolean) => {
   const findLRefKeyReg: RegExp = hasEscaped
     ? /\\\$\\\[(?<lRefKey>[\d\w]*)\\\]/
     : /\$\[(?<lRefKey>[\d\w]*)\]/
   const findLRefKeyRegExp: RegExp = new RegExp(findLRefKeyReg)
   const LReftKeysInLValue: Generator<RegExpExecArray, void, unknown> = matchAll(
-    string,
+    str,
     findLRefKeyRegExp
   );
 
@@ -25,13 +25,13 @@ const changeLRefKeyToGroupKeys = (string: string, hasEscaped: boolean) => {
 
     const lRefKeyReg: string = hasEscaped ? `\\$\\[${lRefKey}\\]` : `$[${lRefKey}]`
 
-    string = string.replace(
+    str = str.replace(
       lRefKeyReg,
       `(?<${lRefKey}_${cntFrequency.get(lRefKey)}>[\\d\\w]*)`
     );
   }
 
-  return string
+  return str
 }
 
 const handleLRefKeyInTemplateLValue = ({
@@ -82,7 +82,7 @@ const handleLRefKeyInTemplateRValue = ({
   groupKeyMatching,
   rvalue
 }: {
-  replaceObj: Object;
+  replaceObj: object;
   matchingStr: string;
   lRefKey: string;
   groupKeyMatching: RegExpMatchArray
