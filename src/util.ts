@@ -75,32 +75,8 @@ export default {
     return flag && funcExecIfFlagIsTrue();
   },
 
-  _funcExecByFlag (flag, funcExecIfFlagIsTrue, funcExecIfFlagIsFalse) {
-    return _.cond([
-      [_.matches({ flag: true }), () => funcExecIfFlagIsTrue()],
-      [
-        _.matches({ flag: false }),
-        () => {
-          funcExecIfFlagIsFalse && funcExecIfFlagIsFalse();
-        }
-      ]
-    ])({
-      flag,
-      funcExecIfFlagIsTrue,
-      funcExecIfFlagIsFalse
-    });
-  },
-
   logByFlag (flag: boolean, logIfFlagIsTrue: string) {
     return flag && console.log(logIfFlagIsTrue);
-  },
-
-  _logByFlag (flag, logIfFlagIsTrue, logIfFlagIsFalse) {
-    module.exports.funcExecByFlag(
-      flag,
-      () => console.log(logIfFlagIsTrue),
-      () => logIfFlagIsFalse && console.log(logIfFlagIsFalse)
-    );
   },
 
   createHighlightedLine (

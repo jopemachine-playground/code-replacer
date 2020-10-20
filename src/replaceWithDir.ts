@@ -6,7 +6,7 @@ import constant from './constant';
 import { CommandArguments } from './type/commandArgument';
 
 export default async function (props: CommandArguments) {
-  recursive(path.resolve(props.dir as string), [], async (_err, files: string[]) => {
+  recursive(path.resolve(props.dir!), [], async (_err: any, files: string[]) => {
     const targetFiles: (string | undefined)[] = files.map((filePath: string) => {
       const targetFileName: string = filePath.split(path.sep).reverse()[0];
       if (props.src && targetFileName === props.src) {

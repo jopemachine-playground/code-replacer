@@ -12,6 +12,7 @@ const changeLRefKeyToGroupKeys = (str: string, hasEscaped: boolean) => {
     findLRefKeyRegExp
   );
 
+  // Avoid duplicate group keys
   const cntFrequency: Map<string, number> = new Map();
 
   for (const LRefKeyInfo of LReftKeysInLValue) {
@@ -94,7 +95,7 @@ const handleLRefKeyInTemplateRValue = ({
     result = utils.replaceAll(
       result,
       `$[${lRefKey}]`,
-      // always first matching
+      // always first matching when duplicate group key name exists
       groupKeyMatching.groups![lRefKey]
         ? groupKeyMatching.groups![lRefKey]
         : groupKeyMatching.groups![lRefKey + "_1"]

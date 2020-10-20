@@ -27,6 +27,6 @@ describe('Handle template', () => {
   test('With no-escape', () => {
     const templateLValue = '$[key1] ${source}${index} $[key2]'
     const result = handleLRefKeyInTemplateLValue({ templateLValue: templateLValue, escaped: false })
-    expect(result).toBe('(?<key1_1>[\\\d\\\w]*) ${source}${index} (?<key2_1>[\\\d\\\w]*)')
+    expect(result).toBe('(?<key1_1>[\\d\\w]*) ${source}${index} (?<key2_1>[\\d\\w]*)')
   })
 })

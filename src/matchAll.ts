@@ -1,4 +1,4 @@
-function ensureFlag (flags, flag) {
+function ensureFlag (flags: string, flag: string) {
   return flags.includes(flag) ? flags : flags + flag;
 }
 
