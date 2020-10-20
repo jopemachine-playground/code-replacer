@@ -24,11 +24,6 @@ const changeLRefKeyToGroupKeys = (string: string, hasEscaped: boolean) => {
     }
 
     const lRefKeyReg: string = hasEscaped ? `\\$\\[${lRefKey}\\]` : `$[${lRefKey}]`
-    // string = utils.replaceAll(
-    //   string,
-    //   lRefKeyReg,
-    //   `(?<${lRefKey}_${cntFrequency.get(lRefKey)}>[\\d\\w]*)`
-    // )
 
     string = string.replace(
       lRefKeyReg,

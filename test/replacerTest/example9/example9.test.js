@@ -129,6 +129,94 @@ abc`
     }).test()
     expect(testPassedOrErrorLine).toBe(true)
   })
+
+  test('Example 9-2-4 test', async () => {
+    optionManager.getInstance()['no-escape'] = false
+
+    const args = {
+      csvTbl: await readCsv(`${__dirname}${path.sep}rlist2.csv`),
+      srcFileLines: (parseSourceFile({ srcFile: `${__dirname}${path.sep}index4.html` })).srcFileLines,
+      templateLValue: '${source}${source2}',
+      templateRValue: 'abc'
+    }
+
+    const testPassedOrErrorLine = new ReplacerTest({
+      replaceArgs: args,
+      expectedResult:
+`abc
+abc
+\${source}\${source2}
+\${source2}`
+
+    }).test()
+    expect(testPassedOrErrorLine).toBe(true)
+  })
+
+  test('Example 9-2-5 test', async () => {
+    optionManager.getInstance()['no-escape'] = false
+
+    const args = {
+      csvTbl: [],
+      srcFileLines: (parseSourceFile({ srcFile: `${__dirname}${path.sep}index4.html` })).srcFileLines,
+      templateLValue: '${source}${source2}',
+      templateRValue: 'abc'
+    }
+
+    const testPassedOrErrorLine = new ReplacerTest({
+      replaceArgs: args,
+      expectedResult:
+`abc\${source2}
+def\${source2}
+abc
+\${source2}`
+
+    }).test()
+    expect(testPassedOrErrorLine).toBe(true)
+  })
+
+  test('Example 9-2-6 test', async () => {
+    optionManager.getInstance()['no-escape'] = true
+
+    const args = {
+      csvTbl: [],
+      srcFileLines: (parseSourceFile({ srcFile: `${__dirname}${path.sep}index4.html` })).srcFileLines,
+      templateLValue: '\\$\\{source\\}\\$\\{source2\\}',
+      templateRValue: 'abc'
+    }
+
+    const testPassedOrErrorLine = new ReplacerTest({
+      replaceArgs: args,
+      expectedResult:
+`abc\${source2}
+def\${source2}
+abc
+\${source2}`
+
+    }).test()
+    expect(testPassedOrErrorLine).toBe(true)
+  })
+
+  test('Example 9-2-7 test', async () => {
+    optionManager.getInstance()['no-escape'] = true
+
+    const args = {
+      csvTbl: await readCsv(`${__dirname}${path.sep}rlist2.csv`),
+      srcFileLines: (parseSourceFile({ srcFile: `${__dirname}${path.sep}index4.html` })).srcFileLines,
+      templateLValue: '${source}\\$\\{source2\\}',
+      templateRValue: 'abc'
+    }
+
+    const testPassedOrErrorLine = new ReplacerTest({
+      replaceArgs: args,
+      expectedResult:
+`abc
+abc
+\${source}\${source2}
+\${source2}`
+
+    }).test()
+    expect(testPassedOrErrorLine).toBe(true)
+  })
 })
 
 describe('Example 9-3 test, template spliter escaping', () => {
