@@ -29,10 +29,6 @@ export default {
 
         <required argument>
 
-            --dir, -d                     specify target directory
-            --ext, -e                     specify target file's extension.
-                                          (Use this with dir to target multiple files)
-
             --src, -s                     specify target file. 
                                           when target and dir are given, 
                                           target the files corresponding to the name in the target directory.
@@ -48,6 +44,11 @@ export default {
 
 
         <optional argument>
+
+            --dir, -d                     specify target directory
+
+            --ext, -e                     specify target file's extension.
+                                          (Use this with dir to target multiple files)
 
             --dst, -dst                   specify the name of the output file. 
                                           default value is '__replaced__.{originalFileName}'.

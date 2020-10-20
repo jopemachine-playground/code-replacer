@@ -12,14 +12,28 @@ const changeLRefKeyToGroupKeys = (string: string, hasEscaped: boolean) => {
     findLRefKeyRegExp
   );
 
+  const cntFrequency: Map<string, number> = new Map;
+
   for (const LRefKeyInfo of LReftKeysInLValue) {
     const lRefKey: string = LRefKeyInfo[1]
+
+    if (cntFrequency.has(lRefKey)) {
+      cntFrequency.set(lRefKey, cntFrequency.get(lRefKey)! + 1);
+    } else {
+      cntFrequency.set(lRefKey, 1);
+    }
+
     const lRefKeyReg: string = hasEscaped ? `\\$\\[${lRefKey}\\]` : `$[${lRefKey}]`
-    string = utils.replaceAll(
-      string,
+    // string = utils.replaceAll(
+    //   string,
+    //   lRefKeyReg,
+    //   `(?<${lRefKey}_${cntFrequency.get(lRefKey)}>[\\d\\w]*)`
+    // )
+
+    string = string.replace(
       lRefKeyReg,
-      `(?<${lRefKey}>[\\d\\w]*)`
-    )
+      `(?<${lRefKey}_${cntFrequency.get(lRefKey)}>[\\d\\w]*)`
+    );
   }
 
   return string
@@ -58,7 +72,12 @@ const handleGroupKeysInTeamplateLValue = ({
   matchingStr: string
   groupKeyMatchingStr: string
 }) => {
-  return utils.replaceAll(matchingStr, `(?<${lRefKey}>)`, groupKeyMatchingStr);
+  let index = 1;
+  while (matchingStr.includes(`(?<${lRefKey}_${index}>)`)) {
+    matchingStr = matchingStr.replace(`(?<${lRefKey}_${index}>)`, groupKeyMatchingStr);
+    index++;
+  }
+  return matchingStr;
 };
 
 const handleLRefKeyInTemplateRValue = ({
@@ -74,21 +93,20 @@ const handleLRefKeyInTemplateRValue = ({
   groupKeyMatching: RegExpMatchArray
   rvalue: string;
 }) => {
-  if (replaceObj[matchingStr]) {
-    return utils.replaceAll(
-      replaceObj[matchingStr],
-      `$[${lRefKey}]`,
-      groupKeyMatching.groups![lRefKey]
-    );
-  } else {
-    // TODO: Need to remote old key here!!!!
+  let result: string = replaceObj[matchingStr] ? replaceObj[matchingStr] : rvalue;
 
-    return utils.replaceAll(
-      rvalue,
+  if (result.includes(`$[${lRefKey}]`)) {
+    result = utils.replaceAll(
+      result,
       `$[${lRefKey}]`,
+      // always first matching
       groupKeyMatching.groups![lRefKey]
+        ? groupKeyMatching.groups![lRefKey]
+        : groupKeyMatching.groups![lRefKey + "_1"]
     );
   }
+
+  return result;
 };
 
 export {

@@ -6,10 +6,16 @@ describe('handleLRefKeyInTemplateLValue', () => {
     optionManager.getInstance()['no-escape'] = false
   })
 
-  test('With escape', () => {
+  test('handleLRefKeyInTemplateLValue with escape 1', () => {
     const { escaped, str } = handleSpecialCharEscapeInTemplateLValue('$[key1] ${source}${index} $[key2]')
     const result = handleLRefKeyInTemplateLValue({ templateLValue: str, escaped })
-    expect(result).toBe('(?<key1>[\\d\\w]*) \\$\\{source\\}\\$\\{index\\} (?<key2>[\\d\\w]*)')
+    expect(result).toBe('(?<key1_1>[\\d\\w]*) \\$\\{source\\}\\$\\{index\\} (?<key2_1>[\\d\\w]*)')
+  })
+
+  test('handleLRefKeyInTemplateLValue with escape 2', () => {
+    const { escaped, str } = handleSpecialCharEscapeInTemplateLValue('$[key1] ${source}${index} $[key1]')
+    const result = handleLRefKeyInTemplateLValue({ templateLValue: str, escaped })
+    expect(result).toBe('(?<key1_1>[\\d\\w]*) \\$\\{source\\}\\$\\{index\\} (?<key1_2>[\\d\\w]*)')
   })
 })
 
@@ -21,6 +27,6 @@ describe('Handle template', () => {
   test('With no-escape', () => {
     const templateLValue = '$[key1] ${source}${index} $[key2]'
     const result = handleLRefKeyInTemplateLValue({ templateLValue: templateLValue, escaped: false })
-    expect(result).toBe('(?<key1>[\\\d\\\w]*) ${source}${index} (?<key2>[\\\d\\\w]*)')
+    expect(result).toBe('(?<key1_1>[\\\d\\\w]*) ${source}${index} (?<key2_1>[\\\d\\\w]*)')
   })
 })

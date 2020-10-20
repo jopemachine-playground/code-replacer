@@ -177,13 +177,18 @@ const getReplacedString = ({
   // not exactly match, but match in regexp :: use regexp and dont insert one
   if (noEscapeOpt && !replaceObj[matchingStr]) {
     for (const key of Object.keys(replaceObj)) {
-      if (new RegExp(key).test(matchingStr)) {
+      const regexMatch = new RegExp(key).test(matchingStr);
+      if (regexMatch) {
         return replaceObj[key];
       }
     }
   }
-  if (!replaceObj[matchingStr]) return templateRValue;
-  return replaceObj[matchingStr];
+
+  const exactMatch = replaceObj[matchingStr];
+  const constantMatch = !replaceObj[matchingStr];
+  if (constantMatch) return templateRValue;
+
+  return exactMatch;
 };
 
 const handleLRefKey = ({
@@ -223,9 +228,8 @@ const handleLRefKey = ({
     };
   }
 
-  const groupKeyMatchingStr: string | undefined = groupKeyMatching.groups![
-    lRefKey
-  ];
+  const groupKeyMatchingStr: string | undefined =
+    groupKeyMatching.groups![lRefKey] || groupKeyMatching.groups![lRefKey + "_1"];
 
   if (!groupKeyMatchingStr) {
     throw new InvalidRightReferenceError(ERROR_CONSTANT.NON_EXISTENT_GROUPKEY);
@@ -351,6 +355,7 @@ const replaceOneline = ({
           : replaceObj[matchingPoints.replacingKey!];
 
         for (const lRefKeyInfo of lRefKeys) {
+          // always use first matching value
           const lRefKey: string = lRefKeyInfo[1];
           if (hasOneToManyMatching) {
             const result = handleLRefKey({
