@@ -21,8 +21,6 @@ class InvalidLeftTemplateError extends Error {
   }
 }
 
-// TODO : handle below errors
-
 class CSVParsingError extends Error {
   constructor (message: string) {
     super(message);
@@ -30,13 +28,13 @@ class CSVParsingError extends Error {
   }
 }
 
-// // Occurs when there is no key in the left term of the template and csv is not an empty array
-// class TemplateHasNoKeyError extends Error {
-//   constructor (message: string) {
-//     super(message);
-//     this.name = this.constructor.name;
-//   }
-// }
+// Occurs when there is no key in the left term of the template and csv is not an empty array
+class TemplateHasNoCSVCOLKeyWithCSVError extends Error {
+  constructor (message: string) {
+    super(message);
+    this.name = this.constructor.name;
+  }
+}
 
 const ERROR_CONSTANT = {
   DUPLICATE_KEY: (key: string, value: string) => `
@@ -47,7 +45,6 @@ duplicated value: ${value}
 This might happens why..
 1. You might use regular expression for the left template value, and there are more than two values matched to that regexp.
 2. csv column Key is not replaced because is not valid.
-3. there are more than one matching csv column key in the left side of the template in csv.
 `,
 
   WRONG_COLUMN_R_Template: `
@@ -69,6 +66,10 @@ This might happens why..
 
   CSV_DUPLICATE_KEY: `
 Duplicate value found among csv column key values used in templateLValue.
+`,
+
+  TEMPLATE_HAS_NO_CSV_COL_KEY: `
+There is no valid csv-column key in the left term of the template
 `
 };
 
@@ -77,6 +78,6 @@ export {
   InvalidLeftReferenceError,
   InvalidLeftTemplateError,
   CSVParsingError,
-  // TemplateHasNoKeyError,
+  TemplateHasNoCSVCOLKeyWithCSVError,
   ERROR_CONSTANT
 };

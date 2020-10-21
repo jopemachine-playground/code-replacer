@@ -59,14 +59,14 @@ const displayConsoleMsg = ({
     optionManager.getInstance().confOpt! ||
       optionManager.getInstance().verboseOpt!,
     () =>
-      utils.printLines(
+      utils.printLines({
         srcFileName,
         lineIdx,
         sourceStr,
         replacedStr,
         srcFileLines,
-        resultLines
-      )
+        resultLines,
+      })
   );
 
   utils.logByFlag(

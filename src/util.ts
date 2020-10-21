@@ -5,28 +5,28 @@ import path from 'path';
 import csv from 'csv-parser';
 import constant from './constant';
 import { Template } from './template';
-import { CSVParsingError, ERROR_CONSTANT } from './error';
+import { CSVParsingError, TemplateHasNoCSVCOLKeyWithCSVError, ERROR_CONSTANT } from './error';
 
 export default {
-  handleSpecialCharacter (str: string) {
+  handleSpecialCharacter(str: string) {
     // TODO: Handle more special characters here if needed
     const spChars = [
-      '\\',
-      '(',
-      ')',
-      '.',
-      '?',
-      '!',
-      '$',
-      '^',
-      '{',
-      '}',
-      '[',
-      ']',
-      '|',
-      '/',
-      '+',
-      '*'
+      "\\",
+      "(",
+      ")",
+      ".",
+      "?",
+      "!",
+      "$",
+      "^",
+      "{",
+      "}",
+      "[",
+      "]",
+      "|",
+      "/",
+      "+",
+      "*",
     ];
 
     for (const spChar of spChars) {
@@ -35,11 +35,11 @@ export default {
     return str;
   },
 
-  restoreTemplateSpliter (str: string, spliter: string) {
-    return this.replaceAll(str, '\\' + spliter, spliter);
+  restoreTemplateSpliter(str: string, spliter: string) {
+    return this.replaceAll(str, "\\" + spliter, spliter);
   },
 
-  handleCSVColKey ({ csvRecord, columnName, templateLValue, templateRValue }) {
+  handleCSVColKey({ csvRecord, columnName, templateLValue, templateRValue }) {
     templateLValue = this.replaceAll(
       templateLValue,
       `\${${columnName}}`,
@@ -54,34 +54,59 @@ export default {
 
     return {
       templateLValue,
-      templateRValue
+      templateRValue,
     };
   },
 
-  async readCsv (csvFilePath: string, template: Template | undefined) {
+  isValidCSV(csvResult: object, template: Template) {
+    let keyColKeyFound = false;
+    for (const lvalueLeftRefKey of template.lvalueCsvColKeys) {
+      if (
+        !keyColKeyFound &&
+        Object.keys(csvResult[0]).includes(lvalueLeftRefKey)
+      ) {
+        keyColKeyFound = true;
+      }
+
+      const records = _.map(csvResult, (item) => {
+        return item[lvalueLeftRefKey];
+      });
+
+      const hasDuplicate = _.uniq(records).length !== records.length;
+      if (hasDuplicate) {
+        return new CSVParsingError(ERROR_CONSTANT.CSV_DUPLICATE_KEY);
+      }
+    }
+
+    if (!keyColKeyFound) {
+      return new TemplateHasNoCSVCOLKeyWithCSVError(
+        ERROR_CONSTANT.TEMPLATE_HAS_NO_CSV_COL_KEY
+      );
+    }
+
+    return true;
+  },
+
+  async readCsv(csvFilePath: string, template: Template | undefined) {
     const csvResult: object[] = [];
     return new Promise((resolve, reject) => {
       try {
         fs.createReadStream(csvFilePath)
           .pipe(csv())
-          .on('data', (data: any) => {
+          .on("data", (data: any) => {
             csvResult.push(data);
           })
-          .on('end', () => {
+          .on("end", () => {
             if (template) {
-              for (const lvalueLeftRefKey of template.lvalueCsvColKeys) {
-                const records = _.map(csvResult, (item) => {
-                  return item[lvalueLeftRefKey];
-                });
-
-                const hasDuplicate = _.uniq(records).length !== records.length;
-                if (hasDuplicate) {
-                  reject(new CSVParsingError(ERROR_CONSTANT.CSV_DUPLICATE_KEY));
-                }
+              const validOrError = this.isValidCSV(csvResult, template);
+              if (validOrError) {
+                resolve(csvResult);
+              } else {
+                reject(validOrError);
               }
+            } else {
+              resolve(csvResult);
             }
-
-            resolve(csvResult);
           });
       } catch (e) {
         reject(e);
@@ -89,15 +114,15 @@ export default {
     });
   },
 
-  funcExecByFlag (flag: boolean, funcExecIfFlagIsTrue: Function) {
+  funcExecByFlag(flag: boolean, funcExecIfFlagIsTrue: Function) {
     return flag && funcExecIfFlagIsTrue();
   },
 
-  logByFlag (flag: boolean, logIfFlagIsTrue: string) {
+  logByFlag(flag: boolean, logIfFlagIsTrue: string) {
     return flag && console.log(logIfFlagIsTrue);
   },
 
-  createHighlightedLine (
+  createHighlightedLine(
     srcLine: string,
     previousMatchingIndex: number,
     matchingWord: string,
@@ -110,8 +135,8 @@ export default {
     ).trim();
   },
 
-  getProperties (obj: object) {
-    let result = '';
+  getProperties(obj: object) {
+    let result = "";
     for (const key of Object.keys(obj)) {
       result += `${key}=${obj[key]}
 `;
@@ -119,16 +144,24 @@ export default {
     return result;
   },
 
-  printLines (
-    srcFileName: string,
-    lineIdx: number,
-    sourceStr: string,
-    replacedStr: string,
-    srcFileLines: string[],
-    resultLines: string[]
-  ) {
-    let previousLine = ''; let postLine = '';
-    const lineIdxSpliter = '║';
+  printLines({
+    srcFileName,
+    lineIdx,
+    sourceStr,
+    replacedStr,
+    srcFileLines,
+    resultLines,
+  }: {
+    srcFileName: string;
+    lineIdx: number;
+    sourceStr: string;
+    replacedStr: string;
+    srcFileLines: string[];
+    resultLines: string[];
+  }) {
+    let previousLine = "";
+    let postLine = "";
+    const lineIdxSpliter = "║";
 
     if (lineIdx - 2 >= 0) {
       previousLine =
@@ -142,7 +175,7 @@ export default {
         chalk.gray(srcFileLines[lineIdx].trim());
     }
 
-    console.log(`
+    const lineToPrint = `
 ${chalk.gray(constant.SINGLE_SPLIT_LINE)}
 
 ${chalk.gray(
@@ -159,16 +192,20 @@ ${
   chalk.greenBright(replacedStr)
 }
 ${postLine}
-`);
+`;
+    console.log(lineToPrint);
+    return lineToPrint;
   },
 
-  findReplaceListFile (rlistDir: string, srcFileName: string) {
+  findReplaceListFile(rlistDir: string, srcFileName: string) {
     if (fs.existsSync(`${rlistDir}${path.sep}rlist_${srcFileName}.csv`)) {
       return `${rlistDir}${path.sep}rlist_${srcFileName}.csv`;
     } else if (
-      fs.existsSync(`${rlistDir}${path.sep}rlist_${srcFileName.split('.')[0]}.csv`)
+      fs.existsSync(
+        `${rlistDir}${path.sep}rlist_${srcFileName.split(".")[0]}.csv`
+      )
     ) {
-      return `${rlistDir}${path.sep}rlist_${srcFileName.split('.')[0]}.csv`;
+      return `${rlistDir}${path.sep}rlist_${srcFileName.split(".")[0]}.csv`;
     } else if (fs.existsSync(`.${path.sep}rlist.csv`)) {
       return `.${path.sep}rlist.csv`;
     } else {
@@ -176,20 +213,20 @@ ${postLine}
     }
   },
 
-  splitWithEscape (str: string, spliter: string) {
-    let prevChar = '';
+  splitWithEscape(str: string, spliter: string) {
+    let prevChar = "";
     let matching = false;
 
-    let frontStrBuf = '';
-    let backStrBuf = '';
+    let frontStrBuf = "";
+    let backStrBuf = "";
 
-    let spliterBuf = '';
+    let spliterBuf = "";
 
     for (let i = 0; i < str.length; i++) {
       const char = str.charAt(i);
 
       // handle escape
-      if (!matching && prevChar === '\\') {
+      if (!matching && prevChar === "\\") {
         prevChar = char;
         frontStrBuf += char;
         continue;
@@ -223,30 +260,34 @@ ${postLine}
     return [frontStrBuf, backStrBuf];
   },
 
-  setOptions (flags: object) {
-    fs.writeFileSync('.env', '\ufeff' + module.exports.getProperties(flags), {
-      encoding: 'utf8'
+  setOptions(flags: object) {
+    fs.writeFileSync(".env", "\ufeff" + module.exports.getProperties(flags), {
+      encoding: "utf8",
     });
 
-    console.log(chalk.whiteBright('🌈  The current setting value has been saved! 🌈'));
+    console.log(
+      chalk.whiteBright("🌈  The current setting value has been saved! 🌈")
+    );
   },
 
-  replaceAll (str: string, searchStr: string, replaceStr: string) {
+  replaceAll(str: string, searchStr: string, replaceStr: string) {
     return str.split(searchStr).join(replaceStr);
   },
 
-  showDefaultOptions () {
-    const env = fs.readFileSync('.env', {
-      encoding: 'utf8'
+  showDefaultOptions() {
+    const env = fs.readFileSync(".env", {
+      encoding: "utf8",
     });
-    const defaultValues = env.split('\n');
+    const defaultValues = env.split("\n");
 
-    console.log(chalk.whiteBright('🌈  Current default setting is as follows. 🌈'));
+    console.log(
+      chalk.whiteBright("🌈  Current default setting is as follows. 🌈")
+    );
 
     for (const devaultValue of defaultValues) {
-      const [key, value] = devaultValue.split('=');
+      const [key, value] = devaultValue.split("=");
       if (!key || !value) continue;
       console.log(chalk.blue(`${key.trim()}: ${value}`));
     }
-  }
+  },
 };

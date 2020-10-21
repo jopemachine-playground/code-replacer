@@ -10,7 +10,8 @@
         "no-unused-expression": false,
         "max-classes-per-file": false,
         "no-var-requires": false,
-        "prefer-for-of": false
+        "prefer-for-of": false,
+        "ban-types": false
     },
     "rulesDirectory": [
         "src/"

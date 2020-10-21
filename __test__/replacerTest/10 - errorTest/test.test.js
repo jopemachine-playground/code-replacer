@@ -67,4 +67,13 @@ describe('Example 10 error test', () => {
       expect(err.name).toBe('CSVParsingError')
     }
   })
+
+  test('Example 10-5 TemplateLValue has no csv col key, (TemplateHasNoCSVCOLKeyWithCSVError)', async () => {
+    try {
+      // eslint-disable-next-line no-unused-vars
+      await utils.readCsv(`${__dirname}${path.sep}rlist.csv`, new Template('${value2}->${source}'))
+    } catch (err) {
+      expect(err.name).toBe('TemplateHasNoCSVCOLKeyWithCSVError')
+    }
+  })
 })
