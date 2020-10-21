@@ -1,13 +1,15 @@
 const { getReplacedCode } = require('../src/getReplacedCode')
 const constant = require('../src/constant').default
+const { Template } = require('../src/template')
 
 module.exports = class ReplacerTest {
   constructor ({ replaceArgs, expectedResult }) {
     this.args = replaceArgs
-    this.args.template =
+    this.args.template = new Template(
       replaceArgs.templateLValue +
-      constant.TEMPLATE_SPLITER +
-      replaceArgs.templateRValue
+        constant.TEMPLATE_SPLITER +
+        replaceArgs.templateRValue
+    )
 
     this.expectedResult = expectedResult
   }

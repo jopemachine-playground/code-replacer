@@ -3,7 +3,7 @@ import chalk from 'chalk';
 export default {
   REPLACED_PREPOSITION: '__replaced__.',
   TEMPLATE_SPLITER: '->',
-  cliSelectorString: {
+  CLI_SELECTOR_STR: {
     FILE_DIR: chalk.yellow('Choose from file tree.'),
     TYPE_INPUT: chalk.yellow('Type input.'),
     ENTER_TEMPLATE: chalk.yellow('Enter template.'),

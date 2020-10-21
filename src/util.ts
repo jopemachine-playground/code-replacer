@@ -4,6 +4,8 @@ import _ from 'lodash';
 import path from 'path';
 import csv from 'csv-parser';
 import constant from './constant';
+import { Template } from './template';
+import { CSVParsingError, ERROR_CONSTANT } from './error';
 
 export default {
   handleSpecialCharacter (str: string) {
@@ -56,14 +58,29 @@ export default {
     };
   },
 
-  async readCsv (csvFilePath: string) {
+  async readCsv (csvFilePath: string, template: Template | undefined) {
     const csvResult: object[] = [];
     return new Promise((resolve, reject) => {
       try {
         fs.createReadStream(csvFilePath)
           .pipe(csv())
-          .on('data', (data: any) => csvResult.push(data))
+          .on('data', (data: any) => {
+            csvResult.push(data);
+          })
           .on('end', () => {
+            if (template) {
+              for (const lvalueLeftRefKey of template.lvalueCsvColKeys) {
+                const records = _.map(csvResult, (item) => {
+                  return item[lvalueLeftRefKey];
+                });
+
+                const hasDuplicate = _.uniq(records).length !== records.length;
+                if (hasDuplicate) {
+                  reject(new CSVParsingError(ERROR_CONSTANT.CSV_DUPLICATE_KEY));
+                }
+              }
+            }
+
             resolve(csvResult);
           });
       } catch (e) {

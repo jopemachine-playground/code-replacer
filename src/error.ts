@@ -23,12 +23,12 @@ class InvalidLeftTemplateError extends Error {
 
 // TODO : handle below errors
 
-// class CSVParsingError extends Error {
-//   constructor (message: string) {
-//     super(message);
-//     this.name = this.constructor.name;
-//   }
-// }
+class CSVParsingError extends Error {
+  constructor (message: string) {
+    super(message);
+    this.name = this.constructor.name;
+  }
+}
 
 // // Occurs when there is no key in the left term of the template and csv is not an empty array
 // class TemplateHasNoKeyError extends Error {
@@ -65,6 +65,10 @@ See README.md for usage
   NON_EXISTENT_GROUPKEY: `
 This might happens why..
 1. You might use $[key] that do not exist at the right term of template.
+`,
+
+  CSV_DUPLICATE_KEY: `
+Duplicate value found among csv column key values used in templateLValue.
 `
 };
 
@@ -72,7 +76,7 @@ export {
   CreatingReplacingObjError,
   InvalidLeftReferenceError,
   InvalidLeftTemplateError,
-  // CSVParsingError,
+  CSVParsingError,
   // TemplateHasNoKeyError,
   ERROR_CONSTANT
 };

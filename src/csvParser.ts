@@ -4,13 +4,16 @@ import chalk from 'chalk';
 import debuggingInfoArr from './debuggingInfo';
 import utils from './util';
 import optionManager from './optionManager';
+import { Template } from './template';
 
 const csvParse = async ({
   replaceListFile,
   srcFileName,
+  template,
 }: {
   replaceListFile: string | number;
   srcFileName: string | number;
+  template: Template;
 }) => {
   if (!replaceListFile) {
     replaceListFile = utils.findReplaceListFile(`.${path.sep}rlist.csv`, srcFileName as string);
@@ -33,7 +36,7 @@ const csvParse = async ({
   );
 
   if (replaceListFile !== -1) {
-    return utils.readCsv(replaceListFile as string);
+    return utils.readCsv(replaceListFile as string, template);
   }
 
   return -1;

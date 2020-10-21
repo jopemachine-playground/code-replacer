@@ -49,12 +49,12 @@ const receiveCSVOption = async () => {
             message: chalk.dim('Choose options'),
             choices: [
               ...csvUsageLogs,
-              constant.cliSelectorString.TYPE_INPUT,
-              constant.cliSelectorString.FILE_DIR
+              constant.CLI_SELECTOR_STR.TYPE_INPUT,
+              constant.CLI_SELECTOR_STR.FILE_DIR
             ]
           }
         ]).then(async (listSelect) => {
-          if (listSelect.csvOpt === constant.cliSelectorString.FILE_DIR) {
+          if (listSelect.csvOpt === constant.CLI_SELECTOR_STR.FILE_DIR) {
             await inquirer
               .prompt([
                 {
@@ -76,7 +76,7 @@ const receiveCSVOption = async () => {
               .then((fileSelectionOutput) => {
                 csvFilePath = fileSelectionOutput.file;
               });
-          } else if (listSelect.csvOpt === constant.cliSelectorString.TYPE_INPUT) {
+          } else if (listSelect.csvOpt === constant.CLI_SELECTOR_STR.TYPE_INPUT) {
             await inquirer
               .prompt([
                 {
@@ -109,11 +109,11 @@ const receiveSrcOption = async () => {
         name: 'srcOpt',
         message: chalk.dim('Select Src option.'),
         choices: [
-          constant.cliSelectorString.SELECT_SRC,
-          constant.cliSelectorString.SELECT_DIR
+          constant.CLI_SELECTOR_STR.SELECT_SRC,
+          constant.CLI_SELECTOR_STR.SELECT_DIR
         ]
       }]).then(async (isSrcOrDirOpt) => {
-      if (isSrcOrDirOpt.srcOpt === constant.cliSelectorString.SELECT_SRC) {
+      if (isSrcOrDirOpt.srcOpt === constant.CLI_SELECTOR_STR.SELECT_SRC) {
         await inquirer
           .prompt([
             {
@@ -122,11 +122,11 @@ const receiveSrcOption = async () => {
               message: chalk.dim('Choose src file by below options'),
               choices: [
                 ...srcUsageLogs,
-                constant.cliSelectorString.TYPE_INPUT,
-                constant.cliSelectorString.FILE_DIR
+                constant.CLI_SELECTOR_STR.TYPE_INPUT,
+                constant.CLI_SELECTOR_STR.FILE_DIR
               ]
             }]).then(async (srcOpt) => {
-            if (srcOpt.src === constant.cliSelectorString.FILE_DIR) {
+            if (srcOpt.src === constant.CLI_SELECTOR_STR.FILE_DIR) {
               await inquirer
                 .prompt([
                   {
@@ -147,7 +147,7 @@ const receiveSrcOption = async () => {
                 ]).then((fileSelectionOutput) => {
                   srcFilePath = fileSelectionOutput.file;
                 });
-            } else if (srcOpt.src === constant.cliSelectorString.TYPE_INPUT) {
+            } else if (srcOpt.src === constant.CLI_SELECTOR_STR.TYPE_INPUT) {
               await inquirer
                 .prompt([
                   {
@@ -165,7 +165,7 @@ const receiveSrcOption = async () => {
               srcFilePath = srcOpt.src;
             }
           });
-      } else if (isSrcOrDirOpt.srcOpt === constant.cliSelectorString.SELECT_DIR) {
+      } else if (isSrcOrDirOpt.srcOpt === constant.CLI_SELECTOR_STR.SELECT_DIR) {
         await inquirer
           .prompt([
             {
@@ -192,11 +192,11 @@ const receiveSrcOption = async () => {
                   name: 'methodToTarget',
                   message: chalk.dim('Select how you want to specify the target file.'),
                   choices: [
-                    constant.cliSelectorString.SELECT_BY_EXT,
-                    constant.cliSelectorString.SELECT_BY_FILENAME
+                    constant.CLI_SELECTOR_STR.SELECT_BY_EXT,
+                    constant.CLI_SELECTOR_STR.SELECT_BY_FILENAME
                   ]
                 }]).then(async (opt) => {
-                if (opt.methodToTarget === constant.cliSelectorString.SELECT_BY_EXT) {
+                if (opt.methodToTarget === constant.CLI_SELECTOR_STR.SELECT_BY_EXT) {
                   await inquirer
                     .prompt([
                       {
@@ -210,7 +210,7 @@ const receiveSrcOption = async () => {
                     ]).then(async (select) => {
                       ext = select.ext;
                     });
-                } else if (opt.methodToTarget === constant.cliSelectorString.SELECT_BY_FILENAME) {
+                } else if (opt.methodToTarget === constant.CLI_SELECTOR_STR.SELECT_BY_FILENAME) {
                   await inquirer
                     .prompt([
                       {
@@ -245,13 +245,13 @@ const receiveTemplateOption = async () => {
         message: chalk.dim("Choose template"),
         choices: [
           ...templateUsageLogs,
-          constant.cliSelectorString.ENTER_TEMPLATE,
+          constant.CLI_SELECTOR_STR.ENTER_TEMPLATE,
         ],
       },
     ])
     .then(async (templateOutput) => {
       if (
-        templateOutput.template === constant.cliSelectorString.ENTER_TEMPLATE
+        templateOutput.template === constant.CLI_SELECTOR_STR.ENTER_TEMPLATE
       ) {
         await inquirer
           .prompt([
@@ -388,7 +388,7 @@ const receiveExcludeRegOption = async () => {
             message: chalk.dim('Choose exclude key'),
             choices: [
               ...excludeRegUsageLogs,
-              constant.cliSelectorString.ENTER_EXCLUDE_KEY
+              constant.CLI_SELECTOR_STR.ENTER_EXCLUDE_KEY
             ]
           }
         ])

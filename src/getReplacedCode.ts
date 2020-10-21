@@ -430,14 +430,12 @@ const getReplacedCode = ({
   srcFileName,
   srcFileLines,
   csvTbl,
-  template: templateStr,
+  template: templateObj,
   excludeRegValue,
   startLine,
   endLine,
 }: ReplacerArgument) => {
   const resultLines: string[] = [];
-
-  const templateObj = new Template(templateStr);
 
   const replaceObj = applyCSVTable({
     csvTbl,

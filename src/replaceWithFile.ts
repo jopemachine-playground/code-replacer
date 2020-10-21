@@ -9,6 +9,7 @@ import optionManager from './optionManager';
 import constant from './constant';
 import utils from './util';
 import { CommandArguments } from './type/commandArgument';
+import { Template } from './template';
 
 export default async function ({
   src: srcFile,
@@ -24,9 +25,12 @@ export default async function ({
     srcFile,
   });
 
+  const templateObj = new Template(template);
+
   const csvTbl = await parseCSV({
-    replaceListFile: replaceListFile as string,
-    srcFileName
+    replaceListFile: replaceListFile!,
+    srcFileName,
+    template: templateObj
   });
 
   if (csvTbl === -1) return;
@@ -44,10 +48,10 @@ export default async function ({
       srcFileName,
       srcFileLines,
       csvTbl,
-      template,
       excludeRegValue,
       startLine,
-      endLine
+      endLine,
+      template: templateObj
     });
   } catch (err) {
     console.log(chalk.red(err.message));

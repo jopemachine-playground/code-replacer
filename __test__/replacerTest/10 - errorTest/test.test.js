@@ -2,6 +2,7 @@ const path = require('path')
 const parseSourceFile = require('../../../src/sourceFileParser').default
 const utils = require('../../../src/util').default
 const ReplacerTest = require('../../util')
+const { Template } = require('../../../src/template')
 
 describe('Example 10 error test', () => {
   test('Example 10-1 csv has no column key, (CreatingReplacingObjError)', async () => {
@@ -15,7 +16,7 @@ describe('Example 10 error test', () => {
     try {
       new ReplacerTest({
         replaceArgs: args,
-        expectedResult: 'a'
+        expectedResult: ''
       }).test()
     } catch (err) {
       expect(err.name).toBe('CreatingReplacingObjError')
@@ -33,7 +34,7 @@ describe('Example 10 error test', () => {
     try {
       new ReplacerTest({
         replaceArgs: args,
-        expectedResult: 'a'
+        expectedResult: ''
       }).test()
     } catch (err) {
       expect(err.name).toBe('InvalidLeftTemplateError')
@@ -51,10 +52,19 @@ describe('Example 10 error test', () => {
     try {
       new ReplacerTest({
         replaceArgs: args,
-        expectedResult: 'a'
+        expectedResult: ''
       }).test()
     } catch (err) {
       expect(err.name).toBe('InvalidLeftReferenceError')
+    }
+  })
+
+  test('Example 10-4 Duplicate key errors, (CSVParsingError)', async () => {
+    try {
+      // eslint-disable-next-line no-unused-vars
+      await utils.readCsv(`${__dirname}${path.sep}rlist.csv`, new Template('${value}->${source}'))
+    } catch (err) {
+      expect(err.name).toBe('CSVParsingError')
     }
   })
 })
