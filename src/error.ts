@@ -7,14 +7,6 @@ class CreatingReplacingObjError extends Error {
 }
 
 // Occurs when ${key} or $[key] is found that is not matched to the right term of the template
-class InvalidRightReferenceError extends Error {
-  constructor (message: string) {
-    super(message);
-    this.name = this.constructor.name;
-  }
-}
-
-// Occurs when ${key} or $[key] is found that is not matched to the left term of the template
 class InvalidLeftReferenceError extends Error {
   constructor (message: string) {
     super(message);
@@ -29,20 +21,22 @@ class InvalidLeftTemplateError extends Error {
   }
 }
 
-class CSVParsingError extends Error {
-  constructor (message: string) {
-    super(message);
-    this.name = this.constructor.name;
-  }
-}
+// TODO : handle below errors
 
-// Occurs when there is no key in the left term of the template and csv is not an empty array
-class TemplateHasNoKeyError extends Error {
-  constructor (message: string) {
-    super(message);
-    this.name = this.constructor.name;
-  }
-}
+// class CSVParsingError extends Error {
+//   constructor (message: string) {
+//     super(message);
+//     this.name = this.constructor.name;
+//   }
+// }
+
+// // Occurs when there is no key in the left term of the template and csv is not an empty array
+// class TemplateHasNoKeyError extends Error {
+//   constructor (message: string) {
+//     super(message);
+//     this.name = this.constructor.name;
+//   }
+// }
 
 const ERROR_CONSTANT = {
   DUPLICATE_KEY: (key: string, value: string) => `
@@ -77,9 +71,8 @@ This might happens why..
 export {
   CreatingReplacingObjError,
   InvalidLeftReferenceError,
-  InvalidRightReferenceError,
   InvalidLeftTemplateError,
-  CSVParsingError,
-  TemplateHasNoKeyError,
+  // CSVParsingError,
+  // TemplateHasNoKeyError,
   ERROR_CONSTANT
 };

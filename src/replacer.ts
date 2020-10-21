@@ -13,7 +13,7 @@ import {
 import {
   CreatingReplacingObjError,
   InvalidLeftTemplateError,
-  InvalidRightReferenceError,
+  InvalidLeftReferenceError,
   ERROR_CONSTANT,
 } from "./error";
 
@@ -231,7 +231,7 @@ const handleLRefKey = ({
     groupKeyMatching.groups![lRefKey] || groupKeyMatching.groups![lRefKey + "_1"];
 
   if (!groupKeyMatchingStr) {
-    throw new InvalidRightReferenceError(ERROR_CONSTANT.NON_EXISTENT_GROUPKEY);
+    throw new InvalidLeftReferenceError(ERROR_CONSTANT.NON_EXISTENT_GROUPKEY);
   }
 
   matchingStr = handleGroupKeysInTeamplateLValue({

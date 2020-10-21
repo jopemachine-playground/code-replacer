@@ -125,7 +125,7 @@ export {
 //   for (const csvColumnVar of csvColumnVars) {
 //     const columnName: string = csvColumnVar.groups!.columnName;
 //     if (!csvTbl[0][columnName]) {
-//       throw new InvalidRightReferenceError(
+//       throw new InvalidLeftReferenceError(
 //         ERROR_CONSTANT.WRONG_COLUMN_R_Template
 //       );
 //     }
