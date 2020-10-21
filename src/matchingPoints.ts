@@ -65,15 +65,13 @@ export class MatchingPoints extends Array {
     template: Template;
   }) {
     // reg of replacingKey is already processed
-    const { escaped, str: escapedKey } = handleSpecialCharEscapeInTemplateLValue(
+    const escapedKey = handleSpecialCharEscapeInTemplateLValue(
       replacingKey
     );
 
     const regKey: string = handleLRefKeyInTemplateLValue({
-      escaped,
       templateLValue: escapedKey,
     });
-
     // const regKey: string = template.getTemplateLValueGroupKeyForm(escaped);
 
     const replacingKeyReg: RegExp = new RegExp(regKey);

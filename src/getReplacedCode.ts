@@ -210,11 +210,10 @@ const handleLRefKey = ({
   rvalue: string;
   template: Template;
 }) => {
-  const { escaped, str: escapedKey } = handleSpecialCharEscapeInTemplateLValue(
+  const escapedKey = handleSpecialCharEscapeInTemplateLValue(
     regKey
   );
   regKey = handleLRefKeyInTemplateLValue({
-    escaped,
     templateLValue: escapedKey,
   });
 
