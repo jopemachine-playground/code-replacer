@@ -3,6 +3,7 @@ import fs from 'fs';
 import _ from 'lodash';
 import path from 'path';
 import csv from 'csv-parser';
+import constant from './constant';
 
 export default {
   handleSpecialCharacter (str: string) {
@@ -110,29 +111,36 @@ export default {
     resultLines: string[]
   ) {
     let previousLine = ''; let postLine = '';
+    const lineIdxSpliter = '║';
 
     if (lineIdx - 2 >= 0) {
       previousLine =
-        chalk.gray(`${lineIdx - 1}    `) +
+        chalk.gray(`${lineIdx - 1} ${lineIdxSpliter}   `) +
         chalk.gray(resultLines[lineIdx - 2].trim());
     }
 
     if (lineIdx < srcFileLines.length) {
       postLine =
-        chalk.gray(`${lineIdx + 1}    `) +
+        chalk.gray(`${lineIdx + 1} ${lineIdxSpliter}   `) +
         chalk.gray(srcFileLines[lineIdx].trim());
     }
 
     console.log(`
+${chalk.gray(constant.SINGLE_SPLIT_LINE)}
+
 ${chalk.gray(
-  '------------------------------------------------------------------------------------------'
+  `# Line: ${chalk.yellow(lineIdx)}, in '${chalk.yellow(srcFileName)}'`
 )}
 
-${chalk.gray(`# Line: ${chalk.yellow(lineIdx)}, in '${chalk.yellow(srcFileName)}'`)}
-
 ${previousLine}
-${chalk.blueBright(`${lineIdx}    `) + chalk.blueBright(sourceStr)}
-${chalk.greenBright(`${lineIdx}    `) + chalk.greenBright(replacedStr)}
+${
+  chalk.blueBright(`${lineIdx} ${lineIdxSpliter}   `) +
+  chalk.blueBright(sourceStr)
+}
+${
+  chalk.greenBright(`${lineIdx} ${lineIdxSpliter}   `) +
+  chalk.greenBright(replacedStr)
+}
 ${postLine}
 `);
   },

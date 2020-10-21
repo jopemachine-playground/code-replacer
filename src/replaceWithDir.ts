@@ -25,7 +25,7 @@ export default async function (props: CommandArguments) {
       if (!targetFile) continue;
       props.src = targetFile;
       await replaceWithFile(props);
-      console.log(chalk.gray('##########################################################################################\n'));
+      console.log(chalk.gray(`${constant.DOUBLE_SPLIT_LINE}\n`));
     }
   });
 }
