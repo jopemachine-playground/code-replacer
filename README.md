@@ -85,6 +85,8 @@ And templateLvalue must include this key because this program should know which 
 
 See `Examples` for examples of use.
 
+Note that the key can contain only alphabetic and numeric characters.
+
 3. **$[key]**
 
 Above key is treated as `left reference key`.
@@ -102,6 +104,10 @@ And along with the `no-escape` option, you can refer regexp's group key like bel
 ```
 --tem='(?<first>[0-9]{3})(?<second>[0-9]{4})(?<third>[0-9]{4})->$[first]-$[second]-$[third]'
 ```
+
+Note that the key can contain only alphabetic and numeric characters.
+
+(And this applies for group keys.)
 
 4. **rlist.csv**
 
@@ -160,7 +166,7 @@ code-replacer --src='example/example_1/msgAlert.js' --csv='example/example_1/rli
 Then you can get to below file.
 
 ```js
-// This file name is __replacer__.msgAlert.js
+// This file name is __replaced__.msgAlert.js
 
 ...
 alert(i18n.t("some_msg"));
@@ -316,6 +322,9 @@ specify end line pattern.
 type: `boolean`
 
 check the string values that you want to replace on each line.
+
+<img src="./image/conf.png" />
+
 
 #### --template, --t
 type: `string`
