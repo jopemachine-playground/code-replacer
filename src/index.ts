@@ -59,7 +59,7 @@ const flags: meow.AnyFlags = {
   },
   template: {
     type: 'string',
-    alias: 'tem',
+    alias: 't',
     isRequired: (_flags, input) => false
   },
   debug: {
