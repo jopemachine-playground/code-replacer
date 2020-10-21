@@ -1,5 +1,5 @@
 import utils from './util';
-import codeReplace from './codeReplace';
+import modSelector from './modSelector';
 import path from 'path';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
@@ -443,7 +443,7 @@ export default async (input: string, args: CommandArguments) => {
       args.endLine = endLine;
       args['no-escape'] = noEscape;
       console.log();
-      codeReplace(args);
+      modSelector(args);
       break;
     }
     case 'set':
@@ -454,7 +454,7 @@ export default async (input: string, args: CommandArguments) => {
       utils.showDefaultOptions();
       break;
     default:
-      codeReplace(args);
+      modSelector(args);
       break;
   }
 };

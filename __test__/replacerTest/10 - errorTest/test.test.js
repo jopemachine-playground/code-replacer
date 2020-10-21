@@ -1,5 +1,5 @@
 const path = require('path')
-const parseSourceFile = require('../../../src/parseSourceFile').default
+const parseSourceFile = require('../../../src/sourceFileParser').default
 const utils = require('../../../src/util').default
 const ReplacerTest = require('../../util')
 

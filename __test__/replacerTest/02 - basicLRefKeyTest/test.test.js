@@ -1,5 +1,5 @@
 const path = require('path')
-const parseSourceFile = require('../../../src/parseSourceFile').default
+const parseSourceFile = require('../../../src/sourceFileParser').default
 const ReplacerTest = require('../../util')
 
 describe('Example 2 basic left reference key test', () => {
@@ -22,22 +22,23 @@ import ghi from "ghi";`
     expect(testPassedOrErrorLine).toBe(true)
   })
 
-  test('Example 2-2 basic left reference key test with multi key in templateLValue', async () => {
-    const args = {
-      csvTbl: [],
-      srcFileLines: (parseSourceFile({ srcFile: `${__dirname}${path.sep}index2.js` })).srcFileLines,
-      templateLValue: ('import $[key] from "$[key]"'),
-      templateRValue: 'require("$[key]")'
-    }
+//   test('Example 2-2 basic left reference key test with multi key in templateLValue', async () => {
+//     const args = {
+//       csvTbl: [],
+//       srcFileLines: (parseSourceFile({ srcFile: `${__dirname}${path.sep}index2.js` })).srcFileLines,
+//       templateLValue: ('import $[key] from "$[key]"'),
+//       templateRValue: 'require("$[key]")'
+//     }
 
-    const testPassedOrErrorLine = new ReplacerTest({
-      replaceArgs: args,
-      expectedResult:
-`require("abc");
-require("def");
-require("ghi");`
-    }).test()
+//     const testPassedOrErrorLine = new ReplacerTest({
+//       replaceArgs: args,
+//       expectedResult:
+// `require("abc");
+// require("def");
+// require("ghi");
+// import jkl from "ghi";`
+//     }).test()
 
-    expect(testPassedOrErrorLine).toBe(true)
-  })
+//     expect(testPassedOrErrorLine).toBe(true)
+//   })
 })

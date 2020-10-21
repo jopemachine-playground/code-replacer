@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 const path = require('path')
-const parseSourceFile = require('../../../src/parseSourceFile').default
+const parseSourceFile = require('../../../src/sourceFileParser').default
 const { readCsv } = require('../../../src/util').default
 const ReplacerTest = require('../../util')
 const optionManager = require('../../../src/optionManager').default

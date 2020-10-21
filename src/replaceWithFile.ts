@@ -1,10 +1,10 @@
 import fs from 'fs';
 import path from 'path';
 import chalk from 'chalk';
-import parseSourceFile from './parseSourceFile';
-import parseCSV from './csvParse';
+import parseSourceFile from './sourceFileParser';
+import parseCSV from './csvParser';
 import debuggingInfoArr from './debuggingInfo';
-import { replace } from './replacer';
+import { getReplacedCode } from './getReplacedCode';
 import optionManager from './optionManager';
 import constant from './constant';
 import utils from './util';
@@ -20,12 +20,6 @@ export default async function ({
   excludeReg: excludeRegValue
 }: CommandArguments) {
 
-  const templateVals: string[] = utils.splitWithEscape(
-    template,
-    constant.TEMPLATE_SPLITER
-  );
-  const templateLValue: string = templateVals[0];
-  const templateRValue: string = templateVals[1];
   const { srcFileLines, srcFileName, srcFilePath } = parseSourceFile({
     srcFile,
   });
@@ -46,12 +40,11 @@ export default async function ({
 
   let resultLines: string[] | number = [];
   try {
-    resultLines = replace({
+    resultLines = getReplacedCode({
       srcFileName,
       srcFileLines,
       csvTbl,
-      templateLValue,
-      templateRValue,
+      template,
       excludeRegValue,
       startLine,
       endLine

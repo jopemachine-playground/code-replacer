@@ -1,4 +1,6 @@
-const { applyCSVTable } = require('../../src/replacer')
+const { applyCSVTable } = require('../../src/getReplacedCode')
+const { Template } = require('../../src/template')
+const constant = require('../../src/constant').default
 
 describe('Apply CSV Table', () => {
   test('Column variables should be appropriately replaced.', () => {
@@ -8,7 +10,8 @@ describe('Apply CSV Table', () => {
     ]
     const templateLValue = '${source}'
     const templateRValue = 'i18n.t("${value}")'
-    const replaceObj = applyCSVTable({ csvTbl, templateLValue, templateRValue })
+    const template = new Template(`${templateLValue}${constant.TEMPLATE_SPLITER}${templateRValue}`)
+    const replaceObj = applyCSVTable({ csvTbl, template })
     const keys = Object.keys(replaceObj)
     expect(keys[0]).toBe('Some message..')
     expect(keys[1]).toBe('Blah blah..')
@@ -24,7 +27,8 @@ describe('Apply CSV Table', () => {
     ]
     const templateLValue = '${source}${index}'
     const templateRValue = '<div id="${id}" class="${class}" />'
-    const replaceObj = applyCSVTable({ csvTbl, templateLValue, templateRValue })
+    const template = new Template(`${templateLValue}${constant.TEMPLATE_SPLITER}${templateRValue}`)
+    const replaceObj = applyCSVTable({ csvTbl, template })
     const keys = Object.keys(replaceObj)
     expect(keys[0]).toBe('example1')
     expect(keys[1]).toBe('example2')
@@ -42,7 +46,8 @@ describe('Apply CSV Table', () => {
     ]
     const templateLValue = '${source}${index}'
     const templateRValue = ''
-    const replaceObj = applyCSVTable({ csvTbl, templateLValue, templateRValue })
+    const template = new Template(`${templateLValue}${constant.TEMPLATE_SPLITER}${templateRValue}`)
+    const replaceObj = applyCSVTable({ csvTbl, template })
     const keys = Object.keys(replaceObj)
     expect(keys[0]).toBe('example1')
     expect(keys[1]).toBe('example2')

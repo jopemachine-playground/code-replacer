@@ -1,13 +1,19 @@
-const { replace } = require('../src/replacer')
+const { getReplacedCode } = require('../src/getReplacedCode')
+const constant = require('../src/constant').default
 
 module.exports = class ReplacerTest {
   constructor ({ replaceArgs, expectedResult }) {
     this.args = replaceArgs
+    this.args.template =
+      replaceArgs.templateLValue +
+      constant.TEMPLATE_SPLITER +
+      replaceArgs.templateRValue
+
     this.expectedResult = expectedResult
   }
 
   test () {
-    const resultLines = replace(this.args)
+    const resultLines = getReplacedCode(this.args)
     const expectedLines = this.expectedResult.split('\n')
     for (let i = 0; i < expectedLines.length; i++) {
       if (resultLines[i] !== expectedLines[i]) {

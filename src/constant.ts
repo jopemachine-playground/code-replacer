@@ -41,7 +41,7 @@ export default {
                                           name './rlist_{fileName}.csv',
                                           if you want to apply different rlist files per file
 
-            --template, -tem              specify template string.
+            --template, -t                specify template string.
                                           see README.md for more detail usage.
 
 

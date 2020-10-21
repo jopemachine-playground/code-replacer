@@ -1,5 +1,5 @@
 const path = require('path')
-const parseSourceFile = require('../../../src/parseSourceFile').default
+const parseSourceFile = require('../../../src/sourceFileParser').default
 const { readCsv } = require('../../../src/util').default
 const optionManager = require('../../../src/optionManager').default
 const ReplacerTest = require('../../util')

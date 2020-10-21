@@ -5,10 +5,11 @@ import readlineSync from "readline-sync";
 import debuggingInfoArr from "./debuggingInfo";
 import optionManager from "./optionManager";
 import {
-  handleLRefKeyInTemplateLValue,
   handleSpecialCharEscapeInTemplateLValue,
-  handleGroupKeysInTeamplateLValue,
-  handleLRefKeyInTemplateRValue
+  handleGroupKeysInTemplateLValue,
+  handleLRefKeyInTemplateRValue,
+  Template,
+  handleLRefKeyInTemplateLValue
 } from "./template";
 import {
   CreatingReplacingObjError,
@@ -21,7 +22,6 @@ import utils from "./util";
 import { MatchingPoints } from "./matchingPoints";
 import { ReplacerArgument } from "./type/replacerArgument";
 import { MatchingPoint } from "./type/matchingPoint";
-import constant from "./constant";
 
 const displayConsoleMsg = ({
   lineIdx,
@@ -81,21 +81,18 @@ const displayConsoleMsg = ({
 
 const applyCSVTable = ({
   csvTbl,
-  templateLValue,
-  templateRValue,
+  template: templateObj
 }: {
   csvTbl: any;
-  templateLValue: string;
-  templateRValue: string;
+  template: Template;
 }) => {
   const replaceObj: object = {};
-  templateRValue = templateRValue.trim().normalize();
 
   if (csvTbl.length > 0) {
     const csvColumnNames: string[] = Object.keys(csvTbl[0]);
     for (const csvRecord of csvTbl) {
-      let key: string = templateLValue;
-      let value: string = templateRValue!;
+      let key: string = templateObj.lvalue;
+      let value: string = templateObj.rvalue;
 
       for (const columnName of csvColumnNames) {
         const trimmedColumnName: string = columnName.trim();
@@ -124,9 +121,11 @@ const applyCSVTable = ({
 const getMatchingPoints = ({
   srcLine,
   replacingKeys,
+  template
 }: {
   srcLine: string;
   replacingKeys: string[];
+  template: Template;
 }) => {
   const matchingPoints: MatchingPoints = new MatchingPoints();
 
@@ -134,6 +133,7 @@ const getMatchingPoints = ({
     matchingPoints.addMatchingPoint({
       srcLine,
       replacingKey,
+      template
     });
   }
   matchingPoints.sortMatchingPoints();
@@ -144,15 +144,18 @@ const getMatchingPoints = ({
 const getMatchingPointsWithOnlyTemplate = ({
   srcLine,
   templateLValue,
+  template
 }: {
   srcLine: string;
   templateLValue: string;
+  template: Template;
 }) => {
   const matchingPoints: MatchingPoints = new MatchingPoints();
 
   matchingPoints.addMatchingPoint({
     srcLine,
     replacingKey: templateLValue,
+    template
   });
   matchingPoints.sortMatchingPoints();
 
@@ -197,6 +200,7 @@ const handleLRefKey = ({
   replaceObj,
   matchingStr,
   rvalue,
+  template
 }: {
   srcLine: string;
   lRefKey: string;
@@ -204,6 +208,7 @@ const handleLRefKey = ({
   replaceObj: object;
   matchingStr: string;
   rvalue: string;
+  template: Template;
 }) => {
   const { escaped, str: escapedKey } = handleSpecialCharEscapeInTemplateLValue(
     regKey
@@ -212,6 +217,8 @@ const handleLRefKey = ({
     escaped,
     templateLValue: escapedKey,
   });
+
+  // regKey = template.getTemplateLValueGroupKeyForm(escaped);
 
   const findMatchingStringReg: RegExp = new RegExp(regKey);
 
@@ -234,7 +241,7 @@ const handleLRefKey = ({
     throw new InvalidLeftReferenceError(ERROR_CONSTANT.NON_EXISTENT_GROUPKEY);
   }
 
-  matchingStr = handleGroupKeysInTeamplateLValue({
+  matchingStr = handleGroupKeysInTemplateLValue({
     matchingStr,
     lRefKey,
     groupKeyMatchingStr,
@@ -264,8 +271,7 @@ const replaceOneline = ({
   srcFileLines,
   srcFileName,
   srcLine,
-  templateLValue,
-  templateRValue,
+  template: templateObj
 }: {
   csvTbl: any;
   excludeRegValue: string | undefined;
@@ -276,8 +282,7 @@ const replaceOneline = ({
   srcFileLines: string[];
   srcFileName: string;
   srcLine: string;
-  templateLValue: string;
-  templateRValue: string;
+  template: Template
 }) => {
 
   if (excludeRegValue && srcLine.match(new RegExp(excludeRegValue))) {
@@ -289,11 +294,13 @@ const replaceOneline = ({
   const matchingPoints: MatchingPoints = hasOneToManyMatching
     ? getMatchingPointsWithOnlyTemplate({
         srcLine,
-        templateLValue,
+        templateLValue: templateObj.lvalue,
+        template: templateObj
       })
     : getMatchingPoints({
         srcLine,
         replacingKeys,
+        template: templateObj
       });
 
   for (
@@ -315,33 +322,32 @@ const replaceOneline = ({
       // handle grouping value
       const findLRefKey: RegExp = new RegExp(/\$\[(?<lRefKey>[\d\w]*)\]/);
       const lRefKeys: Generator<RegExpExecArray, void, unknown> = matchAll(
-        templateRValue,
+        templateObj.rvalue,
         findLRefKey
       );
       const rvalue: string = hasOneToManyMatching
-        ? templateRValue
+        ? templateObj.rvalue
         : replaceObj[matchingPoints.replacingKey!];
 
       for (const lRefKeyInfo of lRefKeys) {
-        // always use first matching value
         const lRefKey: string = lRefKeyInfo[1];
         if (hasOneToManyMatching) {
           const result = handleLRefKey({
             srcLine,
             lRefKey,
-            regKey: templateLValue,
+            regKey: templateObj.lvalue,
             replaceObj,
             matchingStr,
             rvalue,
+            template: templateObj
           });
           matchingStr = result?.matchingStr;
           replaceObj = result?.replaceObj;
           continue;
         }
 
-        const regKeys = Object.keys(replaceObj);
-
-        for (const regKey of regKeys) {
+        const replaceObjectsKey = Object.keys(replaceObj);
+        for (const regKey of replaceObjectsKey) {
           const result = handleLRefKey({
             srcLine,
             lRefKey,
@@ -349,6 +355,7 @@ const replaceOneline = ({
             replaceObj,
             matchingStr,
             rvalue,
+            template: templateObj
           });
           if (replaceObj !== result?.replaceObj) {
             matchingStr = result?.matchingStr;
@@ -386,7 +393,7 @@ const replaceOneline = ({
         const replacedString: string = getReplacedString({
           replaceObj,
           matchingStr,
-          templateRValue,
+          templateRValue: templateObj.rvalue,
         });
 
         // push the index value of the other matching points.
@@ -420,31 +427,22 @@ const replaceOneline = ({
   return srcLine;
 };
 
-const replace = ({
+const getReplacedCode = ({
   srcFileName,
   srcFileLines,
   csvTbl,
-  templateLValue,
-  templateRValue,
+  template: templateStr,
   excludeRegValue,
   startLine,
   endLine,
 }: ReplacerArgument) => {
   const resultLines: string[] = [];
 
-  if (templateLValue === "") {
-    throw new InvalidLeftTemplateError(ERROR_CONSTANT.LEFT_TEMPLATE_EMPTY);
-  }
-
-  templateLValue = utils.restoreTemplateSpliter(
-    templateLValue,
-    constant.TEMPLATE_SPLITER
-  );
+  const templateObj = new Template(templateStr);
 
   const replaceObj = applyCSVTable({
     csvTbl,
-    templateLValue,
-    templateRValue,
+    template: templateObj
   });
 
   const replacingKeys: string[] = Object.keys(replaceObj);
@@ -495,8 +493,7 @@ const replace = ({
         srcFileLines,
         srcFileName,
         srcLine,
-        templateLValue,
-        templateRValue,
+        template: templateObj
       }) as string;
     }
     if (resultLine as unknown as number === -1) return -1;
@@ -507,4 +504,4 @@ const replace = ({
   return resultLines;
 };
 
-export { replace, applyCSVTable, getMatchingPoints };
+export { getReplacedCode, applyCSVTable, getMatchingPoints };

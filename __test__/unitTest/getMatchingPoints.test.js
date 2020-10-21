@@ -1,4 +1,4 @@
-const { getMatchingPoints } = require('../../src/replacer')
+const { getMatchingPoints } = require('../../src/getReplacedCode')
 const optionManager = require('../../src/optionManager').default
 
 // Pre condition: Replacing keys are sorted by length.

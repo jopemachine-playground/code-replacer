@@ -2,8 +2,7 @@ export interface ReplacerArgument {
   srcFileName: string;
   srcFileLines: string[];
   csvTbl: any;
-  templateLValue: string;
-  templateRValue: string;
+  template: string;
   excludeRegValue?: string;
   startLine?: string;
   endLine?: string;
