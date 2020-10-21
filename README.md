@@ -15,18 +15,18 @@ Code repeater replaces code with the desired form based on what is written in th
 
 - [1. How to install](#Installation)
 - [2. How to use](#how-to-use)
-    - [2.1 On Cli]()
-    - [2.2 On Cli using inquirer]()
-    - [2.3 Using vscode plugin]()
+    - [2.1 On Cli](#on-cli)
+    - [2.2 On Cli using inquirer](#on-cli-using-inquirer)
+    - [2.3 Using vscode plugin](#on-vscode)
 - [3. Terms description](#terms-description)
 - [4. Examples](#simple-example)
-    - [4.1 Example 1, using csv column key]()
-    - [4.2 Example 2, using csv column key with template]()
-    - [4.3 Example 3, using csv column keys]()
-    - [4.3 Example 4, using csv column keys with left reference keys]()
-- [5. Tips]()
-- [6. Options]()
-- [7. Bug Reporting]()
+    - [4.1 Example 1, using csv column key](#example-1,-use-`csv`-and-`template`)
+    - [4.2 Example 2, using csv column key with template](#example-2,-use-only-`template`)
+    - [4.3 Example 3, using csv column keys](#example-3,-use-csv's-multiple-column)
+    - [4.4 Example 4, using csv column keys with left reference keys](#example-4,-use-csv's-multiple-column-with-left-reference-keys)
+- [5. Tips](#tips)
+- [6. Options](#options)
+- [7. Bug Reporting](#bug-reporting)
 
 ## Installation
 
@@ -42,7 +42,7 @@ If you like the idea of code-replacer, how about trying to use vscode plugin?
 
 ## How to use
 
-* On cli
+### On cli
 
 1. Write `csv` file to replace text or `template` to change your codes.
 
@@ -50,14 +50,14 @@ If you like the idea of code-replacer, how about trying to use vscode plugin?
 
 3. Output files is `__replaced__.{original file name}`.
 
-* On cli, using [inquirer](https://github.com/SBoudrias/Inquirer.js)
+### On cli using inquirer
 
 you can use `inquirer`'s cli menu to select options.
 
 <img src="./image/inquirer.png" />
 
 
-* On vscode
+### On vscode
 
 See [code-replacer-vscode-plugin](https://github.com/jopemachine/code-replacer-vscode-plugin).
 
@@ -212,14 +212,13 @@ Multiple column data from the csv file are available in the following ways.
 code-replacer --src='example/example_3/index.js' --csv='example/example_3/rlist.csv' --template='${source}${index}-><div id="${id}" class="${class}" />'
 ```
 
-### Example 4, use csv's multiple column with left reference keys 
+### Example 4, use csv's multiple column with left reference keys
 
 You can use the csv column key with the left reference key.
 
 ```
 code-replacer --src='example/example_4/index.js' --csv='example/example_4/rlist.csv' --template='$[key1] ${source}${index} $[key2]->$[key2] ${index}${source} $[key1]'
 ```
-
 
 ## Tips
 
@@ -338,4 +337,4 @@ outputs debugging information to the `DEBUG_INFO` file
 
 ## Bug reporting
 
-Bug reports are always welcome
+Bug reports are always welcome.
