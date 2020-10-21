@@ -13,7 +13,7 @@ Code repeater replaces code with the desired form based on what is written in th
 
 **Table of Contents**
 
-- [1. How to install](#Installation)
+- [1. How to install](#installation)
 - [2. How to use](#how-to-use)
     - [2.1 On Cli](#on-cli)
     - [2.2 On Cli using inquirer](#on-cli-using-inquirer)
@@ -46,7 +46,7 @@ If you like the idea of code-replacer, how about trying to use vscode plugin?
 
 1. Write `csv` file to replace text or `template` to change your codes.
 
-2. Type the command
+2. Specify options you want to apply.
 
 3. Output files is `__replaced__.{original file name}`.
 
@@ -103,12 +103,20 @@ And along with the `no-escape` option, you can refer regexp's group key like bel
 --tem='(?<first>[0-9]{3})(?<second>[0-9]{4})(?<third>[0-9]{4})->$[first]-$[second]-$[third]'
 ```
 
+4. **rlist.csv**
+
+* If you do not give the csv option, code-replacer uses the rlist.csv file as csv option when if it exists in the path where code-replacer was run.
+
+* If you use the dir option, the `rlist_${fileName}.csv` file will be used as a csv option.
+
+
+
 
 ## Simple example
 
 ### Example 1, use `csv` and `template`
 
-Pass the path of the input file to the `csv` option if you need it.
+Pass the path of the input file to the `csv` option if you need it./
 
 For example, if you wanna change `Some message..` to `alert(i18n.t("some_msg"))` for support i18n (supporting multi language feature), you can do this.
 
@@ -125,11 +133,7 @@ Below is the input file (`csv`).
 
 Note that `source` column is Message string including double quotes and `value` column is corresponding string key.
 
-```
-source,value
-Some message..,some_msg
-Blah blah..,blah_blah
-```
+<img src="./image/csv.png" />
 
 And you need to forward some `template` value.
 
@@ -222,7 +226,7 @@ code-replacer --src='example/example_4/index.js' --csv='example/example_4/rlist.
 
 ## Tips
 
-1. If there are more than one matching key, (which contain other key in the rlist.csv (e.g. test, tester)), 
+1. If there are more than one matching key, (which contain other key in the `rlist.csv` (e.g. test, tester)), 
 The longest key is selected (replaced) basically. 
 If you don't want these matching, give `conf` option and skip the longest one, then you can choose next candidate manually (test).
 
