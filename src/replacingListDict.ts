@@ -34,7 +34,7 @@ export default class ReplacingListDict extends Map<string, string> {
       }
 
       this.replacingKeys = [...this.keys()].sort((a: string, b: string) => {
-        return b.length - a.length || b.localeCompare(a);
+        return b.length - a.length || a.localeCompare(b);
       });
 
     }

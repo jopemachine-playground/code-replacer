@@ -26,7 +26,7 @@ import ReplacingListDict from "./replacingListDict";
 const displayConsoleMsg = ({
   lineIdx,
   matchingInfo,
-  replaceObj,
+  replacingListDict,
   resultLines,
   srcFileLines,
   srcFileName,
@@ -34,7 +34,7 @@ const displayConsoleMsg = ({
 }: {
   lineIdx: number;
   matchingInfo: any;
-  replaceObj: ReplacingListDict;
+  replacingListDict: ReplacingListDict;
   resultLines: string[];
   srcFileLines: string[];
   srcFileName: string;
@@ -52,7 +52,7 @@ const displayConsoleMsg = ({
   const replacedStr: string = utils.createHighlightedLine(
     srcLine,
     matchingInfo.index,
-    replaceObj.get(matchingStr)!,
+    replacingListDict.get(matchingStr)!,
     matchingInfo.index + matchingStr.length,
     "green"
   );
@@ -88,7 +88,7 @@ const applyCSVTable = ({
   csvTbl: any;
   template: Template;
 }) => {
-  const replaceObj: object = {};
+  const replacingListDict: object = {};
 
   if (csvTbl.length > 0) {
     const csvColumnNames: string[] = Object.keys(csvTbl[0]);
@@ -108,16 +108,16 @@ const applyCSVTable = ({
         value = result.templateRValue;
       }
 
-      if (replaceObj[key]) {
+      if (replacingListDict[key]) {
         throw new CreatingReplacingObjError(
-          ERROR_CONSTANT.DUPLICATE_KEY(key, replaceObj[key])
+          ERROR_CONSTANT.DUPLICATE_KEY(key, replacingListDict[key])
         );
       }
-      replaceObj[key] = value;
+      replacingListDict[key] = value;
     }
   }
 
-  return replaceObj;
+  return replacingListDict;
 };
 
 const getMatchingPoints = ({
@@ -165,11 +165,11 @@ const getMatchingPointsWithOnlyTemplate = ({
 };
 
 const getReplacedString = ({
-  replaceObj,
+  replacingListDict,
   matchingStr,
   templateRValue,
 }: {
-  replaceObj: ReplacingListDict;
+  replacingListDict: ReplacingListDict;
   matchingStr: string;
   templateRValue: string;
 }) => {
@@ -179,17 +179,17 @@ const getReplacedString = ({
 
   // exactly match :: use regexp and insert new item
   // not exactly match, but match in regexp :: use regexp and dont insert one
-  if (noEscapeOpt && !replaceObj.get(matchingStr)) {
-    for (const key of replaceObj.keys()) {
+  if (noEscapeOpt && !replacingListDict.get(matchingStr)) {
+    for (const key of replacingListDict.keys()) {
       const regexMatch = new RegExp(key).test(matchingStr);
       if (regexMatch) {
-        return replaceObj.get(key);
+        return replacingListDict.get(key);
       }
     }
   }
 
-  const exactMatch = replaceObj.get(matchingStr);
-  const constantMatch = !replaceObj.get(matchingStr);
+  const exactMatch = replacingListDict.get(matchingStr);
+  const constantMatch = !replacingListDict.get(matchingStr);
   if (constantMatch) return templateRValue;
 
   return exactMatch;
@@ -200,7 +200,7 @@ const getReplacedString = ({
 const handleLRefKey = ({
   srcLine,
   lRefKey,
-  replaceObj,
+  replacingListDict,
   matchingStr,
   lvalue,
   rvalue,
@@ -208,7 +208,7 @@ const handleLRefKey = ({
 }: {
   srcLine: string;
   lRefKey: string;
-  replaceObj: ReplacingListDict;
+  replacingListDict: ReplacingListDict;
   matchingStr: string;
   lvalue: string;
   rvalue: string;
@@ -247,7 +247,7 @@ const handleLRefKey = ({
   });
 
   const newRValue = handleLRefKeyInTemplateRValue({
-    replaceObj,
+    replacingListDict,
     matchingStr,
     lRefKey,
     groupKeyMatching,
@@ -264,7 +264,7 @@ const replaceOneline = ({
   csvTbl,
   excludeRegValue,
   lineIdx,
-  replaceObj,
+  replacingListDict,
   resultLines,
   srcFileLines,
   srcFileName,
@@ -274,7 +274,7 @@ const replaceOneline = ({
   csvTbl: any;
   excludeRegValue: string | undefined;
   lineIdx: number;
-  replaceObj: ReplacingListDict;
+  replacingListDict: ReplacingListDict;
   resultLines: string[];
   srcFileLines: string[];
   srcFileName: string;
@@ -295,7 +295,7 @@ const replaceOneline = ({
       })
     : getMatchingPoints({
         srcLine,
-        replacingKeys: replaceObj.replacingKeys,
+        replacingKeys: replacingListDict.replacingKeys,
         template: templateObj
       });
 
@@ -323,7 +323,7 @@ const replaceOneline = ({
       );
       const rvalue: string = hasOneToManyMatching
         ? templateObj.rvalue
-        : replaceObj.get(matchingPoints.replacingKey!)!;
+        : replacingListDict.get(matchingPoints.replacingKey!)!;
 
       for (const lRefKeyInfo of lRefKeys) {
         const lRefKey: string = lRefKeyInfo[1];
@@ -331,23 +331,23 @@ const replaceOneline = ({
           const result = handleLRefKey({
             srcLine,
             lRefKey,
-            replaceObj,
+            replacingListDict,
             matchingStr,
             template: templateObj,
             lvalue: templateObj.lvalue,
             rvalue,
           });
           matchingStr = result.newLValue!;
-          replaceObj.set(matchingStr, result.newRValue!);
+          replacingListDict.set(matchingStr, result.newRValue!);
           continue;
         }
 
-        const replaceObjectsKey = replaceObj.keys();
+        const replaceObjectsKey = replacingListDict.keys();
         for (const replaceObjectKey of replaceObjectsKey) {
           const result = handleLRefKey({
             srcLine,
             lRefKey,
-            replaceObj,
+            replacingListDict,
             matchingStr,
             template: templateObj,
             lvalue: replaceObjectKey,
@@ -358,7 +358,7 @@ const replaceOneline = ({
             continue;
           } else {
             matchingStr = result.newLValue!;
-            replaceObj.set(matchingStr, result.newRValue!);
+            replacingListDict.set(matchingStr, result.newRValue!);
             break;
           }
         }
@@ -367,7 +367,7 @@ const replaceOneline = ({
       displayConsoleMsg({
         srcLine,
         matchingInfo,
-        replaceObj,
+        replacingListDict,
         srcFileName,
         lineIdx,
         srcFileLines,
@@ -390,7 +390,7 @@ const replaceOneline = ({
         return -1;
       } else {
         const replacedString: string = getReplacedString({
-          replaceObj,
+          replacingListDict,
           matchingStr,
           templateRValue: templateObj.rvalue,
         })!;
@@ -436,7 +436,7 @@ const getReplacedCode = ({
 }: ReplacerArgument) => {
   const resultLines: string[] = [];
 
-  const replaceObj: ReplacingListDict = new ReplacingListDict(
+  const replacingListDict: ReplacingListDict = new ReplacingListDict(
     csvTbl,
     templateObj
   );
@@ -476,7 +476,7 @@ const getReplacedCode = ({
         csvTbl,
         lineIdx,
         excludeRegValue,
-        replaceObj,
+        replacingListDict,
         resultLines,
         srcFileLines,
         srcFileName,

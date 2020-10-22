@@ -45,7 +45,7 @@ class FileNotFoundError extends Error {
 
 const ERROR_CONSTANT = {
   DUPLICATE_KEY: (key: string, value: string) => `
-Duplicate key exists in replaceObj.
+Duplicate key exists in replacingListDict.
 duplicated key: ${key}
 duplicated value: ${value}
 

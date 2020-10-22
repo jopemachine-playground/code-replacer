@@ -155,19 +155,19 @@ const handleGroupKeysInTemplateLValue = ({
 };
 
 const handleLRefKeyInTemplateRValue = ({
-  replaceObj,
+  replacingListDict,
   matchingStr,
   lRefKey,
   groupKeyMatching,
   rvalue
 }: {
-  replaceObj: ReplacingListDict;
+  replacingListDict: ReplacingListDict;
   matchingStr: string;
   lRefKey: string;
   groupKeyMatching: RegExpMatchArray
   rvalue: string;
 }) => {
-  let result: string = replaceObj.has(matchingStr) ? replaceObj.get(matchingStr)! : rvalue;
+  let result: string = replacingListDict.has(matchingStr) ? replacingListDict.get(matchingStr)! : rvalue;
 
   if (result.includes(`$[${lRefKey}]`)) {
     result = utils.replaceAll(

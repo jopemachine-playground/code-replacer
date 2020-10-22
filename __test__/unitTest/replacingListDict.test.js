@@ -1,8 +1,8 @@
-const { applyCSVTable } = require('../../src/getReplacedCode')
 const { Template } = require('../../src/template')
+const ReplacingListDict = require('../../src/replacingListDict').default
 const constant = require('../../src/constant').default
 
-describe('Apply CSV Table', () => {
+describe('Generating replacingListDict test', () => {
   test('Column variables should be appropriately replaced.', () => {
     const csvTbl = [
       { source: 'Some message..', value: 'some_msg' },
@@ -10,13 +10,14 @@ describe('Apply CSV Table', () => {
     ]
     const templateLValue = '${source}'
     const templateRValue = 'i18n.t("${value}")'
+
     const template = new Template(`${templateLValue}${constant.TEMPLATE_SPLITER}${templateRValue}`)
-    const replaceObj = applyCSVTable({ csvTbl, template })
-    const keys = Object.keys(replaceObj)
+    const replacingListDict = new ReplacingListDict(csvTbl, template)
+    const keys = replacingListDict.replacingKeys
     expect(keys[0]).toBe('Some message..')
     expect(keys[1]).toBe('Blah blah..')
-    expect(replaceObj[keys[0]]).toBe('i18n.t("some_msg")')
-    expect(replaceObj[keys[1]]).toBe('i18n.t("blah_blah")')
+    expect(replacingListDict.get(keys[0])).toBe('i18n.t("some_msg")')
+    expect(replacingListDict.get(keys[1])).toBe('i18n.t("blah_blah")')
   })
 
   test('Column variables should be appropriately replaced.', () => {
@@ -28,14 +29,15 @@ describe('Apply CSV Table', () => {
     const templateLValue = '${source}${index}'
     const templateRValue = '<div id="${id}" class="${class}" />'
     const template = new Template(`${templateLValue}${constant.TEMPLATE_SPLITER}${templateRValue}`)
-    const replaceObj = applyCSVTable({ csvTbl, template })
-    const keys = Object.keys(replaceObj)
+    const replacingListDict = new ReplacingListDict(csvTbl, template)
+
+    const keys = replacingListDict.replacingKeys
     expect(keys[0]).toBe('example1')
     expect(keys[1]).toBe('example2')
     expect(keys[2]).toBe('example3')
-    expect(replaceObj[keys[0]]).toBe('<div id="id_1" class="class1" />')
-    expect(replaceObj[keys[1]]).toBe('<div id="id_2" class="class2" />')
-    expect(replaceObj[keys[2]]).toBe('<div id="id_3" class="class3" />')
+    expect(replacingListDict.get(keys[0])).toBe('<div id="id_1" class="class1" />')
+    expect(replacingListDict.get(keys[1])).toBe('<div id="id_2" class="class2" />')
+    expect(replacingListDict.get(keys[2])).toBe('<div id="id_3" class="class3" />')
   })
 
   test('Should be deleted', () => {
@@ -47,13 +49,15 @@ describe('Apply CSV Table', () => {
     const templateLValue = '${source}${index}'
     const templateRValue = ''
     const template = new Template(`${templateLValue}${constant.TEMPLATE_SPLITER}${templateRValue}`)
-    const replaceObj = applyCSVTable({ csvTbl, template })
-    const keys = Object.keys(replaceObj)
+    const replacingListDict = new ReplacingListDict(csvTbl, template)
+
+    const keys = replacingListDict.replacingKeys
+
     expect(keys[0]).toBe('example1')
     expect(keys[1]).toBe('example2')
     expect(keys[2]).toBe('example3')
-    expect(replaceObj[keys[0]]).toBe('')
-    expect(replaceObj[keys[1]]).toBe('')
-    expect(replaceObj[keys[2]]).toBe('')
+    expect(replacingListDict.get(keys[0])).toBe('')
+    expect(replacingListDict.get(keys[1])).toBe('')
+    expect(replacingListDict.get(keys[2])).toBe('')
   })
 })
