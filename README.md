@@ -20,10 +20,10 @@ Code repeater replaces code with the desired form based on what is written in th
     - [2.3 Using vscode plugin](#on-vscode)
 - [3. Terms description](#terms-description)
 - [4. Examples](#simple-example)
-    - [4.1 Example 1, using csv column key](#example-1,-use-`csv`-and-`template`)
-    - [4.2 Example 2, using csv column key with template](#example-2,-use-only-`template`)
-    - [4.3 Example 3, using csv column keys](#example-3,-use-csv's-multiple-column)
-    - [4.4 Example 4, using csv column keys with left reference keys](#example-4,-use-csv's-multiple-column-with-left-reference-keys)
+    - [4.1 Example 1, using csv column key and template](#example-1,-use-`csv`-and-`template`)
+    - [4.2 Example 2, using only template](#example-2,-use-only-`template`)
+    - [4.3 Example 3, using multiple csv column keys](#example-3,-use-csv's-multiple-column)
+    - [4.4 Example 4, using multiple csv column keys with left reference keys](#example-4,-use-csv's-multiple-column-with-left-reference-keys)
 - [5. Tips](#tips)
 - [6. Options](#options)
 - [7. Bug Reporting](#bug-reporting)
@@ -63,7 +63,7 @@ See [code-replacer-vscode-plugin](https://github.com/jopemachine/code-replacer-v
 
 ## Terms description
 
-To help you understand how to use this program, I have written a simple description of the terms here.
+To help you understand how to use this program, I have written some description of the terms here.
 
 1. **template**
 
@@ -71,7 +71,7 @@ template is a string indicating which value in the code is to be replaced with w
 
 For example, `A->B` option replace *A* with *B*.
 
-And in this, A is templateLvalue (string to be replaced), B is templateRvalue (string after replacing).
+And for convenience, in this document, A is `templateLvalue` (string to be replaced), B is `templateRvalue` (string after replacing).
 
 2. **${key}**
 
@@ -81,7 +81,7 @@ key is replaced with csv file's column data.
 
 Therefore, the key must be used with the csv option.
 
-And templateLvalue must include this key because this program should know which value should be replaced with which value with this csv file.
+And `templateLvalue` must include this key because this program should know which value should be replaced with which value with this csv file.
 
 See `Examples` for examples of use.
 
@@ -93,9 +93,9 @@ And if the csv columns does not have this "key" column, it is treated as a strin
 
 Above key is treated as `left reference key`.
 
-In fact, this key is replaced with regexp's group key ([\d\w]+).
+In fact, this key is replaced with regexp's group key `([\d\w]+)`.
 
-So, you can refer templateLvalue's substring at templateRvalue using this like below example.
+So, you can refer `templateLvalue`'s substring at `templateRvalue` using this like below example.
 
 ```
 --tem='require("$[key]")->import $[key] from "$[key]"'
@@ -113,7 +113,7 @@ Note that the key can contain only alphabetic and numeric characters.
 
 4. **rlist.csv**
 
-* If you do not give the csv option, code-replacer uses the rlist.csv file as csv option when if it exists in the path where code-replacer was run.
+* If you do not give the csv option, code-replacer uses the `rlist.csv` file as csv option when if it exists in the path where code-replacer was run.
 
 * If you use the dir option, the `rlist_${fileName}.csv` file will be used as a csv option.
 
@@ -137,7 +137,7 @@ alert("Blah blah..");
 ...
 ```
 
-Below is the input file (`csv`).
+Below worksheet is the input file (`csv`).
 
 Note that `source` column is Message string including double quotes and `value` column is corresponding string key.
 
@@ -147,7 +147,7 @@ And you need to forward some `template` value.
 
 We assume this value is `i18n.t(${value})`.
 
-In `template` option, `${var}` option means column data named `var`.
+In `template` option, `${value}` option means column data named `value`.
 
 On each line in the source file (`msgAlert.js`), you can insert data in the csv column with the corresponding variable.
 
@@ -183,8 +183,6 @@ For more detailed instructions, see the topic `Options`.
 In certain situations, key, value pairs may not be required to change the string.
 
 For example, if you need to replace all of *require* below with *import* statements,
-
-(Whether it works or not..)
 
 We assume in this, the argument of require is `$[key]`. 
 
@@ -239,8 +237,8 @@ The longest key is selected (replaced) basically.
 If you don't want these matching, give `conf` option and skip the longest one, then you can choose next candidate manually (test).
 
 2. Left side of `template` are treated as *regular expression*. But special characters are escaped automatically.
-So, no separate escape processing is required. If you want to use raw RegExp, you can use `no-escape` option.
-you can use leftReference key and csv column key with this option, too.
+So, no separate escape processing is required. If you want to use raw `RegExp`, you can use `no-escape` option.
+you also can use `leftReference key` and `csv column key` with this option, too.
 
 3. In `template` option, The `template` value is treated as a form of `A->B`
 If A should contains `->` (arrow signature), you can escape that `->` by `\->`.
@@ -264,6 +262,20 @@ And this vscode's plugin might helps.
 
 ## Options
 
+#### --src, -s (required)
+type: `string`
+
+Specify source code file.
+when `src` and `dir` are given,
+target the files corresponding to the name in the target directory.
+(no need to specify `ext` separately)
+
+#### --template, --t (required)
+type: `string`
+
+Specify template.
+See example for details.
+
 #### --dir, -d
 type: `string`
 
@@ -274,15 +286,7 @@ Files beginning with `__replaced__.` are excluded from the source files.
 type: `string`
 
 Specify source file's extension.
-(Use this with `dir` option to target multiple files at once)
-
-#### --src, -s (required)
-type: `string`
-
-Specify source code file.
-when `src` and `dir` are given,
-target the files corresponding to the name in the target directory.
-(no need to specify `ext` separately)
+(Only use this with `dir` option to target multiple files at once)
 
 #### --csv
 type: `string`
@@ -301,7 +305,7 @@ default value is `__replaced__.{originalFileName}`.
 #### --verbose, -v
 type: `boolean`
 
-Print some information about the text replaced in console.
+Outputs information about replaced lines on the console.
 default is 'false'
 
 #### --once, -o
@@ -335,13 +339,6 @@ default is 'false'
 
 <img src="./image/conf.png" />
 
-
-#### --template, --t (required)
-type: `string`
-
-Specify template.
-See example for details.
-
 #### --overwrite, -o
 type: `boolean`
 
@@ -354,10 +351,11 @@ default is 'false'
 #### --excludeReg, -x
 type: `boolean`
 
-Specify the regular expression of the line
-to be excluded from the replace.
+Specify the regular expression of the line to be excluded from the replace.
 
 Lines corresponding to the regular expression in regexp will not be replaced.
+
+For example, comments might be excluded from replacement.
 
 #### --debug
 type: `boolean`
@@ -370,4 +368,4 @@ default is 'false'
 
 This program still appears to contain a lot of bugs.
 
-Bug reports are always welcome!
+Bug reports are always welcome
