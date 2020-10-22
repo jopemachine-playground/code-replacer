@@ -45,13 +45,15 @@ const displayConsoleMsg = ({
     srcLine,
     matchingInfo.index,
     matchingStr,
-    matchingInfo.index + matchingStr.length
+    matchingInfo.index + matchingStr.length,
+    "redBright"
   );
   const replacedStr: string = utils.createHighlightedLine(
     srcLine,
     matchingInfo.index,
     replaceObj[matchingStr],
-    matchingInfo.index + matchingStr.length
+    matchingInfo.index + matchingStr.length,
+    "green"
   );
 
   utils.funcExecByFlag(

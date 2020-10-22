@@ -131,11 +131,12 @@ export default {
     srcLine: string,
     previousMatchingIndex: number,
     matchingWord: string,
-    afterMatchingIndex: number
+    afterMatchingIndex: number,
+    color: string
   ) {
     return (
       srcLine.substr(0, previousMatchingIndex) +
-      chalk.magentaBright(chalk.bgBlack(matchingWord)) +
+      chalk[color](matchingWord) +
       srcLine.substr(afterMatchingIndex, srcLine.length)
     ).trim();
   },
@@ -170,13 +171,13 @@ export default {
 
     if (lineIdx - 2 >= 0) {
       previousLine =
-        chalk.gray(`${lineIdx - 1} ${lineIdxSpliter}   `) +
+        chalk.gray(`  ${lineIdx - 1} ${lineIdxSpliter}   `) +
         chalk.gray(resultLines[lineIdx - 2].trim());
     }
 
     if (lineIdx < srcFileLines.length) {
       postLine =
-        chalk.gray(`${lineIdx + 1} ${lineIdxSpliter}   `) +
+        chalk.gray(`  ${lineIdx + 1} ${lineIdxSpliter}   `) +
         chalk.gray(srcFileLines[lineIdx].trim());
     }
 
@@ -189,12 +190,12 @@ ${chalk.gray(
 
 ${previousLine}
 ${
-  chalk.blueBright(`${lineIdx} ${lineIdxSpliter}   `) +
-  chalk.blueBright(sourceStr)
+  chalk.redBright(`- ${lineIdx} ${lineIdxSpliter}   `) +
+  chalk.white(sourceStr)
 }
 ${
-  chalk.greenBright(`${lineIdx} ${lineIdxSpliter}   `) +
-  chalk.greenBright(replacedStr)
+  chalk.greenBright(`+ ${lineIdx} ${lineIdxSpliter}   `) +
+  chalk.white(replacedStr)
 }
 ${postLine}
 `;
