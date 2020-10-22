@@ -144,4 +144,51 @@ abcdef`
 
     expect(testPassedOrErrorLine).toBe(true)
   })
+
+  test('Example 8-6 multiple startLine and endLine.', async () => {
+    const args = {
+      csvTbl: await readCsv(`${__dirname}${path.sep}rlist3.csv`),
+      srcFileLines: (parseSourceFile({ srcFile: `${__dirname}${path.sep}index3` })).srcFileLines,
+      templateLValue: '${source}',
+      templateRValue: '${value}',
+      startLine: '## start',
+      endLine: '## end'
+    }
+
+    const testPassedOrErrorLine = new ReplacerTest({
+      replaceArgs: args,
+      expectedResult:
+`## start
+
+html2
+javascript2
+php2
+
+## end
+
+html
+javascript
+php
+
+## start
+
+html2
+javascript2
+php2
+
+## end
+
+html
+javascript
+php
+
+## start
+
+html2
+javascript2
+php2`
+    }).test()
+
+    expect(testPassedOrErrorLine).toBe(true)
+  })
 })

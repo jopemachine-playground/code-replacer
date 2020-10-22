@@ -113,7 +113,7 @@ Note that the key can contain only alphabetic and numeric characters.
 
 4. **rlist.csv**
 
-* If you do not give the csv option, code-replacer uses the `rlist.csv` file as csv option when if it exists in the path where code-replacer was run.
+* If you do not give the csv option, code-replacer uses the `rlist.csv` file in src file's directory as csv option.
 
 * If you use the dir option, the `rlist_${fileName}.csv` file will be used as a csv option.
 
