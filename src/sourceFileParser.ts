@@ -4,6 +4,7 @@ import chalk from 'chalk';
 import utils from './util';
 import debuggingInfoArr from './debuggingInfo';
 import optionManager from './optionManager';
+import { FileNotFoundError, ERROR_CONSTANT } from './error';
 
 export default ({ srcFile }: { srcFile: string }) => {
   const absPath: string = path.resolve(srcFile);
@@ -19,12 +20,16 @@ export default ({ srcFile }: { srcFile: string }) => {
       .append("** target file: " + path.resolve(srcFile))
   );
 
-  const srcFileLines: string[] = fs.readFileSync(srcFile).toString().split("\n");
-  const srcFilePath: string = srcFilePathArr.reverse().join(path.sep);
+  try {
+    const srcFileLines: string[] = fs.readFileSync(srcFile).toString().split("\n");
+    const srcFilePath: string = srcFilePathArr.reverse().join(path.sep);
 
-  return {
-    srcFileLines,
-    srcFileName,
-    srcFilePath,
-  };
+    return {
+      srcFileLines,
+      srcFileName,
+      srcFilePath,
+    };
+  } catch (err) {
+    throw new FileNotFoundError(ERROR_CONSTANT.SRC_NOT_FOUND);
+  }
 };

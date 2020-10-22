@@ -18,72 +18,73 @@ export default async function ({
   endLine,
   dst: dstFileName,
   template,
-  excludeReg: excludeRegValue
+  excludeReg: excludeRegValue,
 }: CommandArguments) {
-
-  const { srcFileLines, srcFileName, srcFilePath } = parseSourceFile({
-    srcFile,
-  });
-
-  const templateObj = new Template(template);
-
-  const csvTbl = await parseCSV({
-    replaceListFile: replaceListFile!,
-    srcFileName,
-    template: templateObj
-  });
-
-  if (csvTbl === -1) return;
-
-  utils.funcExecByFlag(optionManager.getInstance().debugOpt!, () =>
-    debuggingInfoArr.getInstance().append(`startLine: ${startLine}`)
-  );
-  utils.funcExecByFlag(optionManager.getInstance().debugOpt!, () =>
-    debuggingInfoArr.getInstance().append(`endLine: ${endLine}`)
-  );
-
-  let resultLines: string[] | number = [];
   try {
-    resultLines = getReplacedCode({
+    const { srcFileLines, srcFileName, srcFilePath } = parseSourceFile({
+      srcFile,
+    });
+
+    const templateObj = new Template(template);
+
+    const csvTbl = await parseCSV({
+      replaceListFile: replaceListFile!,
+      srcFileName,
+      template: templateObj,
+    });
+
+    if (csvTbl === -1) return;
+
+    utils.funcExecByFlag(optionManager.getInstance().debugOpt!, () =>
+      debuggingInfoArr.getInstance().append(`startLine: ${startLine}`)
+    );
+    utils.funcExecByFlag(optionManager.getInstance().debugOpt!, () =>
+      debuggingInfoArr.getInstance().append(`endLine: ${endLine}`)
+    );
+
+    const resultLines = getReplacedCode({
       srcFileName,
       srcFileLines,
       csvTbl,
       excludeRegValue,
       startLine,
       endLine,
-      template: templateObj
+      template: templateObj,
     });
+
+    if (resultLines === -1) return;
+
+    const dstFilePath: string = optionManager.getInstance().overwriteOpt
+      ? srcFile
+      : dstFileName
+      ? path.resolve(dstFileName)
+      : srcFileName.startsWith(constant.REPLACED_PREPOSITION)
+      ? srcFilePath + path.sep + srcFileName
+      : srcFilePath + path.sep + constant.REPLACED_PREPOSITION + srcFileName;
+
+    fs.writeFileSync(
+      dstFilePath,
+      "\ufeff" + (resultLines as string[]).join("\n"),
+      {
+        encoding: "utf8",
+      }
+    );
+
+    const debugInfoStr: string = debuggingInfoArr.getInstance().toString();
+
+    utils.logByFlag(optionManager.getInstance().verboseOpt!, debugInfoStr);
+
+    utils.funcExecByFlag(optionManager.getInstance().debugOpt!, () =>
+      fs.appendFileSync("DEBUG_INFO", "\ufeff" + debugInfoStr, {
+        encoding: "utf8",
+      })
+    );
+
+    console.log(chalk.italic(chalk.white(`\nGenerated '${dstFilePath}'\n`)));
+
   } catch (err) {
     console.log(chalk.red(err.message));
-    console.log("details:");
-    console.log(err.name);
-    console.log(err.stack);
+    console.log(chalk.whiteBright("** Details:"));
     throw err;
   }
-
-  if (resultLines === -1) return;
-
-  const dstFilePath: string = optionManager.getInstance().overwriteOpt
-    ? srcFile
-    : dstFileName
-    ? path.resolve(dstFileName)
-    : srcFileName.startsWith(constant.REPLACED_PREPOSITION)
-    ? srcFilePath + path.sep + srcFileName
-    : srcFilePath + path.sep + constant.REPLACED_PREPOSITION + srcFileName;
-
-  fs.writeFileSync(dstFilePath, '\ufeff' + (resultLines as string[]).join('\n'), {
-    encoding: 'utf8'
-  });
-
-  const debugInfoStr: string = debuggingInfoArr.getInstance().toString();
-
-  utils.logByFlag(optionManager.getInstance().verboseOpt!, debugInfoStr);
-
-  utils.funcExecByFlag(optionManager.getInstance().debugOpt!, () =>
-    fs.appendFileSync('DEBUG_INFO', '\ufeff' + debugInfoStr, {
-      encoding: 'utf8'
-    })
-  );
-
-  console.log(chalk.italic(chalk.white(`\nGenerated '${dstFilePath}'\n`)));
 }

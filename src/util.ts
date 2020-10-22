@@ -5,7 +5,7 @@ import path from 'path';
 import csv from 'csv-parser';
 import constant from './constant';
 import { Template } from './template';
-import { CSVParsingError, TemplateHasNoCSVCOLKeyWithCSVError, ERROR_CONSTANT } from './error';
+import { CSVParsingError, TemplateHasNoCSVCOLKeyWithCSVError, FileNotFoundError, ERROR_CONSTANT } from './error';
 
 export default {
   handleSpecialCharacter(str: string) {
@@ -90,27 +90,26 @@ export default {
   async readCsv(csvFilePath: string, template: Template | undefined) {
     const csvResult: object[] = [];
     return new Promise((resolve, reject) => {
-      try {
-        fs.createReadStream(csvFilePath)
-          .pipe(csv())
-          .on("data", (data: any) => {
-            csvResult.push(data);
-          })
-          .on("end", () => {
-            if (template) {
-              const validOrError = this.isValidCSV(csvResult, template);
-              if (validOrError) {
-                resolve(csvResult);
-              } else {
-                reject(validOrError);
-              }
-            } else {
+      fs.createReadStream(csvFilePath)
+        .on("error", () => {
+          reject(new FileNotFoundError(ERROR_CONSTANT.CSV_NOT_FOUND));
+        })
+        .pipe(csv())
+        .on("data", (data: any) => {
+          csvResult.push(data);
+        })
+        .on("end", () => {
+          if (template) {
+            const validOrError = this.isValidCSV(csvResult, template);
+            if (validOrError) {
               resolve(csvResult);
+            } else {
+              reject(validOrError);
             }
-          });
-      } catch (e) {
-        reject(e);
-      }
+          } else {
+            resolve(csvResult);
+          }
+        })
     });
   },
 

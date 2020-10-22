@@ -76,4 +76,22 @@ describe('Example 10 error test', () => {
       expect(err.name).toBe('TemplateHasNoCSVCOLKeyWithCSVError')
     }
   })
+
+  test('Example 10-6 Source File not found, (FileNotFoundError)', async () => {
+    try {
+      // eslint-disable-next-line no-unused-vars
+      parseSourceFile({ srcFile: `${__dirname}${path.sep}msgAlert?.js` })
+    } catch (err) {
+      expect(err.name).toBe('FileNotFoundError')
+    }
+  })
+
+  test('Example 10-7 CSV File not found, (FileNotFoundError)', async () => {
+    try {
+      // eslint-disable-next-line no-unused-vars
+      await utils.readCsv(`${__dirname}${path.sep}rlist?.csv`, new Template('${value2}->${source}'))
+    } catch (err) {
+      expect(err.name).toBe('FileNotFoundError')
+    }
+  })
 })

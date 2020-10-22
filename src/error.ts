@@ -36,6 +36,13 @@ class TemplateHasNoCSVCOLKeyWithCSVError extends Error {
   }
 }
 
+class FileNotFoundError extends Error {
+  constructor (message: string) {
+    super(message);
+    this.name = this.constructor.name;
+  }
+}
+
 const ERROR_CONSTANT = {
   DUPLICATE_KEY: (key: string, value: string) => `
 Duplicate key exists in replaceObj.
@@ -70,7 +77,13 @@ Duplicate value found among csv column key values used in templateLValue.
 
   TEMPLATE_HAS_NO_CSV_COL_KEY: `
 There is no valid csv-column key in the left term of the template
-`
+`,
+  SRC_NOT_FOUND: `
+Source file not found.
+`,
+  CSV_NOT_FOUND: `
+CSV file not found.
+`,
 };
 
 export {
@@ -78,6 +91,7 @@ export {
   InvalidLeftReferenceError,
   InvalidLeftTemplateError,
   CSVParsingError,
+  FileNotFoundError,
   TemplateHasNoCSVCOLKeyWithCSVError,
   ERROR_CONSTANT
 };
