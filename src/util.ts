@@ -5,7 +5,7 @@ import path from 'path';
 import csv from 'csv-parser';
 import constant from './constant';
 import { Template } from './template';
-import { CSVParsingError, TemplateHasNoCSVCOLKeyWithCSVError, FileNotFoundError, ERROR_CONSTANT } from './error';
+import { CSVParsingError, InvalidLeftTemplateError, TemplateHasNoCSVCOLKeyWithCSVError, FileNotFoundError, ERROR_CONSTANT } from './error';
 
 export default {
   handleSpecialCharacter(str: string) {
@@ -61,20 +61,21 @@ export default {
   isValidCSV(csvResult: object, template: Template) {
     let keyColKeyFound = false;
     for (const lvalueLeftRefKey of template.lvalueCsvColKeys) {
-      if (
-        !keyColKeyFound &&
-        Object.keys(csvResult[0]).includes(lvalueLeftRefKey)
-      ) {
+      if (Object.keys(csvResult[0]).includes(lvalueLeftRefKey)) {
         keyColKeyFound = true;
-      }
 
-      const records = _.map(csvResult, (item) => {
-        return item[lvalueLeftRefKey];
-      });
+        const records = _.map(csvResult, (item) => {
+          return item[lvalueLeftRefKey];
+        });
 
-      const hasDuplicate = _.uniq(records).length !== records.length;
-      if (hasDuplicate) {
-        return new CSVParsingError(ERROR_CONSTANT.CSV_DUPLICATE_KEY);
+        const hasDuplicate = _.uniq(records).length !== records.length;
+        if (hasDuplicate) {
+          return new CSVParsingError(ERROR_CONSTANT.CSV_DUPLICATE_KEY);
+        }
+      } else {
+        console.log(
+          `'${lvalueLeftRefKey}' is processed as "string" because csv doesn't include ${lvalueLeftRefKey} column..`
+        );
       }
     }
 
@@ -101,7 +102,7 @@ export default {
         .on("end", () => {
           if (template) {
             const validOrError = this.isValidCSV(csvResult, template);
-            if (validOrError) {
+            if (validOrError === true) {
               resolve(csvResult);
             } else {
               reject(validOrError);
@@ -109,7 +110,7 @@ export default {
           } else {
             resolve(csvResult);
           }
-        })
+        });
     });
   },
 
@@ -196,18 +197,34 @@ ${postLine}
     return lineToPrint;
   },
 
-  findReplaceListFile(rlistDir: string, srcFileName: string) {
+  findReplaceListFile({
+    rlistDir,
+    srcFileName,
+  }: {
+    rlistDir: string;
+    srcFileName: string;
+  }) {
+    // CSV is selected rlist_${sourceFileName}.csv of srcFile Path
     if (fs.existsSync(`${rlistDir}${path.sep}rlist_${srcFileName}.csv`)) {
       return `${rlistDir}${path.sep}rlist_${srcFileName}.csv`;
-    } else if (
+    }
+
+    // CSV is selected rlist_${sourceFileName without ext}.csv of srcFile Path
+    else if (
       fs.existsSync(
         `${rlistDir}${path.sep}rlist_${srcFileName.split(".")[0]}.csv`
       )
     ) {
       return `${rlistDir}${path.sep}rlist_${srcFileName.split(".")[0]}.csv`;
-    } else if (fs.existsSync(`.${path.sep}rlist.csv`)) {
-      return `.${path.sep}rlist.csv`;
-    } else {
+    }
+
+    // CSV is selected rlist.csv of srcFile Path
+    else if (fs.existsSync(`${rlistDir}${path.sep}rlist.csv`)) {
+      return `${rlistDir}${path.sep}rlist.csv`;
+    }
+
+    // auto CSV file finding fails
+    else {
       return -1;
     }
   },

@@ -61,17 +61,23 @@ describe('Example 10 error test', () => {
 
   test('Example 10-4 Duplicate key errors, (CSVParsingError)', async () => {
     try {
-      // eslint-disable-next-line no-unused-vars
       await utils.readCsv(`${__dirname}${path.sep}rlist.csv`, new Template('${value}->${source}'))
     } catch (err) {
       expect(err.name).toBe('CSVParsingError')
     }
   })
 
-  test('Example 10-5 TemplateLValue has no csv col key, (TemplateHasNoCSVCOLKeyWithCSVError)', async () => {
+  test('Example 10-5-1 TemplateLValue has no csv col key, (TemplateHasNoCSVCOLKeyWithCSVError)', async () => {
     try {
-      // eslint-disable-next-line no-unused-vars
       await utils.readCsv(`${__dirname}${path.sep}rlist.csv`, new Template('${value2}->${source}'))
+    } catch (err) {
+      expect(err.name).toBe('TemplateHasNoCSVCOLKeyWithCSVError')
+    }
+  })
+
+  test('Example 10-5-2 TemplateLValue has no csv col key, (TemplateHasNoCSVCOLKeyWithCSVError)', async () => {
+    try {
+      await utils.readCsv(`${__dirname}${path.sep}rlist.csv`, new Template('constant->${source}'))
     } catch (err) {
       expect(err.name).toBe('TemplateHasNoCSVCOLKeyWithCSVError')
     }
@@ -79,7 +85,6 @@ describe('Example 10 error test', () => {
 
   test('Example 10-6 Source File not found, (FileNotFoundError)', async () => {
     try {
-      // eslint-disable-next-line no-unused-vars
       parseSourceFile({ srcFile: `${__dirname}${path.sep}msgAlert?.js` })
     } catch (err) {
       expect(err.name).toBe('FileNotFoundError')
@@ -88,7 +93,6 @@ describe('Example 10 error test', () => {
 
   test('Example 10-7 CSV File not found, (FileNotFoundError)', async () => {
     try {
-      // eslint-disable-next-line no-unused-vars
       await utils.readCsv(`${__dirname}${path.sep}rlist?.csv`, new Template('${value2}->${source}'))
     } catch (err) {
       expect(err.name).toBe('FileNotFoundError')

@@ -122,7 +122,7 @@ Note that the key can contain only alphabetic and numeric characters.
 
 ### Example 1, use `csv` and `template`
 
-Pass the path of the input file to the `csv` option if you need it./
+Pass the path of the input file to the `csv` option if you need it.
 
 For example, if you wanna change `Some message..` to `alert(i18n.t("some_msg"))` for support i18n (supporting multi language feature), you can do this.
 
@@ -274,7 +274,7 @@ type: `string`
 specify source file's extension.
 (Use this with `dir` option to target multiple files at once)
 
-#### --src, -s
+#### --src, -s (required)
 type: `string`
 
 specify source code file.
@@ -299,54 +299,70 @@ default value is `__replaced__.{originalFileName}`.
 #### --verbose, -v
 type: `boolean`
 
-print all information about the text replaced in console.
+Print some information about the text replaced in console.
 default is 'false'
 
 #### --once, -o
 type: `boolean`
 
-even if there are multiple substitution values in a line,
-they are replaced only once.
+Even if there are multiple substitution values in a line,
+they are replaced only once at first.
+
+default is 'false'
 
 #### --startLine, -sl
 type: `string`
 
-apply replace from that line.
+apply replacing from that line.
+
+(startLine will be replaced)
 
 #### --endLine, -el
 type: `string`
 
-specify end line pattern.
+specify end line.
+
+(endLine will not be replaced)
 
 #### --conf, -c
 type: `boolean`
 
 check the string values that you want to replace on each line.
 
+default is 'false'
+
 <img src="./image/conf.png" />
 
 
-#### --template, --t
+#### --template, --t (required)
 type: `string`
 
 specify template.
-see example for details.
+See example for details.
 
 #### --overwrite, -o
 type: `boolean`
 
-overwrite the source file.
+Overwrite the source file.
+
+It works the same as when you give dst the same value as src.
+
+default is 'false'
 
 #### --excludeReg, -x
 type: `boolean`
 
-specify the regular expression of the line
+Specify the regular expression of the line
 to be excluded from the replace.
+
+Lines corresponding to the regular expression in regexp will not be replaced.
 
 #### --debug
 type: `boolean`
 
-outputs debugging information to the `DEBUG_INFO` file
+Outputs some debugging information to the `DEBUG_INFO` file
+
+default is 'false'
 
 ## Bug reporting
 

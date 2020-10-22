@@ -1,5 +1,9 @@
 import { MatchingPoint } from './type/matchingPoint';
-import { handleLRefKeyInTemplateLValue, handleSpecialCharEscapeInTemplateLValue, Template } from './template';
+import {
+  handleLRefKeyInTemplateLValue,
+  handleSpecialCharEscapeInTemplateLValue,
+  Template,
+} from './template';
 import matchAll from './matchAll';
 
 export class MatchingPoints extends Array {
@@ -69,6 +73,7 @@ export class MatchingPoints extends Array {
       replacingKey
     );
 
+    // TODO : Need to refactoring
     const regKey: string = handleLRefKeyInTemplateLValue({
       templateLValue: escapedKey,
     });

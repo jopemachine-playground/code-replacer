@@ -1,4 +1,5 @@
 const util = require('../../../src/util').default
+const path = require('path')
 
 describe('Util functions', () => {
   test('getProperties', () => {
@@ -34,8 +35,20 @@ c=d
   })
 
   test('findReplaceListFile - 1', () => {
-    const path = util.findReplaceListFile('./mockDir', 'sample')
-    // TODO: fix the logic and below test
-    expect(path).toBe(-1)
+    const rlistPath = util.findReplaceListFile({
+      rlistDir: __dirname,
+      srcFileName: ''
+    })
+    const expectedPath = rlistPath.split(path.sep)
+    expect(expectedPath[expectedPath.length - 1]).toBe('rlist.csv')
+  })
+
+  test('findReplaceListFile - 2', () => {
+    const rlistPath = util.findReplaceListFile({
+      rlistDir: __dirname,
+      srcFileName: 'sample'
+    })
+    const expectedPath = rlistPath.split(path.sep)
+    expect(expectedPath[expectedPath.length - 1]).toBe('rlist_sample.csv')
   })
 })

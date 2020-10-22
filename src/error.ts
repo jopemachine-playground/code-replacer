@@ -6,7 +6,7 @@ class CreatingReplacingObjError extends Error {
   }
 }
 
-// Occurs when ${key} or $[key] is found that is not matched to the right term of the template
+// Occurs when $[key] is found that is not matched to the right term of the template
 class InvalidLeftReferenceError extends Error {
   constructor (message: string) {
     super(message);

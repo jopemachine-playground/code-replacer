@@ -36,16 +36,16 @@ export default {
                                           target the files corresponding to the name in the target directory.
                                           (no need to ext)
 
-            --csv, -c                     specify replace properties file,
-                                          default value is './rlist.csv'
-                                          name './rlist_{fileName}.csv',
-                                          if you want to apply different rlist files per file
-
             --template, -t                specify template string.
                                           see README.md for more detail usage.
 
 
         <optional argument>
+
+            --csv                         specify replace properties file,
+                                          default value is './rlist.csv'
+                                          name './rlist_{fileName}.csv',
+                                          if you want to apply different rlist files per file
 
             --dir, -d                     specify target directory
 

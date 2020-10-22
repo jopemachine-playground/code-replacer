@@ -30,6 +30,7 @@ export default async function ({
     const csvTbl = await parseCSV({
       replaceListFile: replaceListFile!,
       srcFileName,
+      srcFilePath,
       template: templateObj,
     });
 
@@ -79,9 +80,7 @@ export default async function ({
         encoding: "utf8",
       })
     );
-
     console.log(chalk.italic(chalk.white(`\nGenerated '${dstFilePath}'\n`)));
-
   } catch (err) {
     console.log(chalk.red(err.message));
     console.log(chalk.whiteBright("** Details:"));

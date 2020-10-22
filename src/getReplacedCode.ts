@@ -13,7 +13,6 @@ import {
 } from "./template";
 import {
   CreatingReplacingObjError,
-  InvalidLeftTemplateError,
   InvalidLeftReferenceError,
   ERROR_CONSTANT,
 } from "./error";
@@ -213,6 +212,8 @@ const handleLRefKey = ({
   const escapedKey = handleSpecialCharEscapeInTemplateLValue(
     regKey
   );
+
+  // TODO: Need to refactor below logic
   regKey = handleLRefKeyInTemplateLValue({
     templateLValue: escapedKey,
   });
