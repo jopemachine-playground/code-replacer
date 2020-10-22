@@ -12,7 +12,6 @@ import {
   Template,
 } from "./template";
 import {
-  CreatingReplacingObjError,
   InvalidLeftReferenceError,
   ERROR_CONSTANT,
 } from "./error";
@@ -79,45 +78,6 @@ const displayConsoleMsg = ({
       )
     )
   );
-};
-
-const applyCSVTable = ({
-  csvTbl,
-  template: templateObj
-}: {
-  csvTbl: any;
-  template: Template;
-}) => {
-  const replacingListDict: object = {};
-
-  if (csvTbl.length > 0) {
-    const csvColumnNames: string[] = Object.keys(csvTbl[0]);
-    for (const csvRecord of csvTbl) {
-      let key: string = templateObj.lvalue;
-      let value: string = templateObj.rvalue;
-
-      for (const columnName of csvColumnNames) {
-        const trimmedColumnName: string = columnName.trim();
-        const result = utils.handleCSVColKey({
-          csvRecord,
-          columnName: trimmedColumnName,
-          templateLValue: key,
-          templateRValue: value,
-        });
-        key = result.templateLValue;
-        value = result.templateRValue;
-      }
-
-      if (replacingListDict[key]) {
-        throw new CreatingReplacingObjError(
-          ERROR_CONSTANT.DUPLICATE_KEY(key, replacingListDict[key])
-        );
-      }
-      replacingListDict[key] = value;
-    }
-  }
-
-  return replacingListDict;
 };
 
 const getMatchingPoints = ({
@@ -492,4 +452,4 @@ const getReplacedCode = ({
   return resultLines;
 };
 
-export { getReplacedCode, applyCSVTable, getMatchingPoints };
+export { getReplacedCode, getMatchingPoints };
