@@ -87,6 +87,8 @@ See `Examples` for examples of use.
 
 Note that the key can contain only alphabetic and numeric characters.
 
+And if the csv columns does not have this "key" column, it is treated as a string matching.
+
 3. **$[key]**
 
 Above key is treated as `left reference key`.
@@ -107,7 +109,7 @@ And along with the `no-escape` option, you can refer regexp's group key like bel
 
 Note that the key can contain only alphabetic and numeric characters.
 
-(And this applies for group keys.)
+(And this applies for group keys of regexp)
 
 4. **rlist.csv**
 
@@ -366,4 +368,6 @@ default is 'false'
 
 ## Bug reporting
 
-Bug reports are always welcome.
+This program still appears to contain a lot of bugs.
+
+Bug reports are always welcome!

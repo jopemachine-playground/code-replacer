@@ -6,7 +6,6 @@ import _ from 'lodash';
 import constant from './constant';
 import { CommandArguments } from './type/commandArgument';
 import optionManager from './optionManager';
-// import './type/json'
 import usageLog from './usageLog.json';
 
 const handleOptions = (commandArguments: CommandArguments) => {

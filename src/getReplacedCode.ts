@@ -7,9 +7,9 @@ import optionManager from "./optionManager";
 import {
   handleSpecialCharEscapeInTemplateLValue,
   handleGroupKeysInTemplateLValue,
+  handleLRefKeyInTemplateLValue,
   handleLRefKeyInTemplateRValue,
   Template,
-  handleLRefKeyInTemplateLValue
 } from "./template";
 import {
   CreatingReplacingObjError,

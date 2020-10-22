@@ -5,7 +5,12 @@ import path from 'path';
 import csv from 'csv-parser';
 import constant from './constant';
 import { Template } from './template';
-import { CSVParsingError, InvalidLeftTemplateError, TemplateHasNoCSVCOLKeyWithCSVError, FileNotFoundError, ERROR_CONSTANT } from './error';
+import {
+  CSVParsingError,
+  TemplateHasNoCSVCOLKeyWithCSVError,
+  FileNotFoundError,
+  ERROR_CONSTANT,
+} from "./error";
 
 export default {
   handleSpecialCharacter(str: string) {
@@ -74,7 +79,7 @@ export default {
         }
       } else {
         console.log(
-          `'${lvalueLeftRefKey}' is processed as "string" because csv doesn't include ${lvalueLeftRefKey} column..`
+          `'${lvalueLeftRefKey}' is processed as "string" because csv file doesn't include ${lvalueLeftRefKey} column..`
         );
       }
     }
