@@ -74,12 +74,12 @@ export class MatchingPoints extends Array {
     );
 
     // TODO : Need to refactoring
-    const regKey: string = handleLRefKeyInTemplateLValue({
+    const lvalue: string = handleLRefKeyInTemplateLValue({
       templateLValue: escapedKey,
     });
     // const regKey: string = template.getTemplateLValueGroupKeyForm(escaped);
 
-    const replacingKeyReg: RegExp = new RegExp(regKey);
+    const replacingKeyReg: RegExp = new RegExp(lvalue);
     const replacingKeyMatchingPts: Generator<
       RegExpExecArray,
       void,

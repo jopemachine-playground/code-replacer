@@ -3,6 +3,7 @@ import utils from './util';
 import optionManager from './optionManager';
 import constant from './constant';
 import { ERROR_CONSTANT, InvalidLeftTemplateError } from './error';
+import ReplacingListDict from './replacingListDict';
 
 const changeLRefKeyToGroupKeys = (str: string, hasEscaped: boolean) => {
   const findLRefKeyReg: RegExp = hasEscaped
@@ -160,13 +161,13 @@ const handleLRefKeyInTemplateRValue = ({
   groupKeyMatching,
   rvalue
 }: {
-  replaceObj: object;
+  replaceObj: ReplacingListDict;
   matchingStr: string;
   lRefKey: string;
   groupKeyMatching: RegExpMatchArray
   rvalue: string;
 }) => {
-  let result: string = replaceObj[matchingStr] ? replaceObj[matchingStr] : rvalue;
+  let result: string = replaceObj.has(matchingStr) ? replaceObj.get(matchingStr)! : rvalue;
 
   if (result.includes(`$[${lRefKey}]`)) {
     result = utils.replaceAll(
