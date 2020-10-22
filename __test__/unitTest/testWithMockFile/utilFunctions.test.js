@@ -51,4 +51,13 @@ c=d
     const expectedPath = rlistPath.split(path.sep)
     expect(expectedPath[expectedPath.length - 1]).toBe('rlist_sample.csv')
   })
+
+  test('findReplaceListFile - 3', () => {
+    const rlistPath = util.findReplaceListFile({
+      rlistDir: __dirname,
+      srcFileName: 'sample.js'
+    })
+    const expectedPath = rlistPath.split(path.sep)
+    expect(expectedPath[expectedPath.length - 1]).toBe('rlist_sample.csv')
+  })
 })

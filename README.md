@@ -265,19 +265,19 @@ And this vscode's plugin might helps.
 #### --dir, -d
 type: `string`
 
-specify source file's directory
+Specify source file's directory
 Files beginning with `__replaced__.` are excluded from the source files.
 
 #### --ext, -e
 type: `string`
 
-specify source file's extension.
+Specify source file's extension.
 (Use this with `dir` option to target multiple files at once)
 
 #### --src, -s (required)
 type: `string`
 
-specify source code file.
+Specify source code file.
 when `src` and `dir` are given,
 target the files corresponding to the name in the target directory.
 (no need to specify `ext` separately)
@@ -285,15 +285,15 @@ target the files corresponding to the name in the target directory.
 #### --csv
 type: `string`
 
-specify csv file,
-default value is `./rlist.csv`
+Specify csv file,
+Default value is `./rlist.csv`
 
 And when you specify `dir` option, name `./rlist_{fileName}.csv`, to apply different rlist files per file.
 
 #### --dst, -dst
 type: `string`
 
-specify the name of the output file. 
+Specify the name of the output file. 
 default value is `__replaced__.{originalFileName}`.
 
 #### --verbose, -v
@@ -313,21 +313,21 @@ default is 'false'
 #### --startLine, -sl
 type: `string`
 
-apply replacing from that line.
+Apply replacing from that line.
 
 (startLine will be replaced)
 
 #### --endLine, -el
 type: `string`
 
-specify end line.
+Specify end line.
 
 (endLine will not be replaced)
 
 #### --conf, -c
 type: `boolean`
 
-check the string values that you want to replace on each line.
+Check the string values that you want to replace on each line.
 
 default is 'false'
 
@@ -337,7 +337,7 @@ default is 'false'
 #### --template, --t (required)
 type: `string`
 
-specify template.
+Specify template.
 See example for details.
 
 #### --overwrite, -o

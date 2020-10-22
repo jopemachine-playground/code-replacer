@@ -192,6 +192,8 @@ const getReplacedString = ({
   return exactMatch;
 };
 
+
+// Todo: Need to refactor function
 const handleLRefKey = ({
   srcLine,
   lRefKey,
@@ -209,13 +211,8 @@ const handleLRefKey = ({
   rvalue: string;
   template: Template;
 }) => {
-  const escapedKey = handleSpecialCharEscapeInTemplateLValue(
-    regKey
-  );
-
-  // TODO: Need to refactor below logic
   regKey = handleLRefKeyInTemplateLValue({
-    templateLValue: escapedKey,
+    templateLValue: handleSpecialCharEscapeInTemplateLValue(regKey),
   });
 
   // regKey = template.getTemplateLValueGroupKeyForm(escaped);
@@ -229,8 +226,7 @@ const handleLRefKey = ({
   // continue to next case
   if (!groupKeyMatching || !groupKeyMatching.groups) {
     return {
-      matchingStr,
-      replaceObj,
+      continueFlag: true
     };
   }
 
@@ -241,13 +237,13 @@ const handleLRefKey = ({
     throw new InvalidLeftReferenceError(ERROR_CONSTANT.NON_EXISTENT_GROUPKEY);
   }
 
-  matchingStr = handleGroupKeysInTemplateLValue({
+  const newLValue = handleGroupKeysInTemplateLValue({
     matchingStr,
     lRefKey,
     groupKeyMatchingStr,
   });
 
-  replaceObj[matchingStr] = handleLRefKeyInTemplateRValue({
+  const newRValue = handleLRefKeyInTemplateRValue({
     replaceObj,
     matchingStr,
     lRefKey,
@@ -256,8 +252,8 @@ const handleLRefKey = ({
   });
 
   return {
-    matchingStr,
-    replaceObj,
+    newLValue,
+    newRValue,
   };
 };
 
@@ -341,8 +337,8 @@ const replaceOneline = ({
             rvalue,
             template: templateObj
           });
-          matchingStr = result?.matchingStr;
-          replaceObj = result?.replaceObj;
+          matchingStr = result.newLValue!;
+          replaceObj[matchingStr] = result.newRValue;
           continue;
         }
 
@@ -357,9 +353,12 @@ const replaceOneline = ({
             rvalue,
             template: templateObj
           });
-          if (replaceObj !== result?.replaceObj) {
-            matchingStr = result?.matchingStr;
-            replaceObj = result?.replaceObj;
+
+          if (result.continueFlag === true) {
+            continue;
+          } else {
+            matchingStr = result.newLValue!;
+            replaceObj[matchingStr] = result.newRValue;
             break;
           }
         }
