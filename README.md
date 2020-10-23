@@ -20,10 +20,10 @@ Code repeater replaces code with the desired form based on what is written in th
     - [2.3 Using vscode plugin](#on-vscode)
 - [3. Terms description](#terms-description)
 - [4. Examples](#simple-example)
-    - [4.1 Example 1, using csv column key and template](#example-1,-use-`csv`-and-`template`)
-    - [4.2 Example 2, using only template](#example-2,-use-only-`template`)
-    - [4.3 Example 3, using multiple csv column keys](#example-3,-use-csv's-multiple-column)
-    - [4.4 Example 4, using multiple csv column keys with left reference keys](#example-4,-use-csv's-multiple-column-with-left-reference-keys)
+    - [4.1 Example 1, using csv column key and template](#example-1)
+    - [4.2 Example 2, using only template](#example-2)
+    - [4.3 Example 3, using multiple csv column keys](#example-3)
+    - [4.4 Example 4, using multiple csv column keys with left reference keys](#example-4)
 - [5. Tips](#tips)
 - [6. Options](#options)
 - [7. Bug Reporting](#bug-reporting)
@@ -122,7 +122,7 @@ Note that the key can contain only alphabetic and numeric characters.
 
 ## Simple example
 
-### Example 1, use `csv` and `template`
+### Example 1
 
 Pass the path of the input file to the `csv` option if you need it.
 
@@ -178,7 +178,7 @@ alert(i18n.t("blah_blah"));
 
 For more detailed instructions, see the topic `Options`.
 
-### Example 2, use only `template`
+### Example 2
 
 In certain situations, key, value pairs may not be required to change the string.
 
@@ -214,7 +214,7 @@ import ghi from "ghi";
 ...
 ```
 
-### Example 3, use csv's multiple column
+### Example 3
 
 Multiple column data from the csv file are available in the following ways.
 
@@ -222,7 +222,7 @@ Multiple column data from the csv file are available in the following ways.
 code-replacer --src='example/example_3/index.js' --csv='example/example_3/rlist.csv' --template='${source}${index}-><div id="${id}" class="${class}" />'
 ```
 
-### Example 4, use csv's multiple column with left reference keys
+### Example 4
 
 You can use the csv column key with the left reference key.
 
@@ -276,6 +276,31 @@ type: `string`
 Specify template.
 See example for details.
 
+#### --conf, -c
+type: `boolean`
+
+Check the string values that you want to replace on each line.
+
+default is 'false'
+
+<img src="./image/conf.png" />
+
+#### --verbose, -v
+type: `boolean`
+
+Outputs information about replaced lines on the console.
+default is 'false'
+
+<img src="./image/verbose.png" />
+
+#### --print, -p
+type: `boolean`
+
+Outputs simple information about replaced lines on the console.
+default is 'true'
+
+<img src="./image/print.png" />
+
 #### --dir, -d
 type: `string`
 
@@ -302,22 +327,6 @@ type: `string`
 Specify the name of the output file. 
 default value is `__replaced__.{originalFileName}`.
 
-#### --verbose, -v
-type: `boolean`
-
-Outputs information about replaced lines on the console.
-default is 'false'
-
-<img src="./image/verbose.png" />
-
-#### --print, -p
-type: `boolean`
-
-Outputs simple information about replaced lines on the console.
-default is 'true'
-
-<img src="./image/print.png" />
-
 #### --once, -o
 type: `boolean`
 
@@ -339,15 +348,6 @@ type: `string`
 Specify end line.
 
 (endLine will not be replaced)
-
-#### --conf, -c
-type: `boolean`
-
-Check the string values that you want to replace on each line.
-
-default is 'false'
-
-<img src="./image/conf.png" />
 
 #### --overwrite, -o
 type: `boolean`
