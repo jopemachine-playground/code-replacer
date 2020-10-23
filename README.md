@@ -39,6 +39,8 @@ npm i -g code-replacer
 
 If you like the idea of code-replacer, how about trying to use vscode plugin?
 
+If it's annoying to type options every time, this plugin might help you.
+
 ## How to use
 
 ### On cli
@@ -62,7 +64,7 @@ See [code-replacer-vscode-plugin](https://github.com/jopemachine/code-replacer-v
 
 ## Terms description
 
-To help you understand how to use this program, I have written some description of the terms here.
+To help you understand how to use this program, here is some description of terms.
 
 1. **template**
 
@@ -74,9 +76,11 @@ And for convenience, in this document, A is `templateLvalue` (string to be repla
 
 2. **rlist.csv**
 
-* If you do not give the csv option, code-replacer uses the `rlist.csv` file in src file's directory as csv option.
+* If you do not give the csv option, code-replacer uses the `rlist.csv` file **in src file's directory** as `csv` option.
 
 * If you use the dir option, the `rlist_${fileName}.csv` file will be used as a csv option.
+
+* If the csv file is not found, replace code with only the template value.
 
 3. **${key}**
 
@@ -215,7 +219,7 @@ import ghi from "ghi";
 
 ### Example 3
 
-Multiple column data from the csv file are available in the following ways.
+Multiple `csv column key` are available in the following ways.
 
 ```
 code-replacer --src='example/example_3/index.js' --csv='example/example_3/rlist.csv' --template='${source}${index}-><div id="${id}" class="${class}" />'
@@ -223,7 +227,7 @@ code-replacer --src='example/example_3/index.js' --csv='example/example_3/rlist.
 
 ### Example 4
 
-You can use the csv column key with the left reference key.
+You can use the `csv column key` with the `left reference key`.
 
 ```
 code-replacer --src='example/example_4/index.js' --csv='example/example_4/rlist.csv' --template='$[key1] ${source}${index} $[key2]->$[key2] ${index}${source} $[key1]'
