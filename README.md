@@ -8,8 +8,7 @@
 [npm-url]: https://npmjs.org/package/code-replacer
 [npm-image]: https://img.shields.io/npm/v/code-replacer.svg
 
-
-Code repeater replaces code with the desired form based on what is written in the csv file and template value and regex.
+Replace codes line by line with regex for target files
 
 **Table of Contents**
 
@@ -52,7 +51,7 @@ If you like the idea of code-replacer, how about trying to use vscode plugin?
 
 ### On cli using inquirer
 
-you can use `inquirer`'s cli menu to select options.
+You can use `inquirer`'s cli menu to select options.
 
 <img src="./image/inquirer.png" />
 
@@ -67,13 +66,19 @@ To help you understand how to use this program, I have written some description 
 
 1. **template**
 
-template is a string indicating which value in the code is to be replaced with which value.
+`template` is a string indicating which value in the code is to be replaced with which value.
 
 For example, `A->B` option replace *A* with *B*.
 
 And for convenience, in this document, A is `templateLvalue` (string to be replaced), B is `templateRvalue` (string after replacing).
 
-2. **${key}**
+2. **rlist.csv**
+
+* If you do not give the csv option, code-replacer uses the `rlist.csv` file in src file's directory as csv option.
+
+* If you use the dir option, the `rlist_${fileName}.csv` file will be used as a csv option.
+
+3. **${key}**
 
 Above key is treated as `csv column key`.
 
@@ -85,11 +90,11 @@ And `templateLvalue` must include this key because this program should know whic
 
 See `Examples` for examples of use.
 
-Note that the key can contain only alphabetic and numeric characters.
+Note that the key can contain only **alphabetic and numeric characters.**
 
 And if the csv columns does not have this "key" column, it is treated as a string matching.
 
-3. **$[key]**
+4. **$[key]**
 
 Above key is treated as `left reference key`.
 
@@ -110,12 +115,6 @@ And along with the `no-escape` option, you can refer regexp's group key like bel
 Note that the key can contain only alphabetic and numeric characters.
 
 (And this applies for group keys of regexp)
-
-4. **rlist.csv**
-
-* If you do not give the csv option, code-replacer uses the `rlist.csv` file in src file's directory as csv option.
-
-* If you use the dir option, the `rlist_${fileName}.csv` file will be used as a csv option.
 
 
 
@@ -233,7 +232,7 @@ code-replacer --src='example/example_4/index.js' --csv='example/example_4/rlist.
 ## Tips
 
 1. If there are more than one matching key, (which contain other key in the `rlist.csv` (e.g. test, tester)), 
-The longest key is selected (replaced) basically. 
+The **longest** key is selected (replaced) basically. 
 If you don't want these matching, give `conf` option and skip the longest one, then you can choose next candidate manually (test).
 
 2. Left side of `template` are treated as *regular expression*. But special characters are escaped automatically.
