@@ -5,7 +5,7 @@ import utils from './util';
 export default class ReplacingListDict extends Map<string, string> {
   public replacingKeys: string[] = [];
 
-  constructor(csvTbl: any, templateObj: Template) {
+  constructor(csvTbl: object[], templateObj: Template) {
     super();
     if (csvTbl.length > 0) {
       const csvColumnNames: string[] = Object.keys(csvTbl[0]);

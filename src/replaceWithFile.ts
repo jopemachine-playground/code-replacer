@@ -39,10 +39,10 @@ export default async function ({
     const resultLines: (string[] | number) = getReplacedCode({
       srcFileName,
       srcFileLines,
-      csvTbl,
       excludeRegValue,
       startLine,
       endLine,
+      csvTbl: csvTbl as object[],
       template: templateObj,
     });
 

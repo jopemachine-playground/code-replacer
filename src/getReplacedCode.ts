@@ -32,7 +32,7 @@ const displayConsoleMsg = ({
   srcLine,
 }: {
   lineIdx: number;
-  matchingInfo: any;
+  matchingInfo: RegExpExecArray;
   replacingListDict: ReplacingListDict;
   resultLines: string[];
   srcFileLines: string[];
@@ -228,7 +228,7 @@ const replaceOneline = ({
   srcLine,
   template: templateObj
 }: {
-  csvTbl: any;
+  csvTbl: object[];
   excludeRegValue: string | undefined;
   lineIdx: number;
   replacingListDict: ReplacingListDict;

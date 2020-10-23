@@ -2,7 +2,6 @@ import fs from 'fs';
 import path from 'path';
 import chalk from 'chalk';
 import utils from './util';
-import debuggingInfoArr from './debuggingInfo';
 import optionManager from './optionManager';
 import { FileNotFoundError, ERROR_CONSTANT } from './error';
 
