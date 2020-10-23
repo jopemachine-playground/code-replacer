@@ -21,7 +21,10 @@ export default ({ srcFile }: { srcFile: string }) => {
   );
 
   try {
-    const srcFileLines: string[] = fs.readFileSync(srcFile).toString().split("\n");
+    const srcFileLines: string[] = fs
+      .readFileSync(srcFile)
+      .toString()
+      .split("\n");
     const srcFilePath: string = srcFilePathArr.reverse().join(path.sep);
 
     return {

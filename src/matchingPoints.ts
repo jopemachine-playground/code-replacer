@@ -95,8 +95,9 @@ export class MatchingPoints extends Array {
         matchingPtIdx++
       ) {
         const cands: MatchingPoint = this[matchingPtIdx];
+        const candsArr: RegExpExecArray = cands[0];
+        const longestStrInMatchingPt: string = candsArr[0];
         const replacingKeyMatchingStr: string = replacingKeyMatchingPt[0];
-        const longestStrInMatchingPt: string = cands[0][0];
 
         if (
           replacingKeyMatchingStr === longestStrInMatchingPt ||
@@ -108,7 +109,7 @@ export class MatchingPoints extends Array {
         // Should be same matching point.
         if (
           longestStrInMatchingPt.length >
-          replacingKeyMatchingPt.index - cands[0].index
+          replacingKeyMatchingPt.index - candsArr.index
         ) {
           existingMatchingPtIdx = matchingPtIdx;
           break;

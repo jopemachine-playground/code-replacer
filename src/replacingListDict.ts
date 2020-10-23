@@ -25,7 +25,7 @@ export default class ReplacingListDict extends Map<string, string> {
           value = result.templateRValue;
         }
 
-        if (this.get(key)) {
+        if (this.has(key)) {
           throw new CreatingReplacingObjError(
             ERROR_CONSTANT.DUPLICATE_KEY(key, this[key])
           );

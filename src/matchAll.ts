@@ -2,8 +2,8 @@ function ensureFlag (flags: string, flag: string) {
   return flags.includes(flag) ? flags : flags + flag;
 }
 
-function * matchAll (str: string, regex: RegExp) {
-  const localCopy: RegExp = new RegExp(regex, ensureFlag(regex.flags, 'g'));
+function* matchAll(str: string, regex: RegExp) {
+  const localCopy: RegExp = new RegExp(regex, ensureFlag(regex.flags, "g"));
   let match: RegExpExecArray | null = localCopy.exec(str);
   while (match) {
     yield match;

@@ -5,6 +5,7 @@ import constant from './constant';
 import { ERROR_CONSTANT, InvalidLeftTemplateError } from './error';
 import ReplacingListDict from './replacingListDict';
 
+// only used in templateLValue
 const changeLRefKeyToGroupKeys = (str: string, hasEscaped: boolean) => {
   const findLRefKeyReg: RegExp = hasEscaped
     ? /\\\$\\\[(?<lRefKey>[\d\w]*)\\\]/
@@ -27,7 +28,9 @@ const changeLRefKeyToGroupKeys = (str: string, hasEscaped: boolean) => {
       cntFrequency.set(lRefKey, 1);
     }
 
-    const lRefKeyReg: string = hasEscaped ? `\\$\\[${lRefKey}\\]` : `$[${lRefKey}]`;
+    const lRefKeyReg: string = hasEscaped
+      ? `\\$\\[${lRefKey}\\]`
+      : `$[${lRefKey}]`;
 
     str = str.replace(
       lRefKeyReg,
@@ -130,7 +133,7 @@ const handleLRefKeyInTemplateLValue = ({
 };
 
 const handleSpecialCharEscapeInTemplateLValue = (templateLValue: string) => {
-  if (optionManager.getInstance()['no-escape']) {
+  if (optionManager.getInstance()["no-escape"]) {
     return templateLValue;
   } else {
     return utils.handleSpecialCharacter(templateLValue);
@@ -148,7 +151,10 @@ const handleGroupKeysInTemplateLValue = ({
 }) => {
   let index = 1;
   while (matchingStr.includes(`(?<${lRefKey}_${index}>)`)) {
-    matchingStr = matchingStr.replace(`(?<${lRefKey}_${index}>)`, groupKeyMatchingStr);
+    matchingStr = matchingStr.replace(
+      `(?<${lRefKey}_${index}>)`,
+      groupKeyMatchingStr
+    );
     index++;
   }
   return matchingStr;
@@ -167,7 +173,9 @@ const handleLRefKeyInTemplateRValue = ({
   groupKeyMatching: RegExpMatchArray
   rvalue: string;
 }) => {
-  let result: string = replacingListDict.has(matchingStr) ? replacingListDict.get(matchingStr)! : rvalue;
+  let result: string = replacingListDict.has(matchingStr)
+    ? replacingListDict.get(matchingStr)!
+    : rvalue;
 
   if (result.includes(`$[${lRefKey}]`)) {
     result = utils.replaceAll(

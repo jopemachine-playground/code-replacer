@@ -98,13 +98,13 @@ In fact, this key is replaced with regexp's group key `([\d\w]+)`.
 So, you can refer `templateLvalue`'s substring at `templateRvalue` using this like below example.
 
 ```
---tem='require("$[key]")->import $[key] from "$[key]"'
+-t='require("$[key]")->import $[key] from "$[key]"'
 ```
 
 And along with the `no-escape` option, you can refer regexp's group key like below example.
 
 ```
---tem='(?<first>[0-9]{3})(?<second>[0-9]{4})(?<third>[0-9]{4})->$[first]-$[second]-$[third]'
+-t='(?<first>[0-9]{3})(?<second>[0-9]{4})(?<third>[0-9]{4})->$[first]-$[second]-$[third]'
 ```
 
 Note that the key can contain only alphabetic and numeric characters.

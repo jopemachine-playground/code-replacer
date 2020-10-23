@@ -43,7 +43,7 @@ export default async function ({
       debuggingInfoArr.getInstance().append(`endLine: ${endLine}`)
     );
 
-    const resultLines = getReplacedCode({
+    const resultLines: (string[] | number) = getReplacedCode({
       srcFileName,
       srcFileLines,
       csvTbl,

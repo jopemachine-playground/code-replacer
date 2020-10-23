@@ -29,18 +29,26 @@ const csvParse = async ({
     });
   }
 
-  utils.funcExecByFlag(!optionManager.getInstance().verboseOpt! && replaceListFile !== -1, () =>
-    console.log(
-      chalk.dim(
-        chalk.italic('** replaceList file: ' + path.resolve(replaceListFile as string))
+  utils.funcExecByFlag(
+    !optionManager.getInstance().verboseOpt! && replaceListFile !== -1,
+    () =>
+      console.log(
+        chalk.dim(
+          chalk.italic(
+            "** replaceList file: " + path.resolve(replaceListFile as string)
+          )
+        )
       )
-    )
   );
 
-  utils.funcExecByFlag(optionManager.getInstance().debugOpt! && replaceListFile !== -1, () =>
-    debuggingInfoArr.getInstance().append(
-      '** replaceList file: ' + path.resolve(replaceListFile as string)
-    )
+  utils.funcExecByFlag(
+    optionManager.getInstance().debugOpt! && replaceListFile !== -1,
+    () =>
+      debuggingInfoArr
+        .getInstance()
+        .append(
+          "** replaceList file: " + path.resolve(replaceListFile as string)
+        )
   );
 
   if (replaceListFile !== -1) {

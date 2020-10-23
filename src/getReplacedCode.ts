@@ -40,7 +40,6 @@ const displayConsoleMsg = ({
   srcLine: string;
 }) => {
   const matchingStr: string = matchingInfo[0];
-
   const sourceStr: string = utils.createHighlightedLine(
     srcLine,
     matchingInfo.index,
@@ -181,7 +180,6 @@ const handleLRefKey = ({
   // regKey = template.getTemplateLValueGroupKeyForm(escaped);
 
   const findMatchingStringReg: RegExp = new RegExp(lvalue);
-
   const groupKeyMatching: RegExpMatchArray | null = srcLine.match(
     findMatchingStringReg
   );
@@ -205,7 +203,6 @@ const handleLRefKey = ({
     lRefKey,
     groupKeyMatchingStr,
   });
-
   const newRValue = handleLRefKeyInTemplateRValue({
     replacingListDict,
     matchingStr,
@@ -285,6 +282,7 @@ const replaceOneline = ({
         ? templateObj.rvalue
         : replacingListDict.get(matchingPoints.replacingKey!)!;
 
+      const oldKeysToDelete: Set<string> = new Set();
       for (const lRefKeyInfo of lRefKeys) {
         const lRefKey: string = lRefKeyInfo[1];
         if (hasOneToManyMatching) {
@@ -319,9 +317,15 @@ const replaceOneline = ({
           } else {
             matchingStr = result.newLValue!;
             replacingListDict.set(matchingStr, result.newRValue!);
+            if (replaceObjectKey !== matchingStr) oldKeysToDelete.add(replaceObjectKey);
             break;
           }
         }
+      }
+
+      // Remove the keys that have been replaced and are not needed
+      for (const oldKey of oldKeysToDelete) {
+        replacingListDict.delete(oldKey);
       }
 
       displayConsoleMsg({
@@ -395,7 +399,6 @@ const getReplacedCode = ({
   endLine,
 }: ReplacerArgument) => {
   const resultLines: string[] = [];
-
   const replacingListDict: ReplacingListDict = new ReplacingListDict(
     csvTbl,
     templateObj

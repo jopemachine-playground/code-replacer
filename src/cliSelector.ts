@@ -19,7 +19,11 @@ const fetchLog = ({ keyName }: { keyName: string }) => {
   const keys: string[] = Object.keys(usageLogJson).reverse();
 
   for (const usageLogKey of keys) {
-    if (usageLogJson[usageLogKey][keyName] && !logs.includes(usageLogJson[usageLogKey][keyName]) && (displayCnt < maxDisplayCnt)) {
+    if (
+      usageLogJson[usageLogKey][keyName] &&
+      !logs.includes(usageLogJson[usageLogKey][keyName]) &&
+      displayCnt < maxDisplayCnt
+    ) {
       logs.push(usageLogJson[usageLogKey][keyName]);
       displayCnt++;
     }
