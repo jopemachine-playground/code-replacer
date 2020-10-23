@@ -7,7 +7,6 @@ import optionManager from "./optionManager";
 import {
   handleSpecialCharEscapeInTemplateLValue,
   handleGroupKeysInTemplateLValue,
-  handleLRefKeyInTemplateLValue,
   handleLRefKeyInTemplateRValue,
   Template,
 } from "./template";
@@ -173,11 +172,9 @@ const handleLRefKey = ({
   rvalue: string;
   template: Template;
 }) => {
-  lvalue = handleLRefKeyInTemplateLValue({
-    templateLValue: handleSpecialCharEscapeInTemplateLValue(lvalue),
-  });
-
-  // regKey = template.getTemplateLValueGroupKeyForm(escaped);
+  lvalue = template.getGroupKeyForm(
+    handleSpecialCharEscapeInTemplateLValue(lvalue)
+  );
 
   const findMatchingStringReg: RegExp = new RegExp(lvalue);
   const groupKeyMatching: RegExpMatchArray | null = srcLine.match(

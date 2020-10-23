@@ -1,6 +1,5 @@
 import { MatchingPoint } from './type/matchingPoint';
 import {
-  handleLRefKeyInTemplateLValue,
   handleSpecialCharEscapeInTemplateLValue,
   Template,
 } from './template';
@@ -73,12 +72,7 @@ export class MatchingPoints extends Array {
       replacingKey
     );
 
-    // TODO : Need to refactoring
-    const lvalue: string = handleLRefKeyInTemplateLValue({
-      templateLValue: escapedKey,
-    });
-    // const regKey: string = template.getTemplateLValueGroupKeyForm(escaped);
-
+    const lvalue: string = template.getGroupKeyForm(escapedKey);
     const replacingKeyReg: RegExp = new RegExp(lvalue);
     const replacingKeyMatchingPts: Generator<
       RegExpExecArray,

@@ -5,42 +5,6 @@ import constant from './constant';
 import { ERROR_CONSTANT, InvalidLeftTemplateError } from './error';
 import ReplacingListDict from './replacingListDict';
 
-// only used in templateLValue
-const changeLRefKeyToGroupKeys = (str: string, hasEscaped: boolean) => {
-  const findLRefKeyReg: RegExp = hasEscaped
-    ? /\\\$\\\[(?<lRefKey>[\d\w]*)\\\]/
-    : /\$\[(?<lRefKey>[\d\w]*)\]/;
-  const findLRefKeyRegExp: RegExp = new RegExp(findLRefKeyReg);
-  const LReftKeysInLValue: Generator<RegExpExecArray, void, unknown> = matchAll(
-    str,
-    findLRefKeyRegExp
-  );
-
-  // Avoid duplicate group keys
-  const cntFrequency: Map<string, number> = new Map();
-
-  for (const LRefKeyInfo of LReftKeysInLValue) {
-    const lRefKey: string = LRefKeyInfo[1];
-
-    if (cntFrequency.has(lRefKey)) {
-      cntFrequency.set(lRefKey, cntFrequency.get(lRefKey)! + 1);
-    } else {
-      cntFrequency.set(lRefKey, 1);
-    }
-
-    const lRefKeyReg: string = hasEscaped
-      ? `\\$\\[${lRefKey}\\]`
-      : `$[${lRefKey}]`;
-
-    str = str.replace(
-      lRefKeyReg,
-      `(?<${lRefKey}_${cntFrequency.get(lRefKey)}>[\\d\\w]*)`
-    );
-  }
-
-  return str;
-};
-
 class Template {
   public lvalue: string;
   public rvalue: string;
@@ -69,10 +33,11 @@ class Template {
     const cntFrequency: Map<string, number> = new Map();
 
     const findLRefKey: RegExp = new RegExp(/\$\[(?<lRefKey>[\d\w]+)\]/);
-    const lRefKeysInLValue: Generator<RegExpExecArray, void, unknown> = matchAll(
-      this.lvalue,
-      findLRefKey
-    );
+    const lRefKeysInLValue: Generator<
+      RegExpExecArray,
+      void,
+      unknown
+    > = matchAll(this.lvalue, findLRefKey);
 
     for (const lRefKeyRegExpExecArray of lRefKeysInLValue) {
       const lRefKey: string = lRefKeyRegExpExecArray[1];
@@ -85,10 +50,11 @@ class Template {
       this.lvalueLeftRefKeys.push(lRefKey + "_" + cntFrequency.get(lRefKey));
     }
 
-    const lRefKeysInRValue: Generator<RegExpExecArray, void, unknown> = matchAll(
-      this.rvalue,
-      findLRefKey
-    );
+    const lRefKeysInRValue: Generator<
+      RegExpExecArray,
+      void,
+      unknown
+    > = matchAll(this.rvalue, findLRefKey);
 
     for (const lRefKey of lRefKeysInRValue) {
       this.rvalueLeftRefKeys.push(lRefKey[1]);
@@ -96,41 +62,40 @@ class Template {
 
     const findCsvKey: RegExp = new RegExp(/\$\{(?<lRefKey>[\d\w]+)\}/);
 
-    const lvalueCsvColKeys: Generator<RegExpExecArray, void, unknown> = matchAll(
-      this.lvalue,
-      findCsvKey
-    );
+    const lvalueCsvColKeys: Generator<
+      RegExpExecArray,
+      void,
+      unknown
+    > = matchAll(this.lvalue, findCsvKey);
 
     for (const lRefKey of lvalueCsvColKeys) {
       this.lvalueCsvColKeys.push(lRefKey[1]);
     }
 
-    const rvalueCsvColKeys: Generator<RegExpExecArray, void, unknown> = matchAll(
-      this.rvalue,
-      findCsvKey
-    );
+    const rvalueCsvColKeys: Generator<
+      RegExpExecArray,
+      void,
+      unknown
+    > = matchAll(this.rvalue, findCsvKey);
 
     for (const lRefKey of rvalueCsvColKeys) {
       this.rvalueCsvColKeys.push(lRefKey[1]);
     }
   }
 
-  // public getTemplateLValueGroupKeyForm (escaped: boolean) {
-  //   return changeLRefKeyToGroupKeys(this, escaped);
-  // }
-}
+  // only used in templateLValue
+  public getGroupKeyForm(source: string) {
+    for (const lRefKey of this.lvalueLeftRefKeys) {
+      const OriginalLRefKey: string = lRefKey.split(/_[\d]+/)[0];
+      const findLRefKey: string = optionManager.getInstance()["no-escape"] === true
+        ? `$[${OriginalLRefKey}]`
+        : `\\$\\[${OriginalLRefKey}\\]`;
+      source = source.replace(findLRefKey, `(?<${lRefKey}>[\\d\\w]*)`);
+    }
 
-const handleLRefKeyInTemplateLValue = ({
-  templateLValue,
-}: {
-  templateLValue: string;
-}) => {
-  if (optionManager.getInstance()['no-escape']) {
-    return changeLRefKeyToGroupKeys(templateLValue, false);
-  } else {
-    return changeLRefKeyToGroupKeys(templateLValue, true);
+    return source;
   }
-};
+}
 
 const handleSpecialCharEscapeInTemplateLValue = (templateLValue: string) => {
   if (optionManager.getInstance()["no-escape"]) {
@@ -192,7 +157,6 @@ const handleLRefKeyInTemplateRValue = ({
 };
 
 export {
-  handleLRefKeyInTemplateLValue,
   handleLRefKeyInTemplateRValue,
   handleSpecialCharEscapeInTemplateLValue,
   handleGroupKeysInTemplateLValue,
