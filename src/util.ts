@@ -165,9 +165,9 @@ export default {
     srcFileLines: string[];
     resultLines: string[];
   }) {
-    let previousLine = "";
-    let postLine = "";
-    const lineIdxSpliter = constant.LINENUM_AREA_SPLITER;
+    let previousLine: string = "";
+    let postLine: string = "";
+    const lineIdxSpliter: string = constant.LINENUM_AREA_SPLITER;
 
     if (lineIdx - 2 >= 0) {
       previousLine =
@@ -181,7 +181,7 @@ export default {
         chalk.gray(srcFileLines[lineIdx].trim());
     }
 
-    const lineToPrint = `
+    const lineToPrint: string = `
 ${chalk.gray(constant.SINGLE_SPLIT_LINE)}
 
 ${chalk.gray(

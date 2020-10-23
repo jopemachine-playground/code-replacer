@@ -308,11 +308,15 @@ type: `boolean`
 Outputs information about replaced lines on the console.
 default is 'false'
 
+<img src="./image/verbose.png" />
+
 #### --print, -p
 type: `boolean`
 
 Outputs simple information about replaced lines on the console.
 default is 'true'
+
+<img src="./image/print.png" />
 
 #### --once, -o
 type: `boolean`
