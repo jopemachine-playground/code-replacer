@@ -14,12 +14,6 @@ export default ({ srcFile }: { srcFile: string }) => {
     chalk.dim(chalk.italic("** target file: " + path.resolve(srcFile)))
   );
 
-  utils.funcExecByFlag(optionManager.getInstance().debugOpt!, () =>
-    debuggingInfoArr
-      .getInstance()
-      .append("** target file: " + path.resolve(srcFile))
-  );
-
   try {
     const srcFileLines: string[] = fs
       .readFileSync(srcFile)

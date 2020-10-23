@@ -12,7 +12,7 @@ const handleOptions = (commandArguments: CommandArguments) => {
   optionManager.getInstance().verboseOpt = commandArguments.verbose;
   optionManager.getInstance().onceOpt = commandArguments.once;
   optionManager.getInstance().confOpt = commandArguments.conf;
-  optionManager.getInstance().debugOpt = commandArguments.debug;
+  optionManager.getInstance().printOpt = commandArguments.print;
   optionManager.getInstance().overwriteOpt = commandArguments.overwrite;
   optionManager.getInstance()['no-escape'] = commandArguments['no-escape'];
 };

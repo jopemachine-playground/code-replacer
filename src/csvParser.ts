@@ -41,16 +41,6 @@ const csvParse = async ({
       )
   );
 
-  utils.funcExecByFlag(
-    optionManager.getInstance().debugOpt! && replaceListFile !== -1,
-    () =>
-      debuggingInfoArr
-        .getInstance()
-        .append(
-          "** replaceList file: " + path.resolve(replaceListFile as string)
-        )
-  );
-
   if (replaceListFile !== -1) {
     return utils.readCsv(replaceListFile as string, template);
   }

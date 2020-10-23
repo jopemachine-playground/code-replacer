@@ -308,6 +308,12 @@ type: `boolean`
 Outputs information about replaced lines on the console.
 default is 'false'
 
+#### --print, -p
+type: `boolean`
+
+Outputs simple information about replaced lines on the console.
+default is 'true'
+
 #### --once, -o
 type: `boolean`
 
@@ -356,13 +362,6 @@ Specify the regular expression of the line to be excluded from the replace.
 Lines corresponding to the regular expression in regexp will not be replaced.
 
 For example, comments might be excluded from replacement.
-
-#### --debug
-type: `boolean`
-
-Outputs some debugging information to the `DEBUG_INFO` file
-
-default is 'false'
 
 ## Bug reporting
 

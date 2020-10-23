@@ -36,13 +36,6 @@ export default async function ({
 
     if (csvTbl === -1) return;
 
-    utils.funcExecByFlag(optionManager.getInstance().debugOpt!, () =>
-      debuggingInfoArr.getInstance().append(`startLine: ${startLine}`)
-    );
-    utils.funcExecByFlag(optionManager.getInstance().debugOpt!, () =>
-      debuggingInfoArr.getInstance().append(`endLine: ${endLine}`)
-    );
-
     const resultLines: (string[] | number) = getReplacedCode({
       srcFileName,
       srcFileLines,
@@ -71,15 +64,14 @@ export default async function ({
       }
     );
 
-    const debugInfoStr: string = debuggingInfoArr.getInstance().toString();
+    const debugInfoStr: string = chalk.greenBright(debuggingInfoArr.getInstance().toString());
 
-    utils.logByFlag(optionManager.getInstance().verboseOpt!, debugInfoStr);
-
-    utils.funcExecByFlag(optionManager.getInstance().debugOpt!, () =>
-      fs.appendFileSync("DEBUG_INFO", "\ufeff" + debugInfoStr, {
-        encoding: "utf8",
-      })
+    utils.logByFlag(
+      optionManager.getInstance().printOpt! &&
+        !optionManager.getInstance().verboseOpt!,
+      debugInfoStr
     );
+
     console.log(chalk.italic(chalk.white(`\nGenerated '${dstFilePath}'\n`)));
   } catch (err) {
     console.log(chalk.red(err.message));

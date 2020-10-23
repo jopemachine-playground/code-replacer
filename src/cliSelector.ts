@@ -280,7 +280,7 @@ const receiveTemplateOption = async () => {
 
 const receiveFlagOptions = async () => {
   let verbose: boolean | undefined;
-  let debug: boolean | undefined;
+  let print: boolean | undefined;
   let overwrite: boolean | undefined;
   let once: boolean | undefined;
   let conf: boolean | undefined;
@@ -299,7 +299,7 @@ const receiveFlagOptions = async () => {
             name: 'verbose'
           },
           {
-            name: 'debug'
+            name: 'print'
           },
           {
             name: 'overwrite'
@@ -325,7 +325,7 @@ const receiveFlagOptions = async () => {
         }
       }
     ]).then(async answer => {
-      debug = answer.flags.includes('debug');
+      print = answer.flags.includes('print');
       verbose = answer.flags.includes('verbose');
       overwrite = answer.flags.includes('overwrite');
       once = answer.flags.includes('once');
@@ -362,7 +362,7 @@ const receiveFlagOptions = async () => {
 
   return {
     verbose,
-    debug,
+    print,
     overwrite,
     once,
     conf,
@@ -430,7 +430,7 @@ export default async (input: string, args: CommandArguments) => {
       excludeReg !== -1 && (args.excludeReg = excludeReg as unknown as string);
       const {
         verbose,
-        debug,
+        print,
         overwrite,
         once,
         conf,
@@ -439,7 +439,7 @@ export default async (input: string, args: CommandArguments) => {
         endLine
       } = await receiveFlagOptions();
       args.verbose = verbose;
-      args.debug = debug;
+      args.print = print;
       args.overwrite = overwrite;
       args.once = once;
       args.conf = conf;

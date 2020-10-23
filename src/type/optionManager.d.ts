@@ -1,6 +1,6 @@
 export interface OptionManager {
   verboseOpt?: boolean;
-  debugOpt?: boolean;
+  printOpt?: boolean;
   overwriteOpt?: boolean;
   onceOpt?: boolean;
   confOpt?: boolean;

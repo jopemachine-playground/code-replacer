@@ -167,7 +167,7 @@ export default {
   }) {
     let previousLine = "";
     let postLine = "";
-    const lineIdxSpliter = "║";
+    const lineIdxSpliter = constant.LINENUM_AREA_SPLITER;
 
     if (lineIdx - 2 >= 0) {
       previousLine =
@@ -190,11 +190,11 @@ ${chalk.gray(
 
 ${previousLine}
 ${
-  chalk.redBright(`- ${lineIdx} ${lineIdxSpliter}   `) +
+  chalk.redBright(`- ${lineIdx} ${chalk.gray(lineIdxSpliter)}   `) +
   chalk.white(sourceStr)
 }
 ${
-  chalk.greenBright(`+ ${lineIdx} ${lineIdxSpliter}   `) +
+  chalk.greenBright(`+ ${lineIdx} ${chalk.gray(lineIdxSpliter)}   `) +
   chalk.white(replacedStr)
 }
 ${postLine}

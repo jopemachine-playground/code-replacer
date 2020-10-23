@@ -1,4 +1,5 @@
 const utils = require('../../src/util').default
+const constant = require('../../src/constant').default
 
 describe('printLines test', () => {
   test('printLines format test', () => {
@@ -26,8 +27,8 @@ describe('printLines test', () => {
     expect(results[2]).toBe('')
     expect(results[3].includes('Line: ')).toBe(true)
     expect(results[4]).toBe('')
-    expect(results[5].includes('║')).toBe(true)
-    expect(results[6].includes('║')).toBe(true)
-    expect(results[7].includes('║')).toBe(true)
+    expect(results[5].includes(constant.LINENUM_AREA_SPLITER)).toBe(true)
+    expect(results[6].includes(constant.LINENUM_AREA_SPLITER)).toBe(true)
+    expect(results[7].includes(constant.LINENUM_AREA_SPLITER)).toBe(true)
   })
 })

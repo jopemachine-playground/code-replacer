@@ -372,6 +372,14 @@ const replaceOneline = ({
           chalk.yellow("\nreplace..")
         );
 
+        utils.funcExecByFlag(optionManager.getInstance().printOpt!, () =>
+          debuggingInfoArr
+            .getInstance()
+            .append(
+              `Replace ${lineIdx} line, key: ${matchingStr}, value: ${replacedString}`
+            )
+        );
+
         srcLine =
           srcLine.substr(0, matchingInfo.index) +
           replacedString +
@@ -412,7 +420,7 @@ const getReplacedCode = ({
     utils.funcExecByFlag(
       blockingReplaceFlag && !!startLine && srcLine.trim() === startLine.trim(),
       () => {
-        utils.funcExecByFlag(optionManager.getInstance().debugOpt!, () =>
+        utils.funcExecByFlag(optionManager.getInstance().printOpt!, () =>
           debuggingInfoArr
             .getInstance()
             .append(`Encountered startLine on line ${lineIdx}`)
@@ -424,7 +432,7 @@ const getReplacedCode = ({
     utils.funcExecByFlag(
       !blockingReplaceFlag && !!endLine && srcLine.trim() === endLine.trim(),
       () => {
-        utils.funcExecByFlag(optionManager.getInstance().debugOpt!, () =>
+        utils.funcExecByFlag(optionManager.getInstance().printOpt!, () =>
           debuggingInfoArr
             .getInstance()
             .append(`Encountered endLine on line ${lineIdx}`)

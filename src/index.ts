@@ -62,8 +62,10 @@ const flags: meow.AnyFlags = {
     alias: 't',
     isRequired: (_flags, input) => false
   },
-  debug: {
+  print: {
     type: 'boolean',
+    alias: 'p',
+    default: true,
     isRequired: (_flags, input) => false
   },
   overwrite: {

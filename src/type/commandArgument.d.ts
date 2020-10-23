@@ -2,7 +2,7 @@ export interface CommandArguments {
   src: string;
   template: string;
   verbose?: boolean;
-  debug?: boolean;
+  print?: boolean;
   overwrite?: boolean;
   once?: boolean;
   conf?: boolean;

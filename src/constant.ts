@@ -17,6 +17,7 @@ export default {
   CLI_SELCTOR_MAX_DISPLAYING_LOG: 5,
   SINGLE_SPLIT_LINE: '──────────────────────────────────────────────────────────────────────────────────────────',
   DOUBLE_SPLIT_LINE: '══════════════════════════════════════════════════════════════════════════════════════════',
+  LINENUM_AREA_SPLITER: '┃',
   HELP_STRING:
   `
     Outline
@@ -58,7 +59,7 @@ export default {
             --verbose, -v                 print all information about the text replaced in console.
                                           default is 'false'
 
-            --debug                       outputs debugging information to the 'DEBUG_INFO' file
+            --print                       outputs debugging information to the 'DEBUG_INFO' file
 
             --once, -o                    even if there are multiple substitution values in a line,
                                           they are replaced only once.
