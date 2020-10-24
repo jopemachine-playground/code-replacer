@@ -42,7 +42,7 @@ npm i -g code-replacer
 
 If you like the idea of code-replacer, how about trying to use vscode plugin?
 
-If it's annoying to type options every time, this plugin might help you.
+If it's annoying to type options on console every time, this plugin might help you.
 
 ## Development environment
 
@@ -87,7 +87,7 @@ And for convenience, in this document, A is `templateLvalue` (string to be repla
 
 * If you use the dir option, the `rlist_${fileName}.csv` file will be used as a csv option.
 
-* If the csv file is not found, replace code with only the template value.
+* If the csv file is not found, replace code with only the `template` value.
 
 3. **${key}**
 
@@ -95,7 +95,7 @@ Above key is treated as `csv column key`.
 
 key is replaced with csv file's column data.
 
-Therefore, the key must be used with the csv option.
+Therefore, the key must be used with the `csv` option.
 
 And `templateLvalue` must include this key because this program should know which value should be replaced with which value with this csv file.
 
@@ -123,7 +123,7 @@ And along with the `no-escape` option, you can refer regexp's group key like bel
 -t='(?<first>[0-9]{3})(?<second>[0-9]{4})(?<third>[0-9]{4})->$[first]-$[second]-$[third]'
 ```
 
-Note that the key can contain only alphabetic and numeric characters.
+Note that the key can contain only `alphabetic` and `numeric` characters.
 
 (And this applies for group keys of regexp)
 
