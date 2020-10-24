@@ -1,6 +1,6 @@
 {
   "name": "code-replacer",
-  "version": "0.0.210",
+  "version": "0.0.212",
   "bin": {
     "code-replacer": "./dist/index.js"
   },
