@@ -41,6 +41,10 @@ If you like the idea of code-replacer, how about trying to use vscode plugin?
 
 If it's annoying to type options every time, this plugin might help you.
 
+## Development environment
+
+Tested on `Windows 10`, `macos Catalina`
+
 ## How to use
 
 ### On cli
