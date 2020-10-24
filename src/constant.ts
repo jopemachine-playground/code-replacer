@@ -80,8 +80,8 @@ export default {
 
     Examples
 
-        $ code-replacer --target=./abc.java --csv=./rlist.csv
-        $ code-replacer --dir=./ ext=java --csv=./rlist.csv
+        $ code-replacer --src=./abc.js --csv=./rlist.csv -t=\${source}->\${value}
+        $ code-replacer --dir=./target ext=js -t=\${source}->\${value}
 
 
     See README.md for more details.

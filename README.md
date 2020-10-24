@@ -1,9 +1,12 @@
 # Code-replacer
 
 [![NPM version][npm-image]][npm-url]
+<img src="https://img.shields.io/npm/dt/code-replacer" alt="NPM Release">
+<img src="https://img.shields.io/github/license/jopemachine/code-replacer.svg" alt="License">
 [![Build Status](https://travis-ci.com/jopemachine/code-replacer.svg?token=81JsWap8614c381MskPH&branch=master)](https://travis-ci.com/jopemachine/code-replacer)
 [![codecov](https://codecov.io/gh/jopemachine/code-replacer/branch/master/graph/badge.svg?token=AM0XLWG78T)](undefined)
 [![CodeFactor](https://www.codefactor.io/repository/github/jopemachine/code-replacer/badge?s=ac4f10a333a3ba472ee3e87b02f9a5e00c6aeb29)](https://www.codefactor.io/repository/github/jopemachine/code-replacer)
+
 
 [npm-url]: https://npmjs.org/package/code-replacer
 [npm-image]: https://img.shields.io/npm/v/code-replacer.svg
