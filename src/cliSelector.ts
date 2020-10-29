@@ -459,8 +459,8 @@ export default async (inputs: string[], args: CommandArguments) => {
       break;
     default:
       // order : src, csv
-      inputs.length >= 2 && (args.src = inputs[1]);
-      inputs.length >= 3 && (args.csv = inputs[2]);
+      inputs.length >= 1 && (args.src = inputs[0]);
+      inputs.length >= 2 && (args.csv = inputs[1]);
       modSelector(args);
       break;
   }
