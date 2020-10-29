@@ -74,8 +74,8 @@ export default async function ({
 
     console.log(chalk.italic(chalk.white(`\nGenerated '${dstFilePath}'\n`)));
   } catch (err) {
-    console.log(chalk.red(err.message));
-    console.log(chalk.whiteBright("** Details:"));
+    console.error(chalk.red(err.message));
+    console.error(chalk.whiteBright("** Details:"));
     throw err;
   }
 }

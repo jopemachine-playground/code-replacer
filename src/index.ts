@@ -98,4 +98,4 @@ _.map(Object.keys(flags), (flagKey: string) => {
 
 const meowCli: meow.Result<meow.AnyFlags> = meow(constant.HELP_STRING, { flags });
 
-cliSelector(meowCli.input[0], meowCli.flags as unknown as CommandArguments);
+cliSelector(meowCli.input, meowCli.flags as unknown as CommandArguments);

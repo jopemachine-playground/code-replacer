@@ -414,8 +414,8 @@ const receiveExcludeRegOption = async () => {
   return excludeReg;
 };
 
-export default async (input: string, args: CommandArguments) => {
-  switch (input) {
+export default async (inputs: string[], args: CommandArguments) => {
+  switch (inputs[0]) {
     case 'sel':
     case 'select': {
       const { srcFilePath: src, ext, dir } = await receiveSrcOption();
@@ -458,6 +458,9 @@ export default async (input: string, args: CommandArguments) => {
       utils.showDefaultOptions();
       break;
     default:
+      // order : src, csv
+      inputs.length >= 2 && (args.src = inputs[1]);
+      inputs.length >= 3 && (args.csv = inputs[2]);
       modSelector(args);
       break;
   }

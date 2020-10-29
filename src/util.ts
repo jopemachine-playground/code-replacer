@@ -288,7 +288,7 @@ ${postLine}
     });
 
     console.log(
-      chalk.whiteBright("🌈  The current setting value has been saved! 🌈")
+      chalk.whiteBright("🌈  The current setting value has been saved!")
     );
   },
 
@@ -303,7 +303,7 @@ ${postLine}
     const defaultValues = env.split("\n");
 
     console.log(
-      chalk.whiteBright("🌈  Current default setting is as follows. 🌈")
+      chalk.whiteBright("ℹ️ Current default setting is as follows.")
     );
 
     for (const devaultValue of defaultValues) {

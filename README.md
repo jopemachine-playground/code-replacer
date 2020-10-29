@@ -280,6 +280,8 @@ when `src` and `dir` are given,
 target the files corresponding to the name in the target directory.
 (no need to specify `ext` separately)
 
+Instead of using the `src` option, you can pass the value to the first argument.
+
 #### --template, --t (required)
 type: `string`
 
@@ -330,6 +332,8 @@ Specify csv file,
 Default value is `./rlist.csv`
 
 And when you specify `dir` option, name `./rlist_{fileName}.csv`, to apply different rlist files per file.
+
+Instead of using the `csv` option, you can pass the value to the second argument.
 
 #### --dst, -dst
 type: `string`
