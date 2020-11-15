@@ -256,7 +256,7 @@ const replaceOneline = ({
   for (
     let matchingPtIdx: number = 0;
     matchingPtIdx < matchingPoints.length;
-    matchingPtIdx++
+    ++matchingPtIdx
   ) {
     // Match the longest string first
     const matchingCandidates: MatchingPoint = matchingPoints[matchingPtIdx];

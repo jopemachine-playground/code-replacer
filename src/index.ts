@@ -89,8 +89,8 @@ const flags: meow.AnyFlags = {
 
 _.map(Object.keys(flags), (flagKey: string) => {
   if (process.env[flagKey]) {
+    console.log(chalk.blue(`Use '${flagKey}' as the stored default value, '${process.env[flagKey]}'`));
     if (process.env[flagKey] === 'true' || process.env[flagKey] === 'false') {
-      console.log(chalk.blue(`Use ${flagKey} as the stored default value, ${process.env[flagKey]}.`));
       (flags[flagKey] as any).default = Boolean(process.env[flagKey]);
     } else (flags[flagKey] as any).default = process.env[flagKey];
   }

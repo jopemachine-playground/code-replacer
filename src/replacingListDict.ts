@@ -36,7 +36,12 @@ export default class ReplacingListDict extends Map<string, string> {
       this.replacingKeys = [...this.keys()].sort((a: string, b: string) => {
         return b.length - a.length || a.localeCompare(b);
       });
-
+    } else {
+      // handle constant matching
+      if (templateObj.lvalueLeftRefKeys.length === 0) {
+        this.set(templateObj.lvalue, templateObj.rvalue);
+        this.replacingKeys = [templateObj.lvalue];
+      }
     }
   }
 }
