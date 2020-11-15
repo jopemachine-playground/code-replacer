@@ -16,7 +16,7 @@ describe('Example 2 basic left reference key test', () => {
       expectedResult:
 `import abc from "abc";
 import def from "def";
-import ghi from "ghi";`
+    import ghi from "ghi";`
     }).test()
 
     expect(testPassedOrErrorLine).toBe(true)

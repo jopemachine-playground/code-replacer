@@ -75,7 +75,9 @@ export default {
 
         const hasDuplicate = _.uniq(records).length !== records.length;
         if (hasDuplicate) {
-          return new CSVParsingError(ERROR_CONSTANT.CSV_DUPLICATE_KEY);
+          console.log(
+            `In '${lvalueLeftRefKey}' column, some values are duplicated..`
+          );
         }
       } else {
         console.log(

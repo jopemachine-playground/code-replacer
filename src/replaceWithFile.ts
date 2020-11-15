@@ -34,8 +34,6 @@ export default async function ({
       template: templateObj,
     });
 
-    if (csvTbl === -1) return;
-
     const resultLines: (string[] | number) = getReplacedCode({
       srcFileName,
       srcFileLines,

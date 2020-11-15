@@ -35,7 +35,7 @@ const csvParse = async ({
       console.log(
         chalk.dim(
           chalk.italic(
-            "** replaceList file: " + path.resolve(replaceListFile as string)
+            "** csv file: " + path.resolve(replaceListFile as string)
           )
         )
       )
@@ -45,7 +45,7 @@ const csvParse = async ({
     return utils.readCsv(replaceListFile as string, template);
   }
 
-  return -1;
+  return [];
 };
 
 export default csvParse;
