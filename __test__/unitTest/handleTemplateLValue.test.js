@@ -2,7 +2,7 @@ const {
   Template,
   handleSpecialCharEscapeInTemplateLValue
 } = require('../../src/template')
-const optionManager = require('../../src/optionManager').default
+const optionManager = require('../../src/cli/optionManager').default
 
 describe('handleLRefKeyInTemplateLValue', () => {
   beforeAll(() => {

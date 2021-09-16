@@ -1,6 +1,6 @@
 const { Template } = require('../../src/template')
 const ReplacingListDict = require('../../src/replacingListDict').default
-const constant = require('../../src/constant').default
+const constant = require('../../src/config/constant').default
 
 describe('Generating replacingListDict test', () => {
   test('Column variables should be appropriately replaced.', () => {

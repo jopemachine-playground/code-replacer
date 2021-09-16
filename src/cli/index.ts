@@ -4,8 +4,8 @@ import meow from 'meow';
 import path from 'path';
 import _ from 'lodash';
 import cliSelector from './cliSelector';
-import constant from './constant';
-import { CommandArguments } from './type/commandArgument';
+import constant from '../config/constant';
+import { CommandArguments } from '../type/commandArgument';
 import chalk from 'chalk';
 require('dotenv').config({ path: `${__dirname}${path.sep}.env` });
 

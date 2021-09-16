@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import chalk from 'chalk';
 import utils from './util';
-import optionManager from './optionManager';
+import optionManager from './cli/optionManager';
 import { Template } from './template';
 
 const csvParse = async ({

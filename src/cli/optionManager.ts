@@ -1,4 +1,4 @@
-import { OptionManager } from './type/optionManager';
+import { OptionManager } from '../type/optionManager';
 
 export default (() => {
   let instance: OptionManager;

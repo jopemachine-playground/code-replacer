@@ -1,7 +1,7 @@
 import matchAll from './matchAll';
 import utils from './util';
-import optionManager from './optionManager';
-import constant from './constant';
+import optionManager from './cli/optionManager';
+import constant from './config/constant';
 import { ERROR_CONSTANT, InvalidLeftTemplateError } from './error';
 import ReplacingListDict from './replacingListDict';
 

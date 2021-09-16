@@ -4,7 +4,7 @@ import _ from 'lodash';
 import path from 'path';
 import csv from 'csv-parser';
 import logSymbols from 'log-symbols';
-import constant from './constant';
+import constant from './config/constant';
 import { Template } from './template';
 import {
   TemplateHasNoCSVCOLKeyWithCSVError,

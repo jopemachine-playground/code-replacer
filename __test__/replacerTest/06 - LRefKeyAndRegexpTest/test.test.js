@@ -1,6 +1,6 @@
 const path = require('path')
 const parseSourceFile = require('../../../src/sourceFileParser').default
-const optionManager = require('../../../src/optionManager').default
+const optionManager = require('../../../src/cli/optionManager').default
 const ReplacerTest = require('../../util')
 
 describe('Example 6, Left reference key and regexp test', () => {

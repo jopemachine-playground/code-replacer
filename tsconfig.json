@@ -65,7 +65,7 @@
     },
     "include": [
       "src/**.ts"
-    ],
+, "src/cli/modSelector.ts", "src/cli/index.ts", "src/cli/cliSelector.ts", "src/config/constant.ts", "src/config/path.ts", "src/config/debuggingInfo.ts", "src/cli/optionManager.ts"    ],
     "exclude": [
       "node_modules"
     ]

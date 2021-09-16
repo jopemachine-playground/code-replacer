@@ -3,7 +3,7 @@ import replaceWithFile from './replaceWithFile';
 import recursive from 'recursive-readdir';
 import chalk from 'chalk';
 import { isText } from 'istextorbinary';
-import constant from './constant';
+import constant from './config/constant';
 import { CommandArguments } from './type/commandArgument';
 
 export default async function (props: CommandArguments) {

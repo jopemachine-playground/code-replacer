@@ -1,7 +1,7 @@
 const path = require('path')
 const parseSourceFile = require('../../../src/sourceFileParser').default
 const { readCsv } = require('../../../src/util').default
-const optionManager = require('../../../src/optionManager').default
+const optionManager = require('../../../src/cli/optionManager').default
 const ReplacerTest = require('../../util')
 
 describe('Example 5, regexp and left reference key, csv column key test', () => {

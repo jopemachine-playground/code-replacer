@@ -1,13 +1,13 @@
-import utils from './util';
+import utils from '../util';
 import modSelector from './modSelector';
 import path from 'path';
 import fs from 'fs';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
 import inquirerFileTreeSelection from 'inquirer-file-tree-selection-prompt';
-import { readUsageLog } from './path';
-import constant from './constant';
-import { CommandArguments } from './type/commandArgument';
+import { readUsageLog } from '../config/path';
+import constant from '../config/constant';
+import { CommandArguments } from '../type/commandArgument';
 
 inquirer.registerPrompt('file-tree-selection', inquirerFileTreeSelection);
 

@@ -1,5 +1,5 @@
 const { getMatchingPoints } = require('../../src/getReplacedCode')
-const optionManager = require('../../src/optionManager').default
+const optionManager = require('../../src/cli/optionManager').default
 const {
   Template
 } = require('../../src/template')

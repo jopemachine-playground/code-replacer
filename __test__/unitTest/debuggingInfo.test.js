@@ -1,4 +1,4 @@
-const debuggingInfo = require('../../src/debuggingInfo').default
+const debuggingInfo = require('../../src/config/debuggingInfo').default
 
 describe('debuggingInfo test', () => {
   test('debuggingInfo test', () => {

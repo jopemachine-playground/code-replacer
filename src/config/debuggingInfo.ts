@@ -1,4 +1,4 @@
-import StringBuffer from './stringBuffer';
+import StringBuffer from '../stringBuffer';
 
 export default (() => {
   let instance: StringBuffer;

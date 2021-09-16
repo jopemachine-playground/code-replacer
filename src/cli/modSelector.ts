@@ -1,11 +1,11 @@
 import fse from 'fs-extra';
-import replaceWithFileExec from './replaceWithFile';
-import replaceWithDirExec from './replaceWithDir';
+import replaceWithFileExec from '../replaceWithFile';
+import replaceWithDirExec from '../replaceWithDir';
 import _ from 'lodash';
-import constant from './constant';
-import { CommandArguments } from './type/commandArgument';
+import constant from '../config/constant';
+import { CommandArguments } from '../type/commandArgument';
 import optionManager from './optionManager';
-import { readUsageLog, usageLogPath } from './path';
+import { readUsageLog, usageLogPath } from '../config/path';
 
 const handleOptions = (commandArguments: CommandArguments) => {
   optionManager.getInstance().verboseOpt = commandArguments.verbose;
@@ -21,8 +21,7 @@ export default (commandArguments: CommandArguments) => {
   const usageLog = readUsageLog();
 
   if (
-    commandArguments.dir &&
-    (commandArguments.src || commandArguments.ext)
+    commandArguments.dir
   ) {
     replaceWithDirExec(commandArguments);
   } else if (commandArguments.src) {

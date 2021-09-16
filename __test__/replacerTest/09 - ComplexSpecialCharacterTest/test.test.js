@@ -3,7 +3,7 @@ const path = require('path')
 const parseSourceFile = require('../../../src/sourceFileParser').default
 const { readCsv } = require('../../../src/util').default
 const ReplacerTest = require('../../util')
-const optionManager = require('../../../src/optionManager').default
+const optionManager = require('../../../src/cli/optionManager').default
 
 describe('Example 9-1 test, complex special character handling', () => {
   test('Example 9-1-1 test', async () => {

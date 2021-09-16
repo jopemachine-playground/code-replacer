@@ -1,5 +1,5 @@
 const { getReplacedCode } = require('../src/getReplacedCode')
-const constant = require('../src/constant').default
+const constant = require('../src/config/constant').default
 const { Template } = require('../src/template')
 
 module.exports = class ReplacerTest {

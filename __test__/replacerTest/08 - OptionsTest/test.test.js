@@ -2,7 +2,7 @@ const path = require('path')
 const parseSourceFile = require('../../../src/sourceFileParser').default
 const { readCsv } = require('../../../src/util').default
 const ReplacerTest = require('../../util')
-const optionManager = require('../../../src/optionManager').default
+const optionManager = require('../../../src/cli/optionManager').default
 
 describe('Example 8 test, boolean flags and other options test', () => {
   test('Example 8-1 onceOpt test.', async () => {

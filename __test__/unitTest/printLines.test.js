@@ -1,5 +1,5 @@
 const utils = require('../../src/util').default
-const constant = require('../../src/constant').default
+const constant = require('../../src/config/constant').default
 
 describe('printLines test', () => {
   test('printLines format test', () => {

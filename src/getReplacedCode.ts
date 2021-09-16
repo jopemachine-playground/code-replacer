@@ -2,8 +2,8 @@ import chalk from "chalk";
 import matchAll from "./matchAll";
 import yn from "yn";
 import readlineSync from "readline-sync";
-import debuggingInfoArr from "./debuggingInfo";
-import optionManager from "./optionManager";
+import debuggingInfoArr from "./config/debuggingInfo";
+import optionManager from "./cli/optionManager";
 import {
   handleSpecialCharEscapeInTemplateLValue,
   handleGroupKeysInTemplateLValue,
