@@ -18,8 +18,8 @@ export default {
   SINGLE_SPLIT_LINE: '──────────────────────────────────────────────────────────────────────────────────────────',
   DOUBLE_SPLIT_LINE: '══════════════════════════════════════════════════════════════════════════════════════════',
   LINENUM_AREA_SPLITER: '┃',
-  HELP_STRING:
-  `
+  HELP_STRING: chalk.whiteBright(
+    `
     Outline
 
         Replace string pattern values for specific files or files with specific extensions.
@@ -53,7 +53,7 @@ export default {
             --ext, -e                     specify target file's extension.
                                           (Use this with dir to target multiple files)
 
-            --dst, -dst                   specify the name of the output file.
+            --dst                         specify the name of the output file.
                                           default value is '__replaced__.{originalFileName}'.
 
             --verbose, -v                 print all information about the text replaced in console.
@@ -70,7 +70,7 @@ export default {
 
             --conf, -c                    check the string values that you want to replace on each line.
 
-            --overwrite, -o               overwrite existing file.
+            --overwrite, -w               overwrite existing file.
 
             --excludeReg, -x              specify the regular expression of the line
                                           to be excluded from the replace.
@@ -85,5 +85,5 @@ export default {
 
 
     See README.md for more details.
-`
+`)
 };

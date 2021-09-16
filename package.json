@@ -1,6 +1,6 @@
 {
   "name": "code-replacer",
-  "version": "0.0.9",
+  "version": "0.1.0",
   "bin": {
     "code-replacer": "./dist/index.js"
   },
@@ -19,12 +19,16 @@
   "author": "jopemachine",
   "license": "MIT",
   "dependencies": {
-    "chalk": "^4.1.0",
+    "chalk": "^4.1.2",
     "csv-parser": "^2.3.3",
     "dotenv": "^8.2.0",
+    "env-paths": "^3.0.0",
+    "fs-extra": "^10.0.0",
     "inquirer": "^7.3.3",
     "inquirer-file-tree-selection-prompt": "^1.0.6",
+    "istextorbinary": "^5.14.0",
     "lodash": "^4.17.20",
+    "log-symbols": "^4.1.0",
     "meow": "^7.1.1",
     "readline-sync": "^1.4.10",
     "recursive-readdir": "^2.2.2",
@@ -36,11 +40,10 @@
   ],
   "files": [
     "dist/*.js",
-    "dist/usageLog.json",
-    "README.md",
-    "LICENSE"
+    "dist/usageLog.json"
   ],
   "devDependencies": {
+    "@types/fs-extra": "^9.0.12",
     "@types/lodash": "^4.14.162",
     "@types/node": "^14.11.10",
     "codecov": "^3.8.0",

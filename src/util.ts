@@ -3,10 +3,10 @@ import fs from 'fs';
 import _ from 'lodash';
 import path from 'path';
 import csv from 'csv-parser';
+import logSymbols from 'log-symbols';
 import constant from './constant';
 import { Template } from './template';
 import {
-  CSVParsingError,
   TemplateHasNoCSVCOLKeyWithCSVError,
   FileNotFoundError,
   ERROR_CONSTANT,
@@ -290,7 +290,7 @@ ${postLine}
     });
 
     console.log(
-      chalk.whiteBright("🌈  The current setting value has been saved!")
+      chalk.whiteBright(`${logSymbols.success} The current setting value has been saved!`)
     );
   },
 
@@ -299,13 +299,20 @@ ${postLine}
   },
 
   showDefaultOptions() {
+    if (!fs.existsSync('.env')) {
+      console.log(
+        chalk.whiteBright(`${logSymbols.error} Current directory does not have setting file`)
+      );
+      return;
+    }
+
     const env = fs.readFileSync(".env", {
       encoding: "utf8",
     });
     const defaultValues = env.split("\n");
 
     console.log(
-      chalk.whiteBright("ℹ️ Current default setting is as follows.")
+      chalk.whiteBright(`${logSymbols.success} Current default setting is as follows.`)
     );
 
     for (const devaultValue of defaultValues) {

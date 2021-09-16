@@ -1,7 +1,6 @@
 import fs from 'fs';
 import path from 'path';
 import chalk from 'chalk';
-import debuggingInfoArr from './debuggingInfo';
 import utils from './util';
 import optionManager from './optionManager';
 import { Template } from './template';

@@ -335,7 +335,7 @@ And when you specify `dir` option, name `./rlist_{fileName}.csv`, to apply diffe
 
 Instead of using the `csv` option, you can pass the value to the second argument.
 
-#### --dst, -dst
+#### --dst
 type: `string`
 
 Specify the name of the output file. 
@@ -363,7 +363,7 @@ Specify end line.
 
 (endLine will not be replaced)
 
-#### --overwrite, -o
+#### --overwrite, -w
 type: `boolean`
 
 Overwrite the source file.
@@ -383,6 +383,6 @@ For example, comments might be excluded from replacement.
 
 ## Bug reporting
 
-This program still appears to contain a lot of bugs.
+This program still appears to contain lots of bugs.
 
-Bug reports are always welcome
+Bug reports are always welcome.

@@ -1,12 +1,11 @@
-import fs from 'fs';
-import path from 'path';
+import fse from 'fs-extra';
 import replaceWithFileExec from './replaceWithFile';
 import replaceWithDirExec from './replaceWithDir';
 import _ from 'lodash';
 import constant from './constant';
 import { CommandArguments } from './type/commandArgument';
 import optionManager from './optionManager';
-import usageLog from './usageLog.json';
+import { readUsageLog, usageLogPath } from './path';
 
 const handleOptions = (commandArguments: CommandArguments) => {
   optionManager.getInstance().verboseOpt = commandArguments.verbose;
@@ -19,6 +18,7 @@ const handleOptions = (commandArguments: CommandArguments) => {
 
 export default (commandArguments: CommandArguments) => {
   handleOptions(commandArguments);
+  const usageLog = readUsageLog();
 
   if (
     commandArguments.dir &&
@@ -34,8 +34,8 @@ export default (commandArguments: CommandArguments) => {
       oldest && delete usageLog[oldest];
     }
 
-    fs.writeFileSync(
-      `${__dirname}${path.sep}usageLog.json`,
+    fse.writeFileSync(
+      usageLogPath,
       '\ufeff' + JSON.stringify(usageLog, null, 2),
       { encoding: 'utf8' }
     );

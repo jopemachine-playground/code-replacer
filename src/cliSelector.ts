@@ -1,18 +1,19 @@
 import utils from './util';
 import modSelector from './modSelector';
 import path from 'path';
+import fs from 'fs';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
 import inquirerFileTreeSelection from 'inquirer-file-tree-selection-prompt';
+import { readUsageLog } from './path';
 import constant from './constant';
-import fs from 'fs';
 import { CommandArguments } from './type/commandArgument';
 
 inquirer.registerPrompt('file-tree-selection', inquirerFileTreeSelection);
 
 const fetchLog = ({ keyName }: { keyName: string }) => {
   const logs: string[] = [];
-  const usageLogJson: JSON = require('./usageLog.json');
+  const usageLogJson = readUsageLog();
 
   let displayCnt: number = 0;
   const maxDisplayCnt: number = constant.CLI_SELCTOR_MAX_DISPLAYING_LOG;
@@ -111,7 +112,7 @@ const receiveSrcOption = async () => {
       {
         type: 'list',
         name: 'srcOpt',
-        message: chalk.dim('Select Src option.'),
+        message: chalk.dim('Select src option.'),
         choices: [
           constant.CLI_SELECTOR_STR.SELECT_SRC,
           constant.CLI_SELECTOR_STR.SELECT_DIR
@@ -414,40 +415,44 @@ const receiveExcludeRegOption = async () => {
   return excludeReg;
 };
 
+const selectHandler = async (args: CommandArguments) => {
+  const { srcFilePath: src, ext, dir } = await receiveSrcOption();
+  const csv = await receiveCSVOption();
+  const template = await receiveTemplateOption();
+  const excludeReg = await receiveExcludeRegOption();
+  src !== -1 && (args.src = src as unknown as string);
+  ext !== -1 && (args.ext = ext as unknown as string);
+  dir !== -1 && (args.dir = dir as unknown as string);
+  csv !== -1 && (args.csv = csv as unknown as string);
+  template !== -1 && (args.template = template as unknown as string);
+  excludeReg !== -1 && (args.excludeReg = excludeReg as unknown as string);
+  const {
+    verbose,
+    print,
+    overwrite,
+    once,
+    conf,
+    noEscape,
+    startLine,
+    endLine
+  } = await receiveFlagOptions();
+  args.verbose = verbose;
+  args.print = print;
+  args.overwrite = overwrite;
+  args.once = once;
+  args.conf = conf;
+  args.startLine = startLine;
+  args.endLine = endLine;
+  args['no-escape'] = noEscape;
+  console.log();
+  modSelector(args);
+};
+
 export default async (inputs: string[], args: CommandArguments) => {
   switch (inputs[0]) {
     case 'sel':
     case 'select': {
-      const { srcFilePath: src, ext, dir } = await receiveSrcOption();
-      const csv = await receiveCSVOption();
-      const template = await receiveTemplateOption();
-      const excludeReg = await receiveExcludeRegOption();
-      src !== -1 && (args.src = src as unknown as string);
-      ext !== -1 && (args.ext = ext as unknown as string);
-      dir !== -1 && (args.dir = dir as unknown as string);
-      csv !== -1 && (args.csv = csv as unknown as string);
-      template !== -1 && (args.template = template as unknown as string);
-      excludeReg !== -1 && (args.excludeReg = excludeReg as unknown as string);
-      const {
-        verbose,
-        print,
-        overwrite,
-        once,
-        conf,
-        noEscape,
-        startLine,
-        endLine
-      } = await receiveFlagOptions();
-      args.verbose = verbose;
-      args.print = print;
-      args.overwrite = overwrite;
-      args.once = once;
-      args.conf = conf;
-      args.startLine = startLine;
-      args.endLine = endLine;
-      args['no-escape'] = noEscape;
-      console.log();
-      modSelector(args);
+      selectHandler(args);
       break;
     }
     case 'set':
