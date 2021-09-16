@@ -1,11 +1,11 @@
 {
   "name": "code-replacer",
-  "version": "0.1.2",
+  "version": "0.1.4",
   "bin": {
-    "code-replacer": "./dist/index.js"
+    "code-replacer": "./dist/cli/index.js"
   },
   "description": "Replace codes line by line with regex for target files",
-  "main": "./dist/index.js",
+  "main": "./dist/cli/index.js",
   "scripts": {
     "test": "jest __test__ --ci --coverage && codecov",
     "unitTest": "jest ./__test__/unitTest/**.test.js --ci --coverage && codecov",
@@ -39,7 +39,7 @@
     "regex-match"
   ],
   "files": [
-    "dist/*.js",
+    "dist/**",
     "dist/usageLog.json"
   ],
   "devDependencies": {
